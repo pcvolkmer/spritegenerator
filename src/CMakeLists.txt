@@ -28,7 +28,18 @@ qt4_add_resources(resources_RCC_SRCS ${resources_RCCS})
 qt4_wrap_cpp(spritegenerator_SRCS ${spritegenerator_MOC_SRCS})
 qt4_wrap_ui(spritegenerator_UIS_H ${spritegenerator_UIS})
 
-add_executable(spritegenerator MACOSX_BUNDLE
+IF( WIN32 AND MINGW )
+  ADD_CUSTOM_COMMAND( OUTPUT spritegeneratoricon.rc.obj
+    COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/resources/spritegeneratoricon.rc 
+	-o spritegeneratoricon.rc.obj
+  )
+  SET(spritegenerator_SRCS ${spritegenerator_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/spritegeneratoricon.rc.obj)
+ENDIF( WIN32 AND MINGW )
+IF( WIN32 AND NOT MINGW )
+  SET(spritegenerator_SRCS ${dataseteditor_SRCS} spritegeneratoricon.rc)
+ENDIF( WIN32 AND NOT MINGW )
+
+add_executable(spritegenerator MACOSX_BUNDLE WIN32
   ${spritegenerator_SRCS}
   ${spritegenerator_UIS_H}
   ${resources_RCC_SRCS}
@@ -55,3 +66,9 @@ IF (UNIX AND NOT APPLE)
     RUNTIME DESTINATION /opt/spritegenerator
   )
 ENDIF (UNIX AND NOT APPLE)
+
+IF (WIN32)
+  INSTALL(TARGETS spritegenerator
+    RUNTIME DESTINATION .
+  )
+ENDIF (WIN32)
