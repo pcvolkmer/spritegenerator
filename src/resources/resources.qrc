@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="images">
+    <file>images/gplv3-88x31.png</file>
+    <file>images/spritegenerator.svg</file>
+    <file>images/22x22/archive-insert-directory.png</file>
+    <file>images/22x22/archive-insert.png</file>
+    <file>images/22x22/archive-remove.png</file>
+  </qresource>
+  <qresource prefix="others">
+    <file>others/license</file>
+  </qresource>
+</RCC>

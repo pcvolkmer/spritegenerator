@@ -1,0 +1,66 @@
+project(spritegenerator)
+cmake_minimum_required(VERSION 2.6)
+
+set(QT_MIN_VERSION 4.6.0)
+find_package(Qt4 REQUIRED)
+
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_RELEASE 20101203)
+
+set(EXECUTABLE_OUTPUT_PATH
+  ${CMAKE_CURRENT_BINARY_DIR}/bin
+)
+
+CONFIGURE_FILE( version.h.cmake src/version.h )
+
+SET(DESKTOP
+  spritegenerator.desktop
+)
+
+SET(FILES
+  src/resources/images/spritegenerator.svg
+)
+
+add_subdirectory(src)
+
+IF (UNIX AND NOT APPLE)
+  INSTALL(FILES ${DESKTOP}
+    DESTINATION /usr/share/applications
+  )
+  INSTALL(FILES ${FILES}
+    DESTINATION /opt/spritegenerator
+  )
+ENDIF (UNIX AND NOT APPLE)
+
+IF (APPLE)
+  INSTALL(FILES ${FILES}
+    DESTINATION ../../../
+  )
+ENDIF (APPLE)
+
+# CPACK
+INCLUDE(InstallRequiredSystemLibraries)
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Creates CSS sprites")
+SET(CPACK_PACKAGE_VENDOR "Paul-Christian Volkmer <pcvolkmer@users.sourceforge.net>")
+SET(CPACK_PACKAGE_CONTACT "Paul-Christian Volkmer <pcvolkmer@users.sourceforge.net>")
+SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${VERSION_RELEASE})
+IF (UNIX AND NOT APPLE)
+  SET(CPACK_GENERATOR  "RPM")
+  SET(CPACK_SYSTEM_NAME "i586")
+  SET(CPACK_RPM_PACKAGE_RELEASE "1")
+  SET(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
+  SET(CPACK_RPM_PACKAGE_DESCRIPTION "Creates CSS sprites.")
+  #SET(CPACK_RPM_CHANGELOG_FILE ${CMAKE_CURRENT_BINARY_DIR}/CHANGES)
+  SET(CPACK_STRIP_FILES "/opt/spritegenerator/spritegenerator")
+ENDIF (UNIX AND NOT APPLE)
+IF (APPLE)
+  SET(CPACK_GENERATOR  "Bundle")
+  SET(CPACK_BUNDLE_NAME "spritegenerator")
+  SET(CPACK_BUNDLE_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
+  SET(CPACK_BUNDLE_ICON ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
+ENDIF (APPLE)
+INCLUDE(CPack)
+

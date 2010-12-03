@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=SpriteGenerator
+GenericName=SpriteGenerator
+Comment=Generator for CSS sprites
+Exec=/opt/spritegenerator/spritegenerator
+Icon=/opt/spritegenerator/spritegenerator.svg
+Terminal=false
+Categories=Development;
+X-SuSE-translate=false

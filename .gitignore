@@ -1,0 +1,7 @@
+CMakeCache
+CMakeFiles
+.kdev*
+*~
+CPack*
+_CPack*
+bin
