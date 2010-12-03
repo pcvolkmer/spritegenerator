@@ -130,9 +130,9 @@ void MainWindow::on_previewPageCommandButton_clicked() {
     QTextStream out(&htmlFile);
     out << "<!DOCTYPE html>\n";
     out << "<html lang=\"de-DE\">\n<head>\n<meta charset=\"UTF-8\"/>\n<title>Preview</title>\n<style type=\"text/css\">\n";
-    out << "body { margin: 24px; background-color: window; }\n";
+    out << "body { margin: 24px; background-color: #DDD; font-family: sans-serif; }\n";
     out << "b { margin: 8px; display: block; }\n";
-    out << ".style { border: 1px solid gray; background-color: white; color: #333; margin: 2px; padding: 8px; ";
+    out << ".style { border: 1px solid gray; background-color: #FFF; color: #333; margin: 2px; padding: 8px; ";
     out << "-moz-border-radius: 8px; -webkit-border-radius: 8px; }\n";
     out << ".style:hover { background-color: #FFC; ";
     out << "-moz-box-shadow:0 0 2px gray; -webkit-box-shadow:0 0 2px gray; }\n";
@@ -179,8 +179,8 @@ void MainWindow::on_previewPageCommandButton_clicked() {
     htmlFile.close();
 
     SpriteWidget::createCssSprite(this->_images, this->marginSpinBox->value()).save(dirName + "/sprite.png");
-
-    QDesktopServices::openUrl(dirName + "/index.html");
+	
+    QDesktopServices::openUrl(QUrl("file://" + dirName + "/index.html"));
 }
 
 void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {

@@ -28,7 +28,7 @@ qt4_add_resources(resources_RCC_SRCS ${resources_RCCS})
 qt4_wrap_cpp(spritegenerator_SRCS ${spritegenerator_MOC_SRCS})
 qt4_wrap_ui(spritegenerator_UIS_H ${spritegenerator_UIS})
 
-add_executable(spritegenerator
+add_executable(spritegenerator MACOSX_BUNDLE
   ${spritegenerator_SRCS}
   ${spritegenerator_UIS_H}
   ${resources_RCC_SRCS}
