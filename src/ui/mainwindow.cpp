@@ -180,7 +180,11 @@ void MainWindow::on_previewPageCommandButton_clicked() {
 
     SpriteWidget::createCssSprite(this->_images, this->marginSpinBox->value()).save(dirName + "/sprite.png");
 	
+    #ifdef WIN32
+    QDesktopServices::openUrl(QUrl("file:///" + dirName + "/index.html"));
+    #else
     QDesktopServices::openUrl(QUrl("file://" + dirName + "/index.html"));
+    #endif
 }
 
 void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
