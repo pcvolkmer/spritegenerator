@@ -81,5 +81,5 @@ QSize SpriteWidget::_spriteSize() {
             x = image.image().size().width();
         }
     }
-    return QSize(x+10+this->_elementMargin,y+this->_elementMargin);
+    return QSize(x+(2*this->_elementMargin),y+this->_elementMargin);
 }
