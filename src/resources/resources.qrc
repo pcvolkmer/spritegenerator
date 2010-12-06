@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="images">
+    <file>images/16x16/emblem-locked.png</file>
+    <file>images/16x16/emblem-unlocked.png</file>
     <file>images/gplv3-88x31.png</file>
     <file>images/spritegenerator.svg</file>
     <file>images/22x22/archive-insert-directory.png</file>

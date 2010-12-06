@@ -26,7 +26,7 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     this->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     this->listWidget->addActions(this->toolBar->actions());
-    
+
     this->actionRemoveFile->setEnabled(false);
     this->createSpriteCommandButton->setEnabled(false);
     this->previewPageCommandButton->setEnabled(false);
@@ -69,7 +69,12 @@ void MainWindow::on_actionAddDirectory_triggered() {
         }
     }
 
-    this->_images = SpriteWidget::updateCssSprite(this->_images, this->marginSpinBox->value());
+    this->_images = SpriteWidget::updateCssSprite(
+                        this->_images,
+                        this->xMarginSpinBox->value(),
+                        this->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                    );
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
 }
@@ -91,7 +96,12 @@ void MainWindow::on_actionAddFile_triggered() {
         }
     }
 
-    this->_images = SpriteWidget::updateCssSprite(this->_images, this->marginSpinBox->value());
+    this->_images = SpriteWidget::updateCssSprite(
+                        this->_images,
+                        this->xMarginSpinBox->value(),
+                        this->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                    );
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
 }
@@ -104,7 +114,12 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 this->_images->removeOne(image);
             }
         }
-        this->_images =  SpriteWidget::updateCssSprite(this->_images, this->marginSpinBox->value());
+        this->_images = SpriteWidget::updateCssSprite(
+                            this->_images,
+                            this->xMarginSpinBox->value(),
+                            this->yMarginSpinBox->value(),
+                            (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                        );
         delete item;
     }
     this->updateListWidget();
@@ -118,7 +133,12 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
                            "PNG Image (*.png)"
                        );
     if (fileName.isEmpty()) return;
-    SpriteWidget::createCssSprite(this->_images, this->marginSpinBox->value()).save(fileName);
+    SpriteWidget::createCssSprite(
+        this->_images,
+        this->xMarginSpinBox->value(),
+        this->yMarginSpinBox->value(),
+        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+    ).save(fileName);
 }
 
 void MainWindow::on_previewPageCommandButton_clicked() {
@@ -178,13 +198,18 @@ void MainWindow::on_previewPageCommandButton_clicked() {
     htmlFile.flush();
     htmlFile.close();
 
-    SpriteWidget::createCssSprite(this->_images, this->marginSpinBox->value()).save(dirName + "/sprite.png");
-	
-    #ifdef WIN32
+    SpriteWidget::createCssSprite(
+        this->_images,
+        this->xMarginSpinBox->value(),
+        this->yMarginSpinBox->value(),
+        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+    ).save(dirName + "/sprite.png");
+
+#ifdef WIN32
     QDesktopServices::openUrl(QUrl("file:///" + dirName + "/index.html"));
-    #else
+#else
     QDesktopServices::openUrl(QUrl("file://" + dirName + "/index.html"));
-    #endif
+#endif
 }
 
 void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
@@ -228,7 +253,41 @@ void MainWindow::on_actionInfo_triggered() {
     infoDialog.exec();
 }
 
-void MainWindow::on_marginSpinBox_valueChanged(int i) {
-    this->_images =  SpriteWidget::updateCssSprite(this->_images, this->marginSpinBox->value());
+void MainWindow::on_xMarginSpinBox_valueChanged(int i) {
+    if (this->lockMarginToolButton->isChecked()) {
+        this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
+    }
+
+    this->_images = SpriteWidget::updateCssSprite(
+                        this->_images,
+                        this->xMarginSpinBox->value(),
+                        this->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                    );
     this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+}
+
+void MainWindow::on_yMarginSpinBox_valueChanged(int i) {
+    this->_images = SpriteWidget::updateCssSprite(
+                        this->_images,
+                        this->xMarginSpinBox->value(),
+                        this->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                    );
+    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+}
+
+void MainWindow::on_elementLayoutComboBox_currentIndexChanged(int index) {
+    this->_images = SpriteWidget::updateCssSprite(
+                        this->_images,
+                        this->xMarginSpinBox->value(),
+                        this->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) index
+                    );
+    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+}
+
+void MainWindow::on_lockMarginToolButton_toggled(bool checked) {
+    this->yMarginSpinBox->setEnabled(!checked);
+    this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
 }

@@ -51,7 +51,10 @@ protected slots:
     void on_listWidget_itemPressed(QListWidgetItem* item);
     void on_listWidget_currentItemChanged(QListWidgetItem* item);
     void on_actionInfo_triggered();
-    void on_marginSpinBox_valueChanged(int i);
+    void on_xMarginSpinBox_valueChanged(int i);
+    void on_yMarginSpinBox_valueChanged(int i);
+    void on_elementLayoutComboBox_currentIndexChanged(int index);
+    void on_lockMarginToolButton_toggled(bool checked);
 };
 
 #endif

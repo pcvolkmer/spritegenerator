@@ -29,17 +29,41 @@ class SpriteWidget : public QWidget {
     Q_OBJECT
 
 public:
-    static QList< CssSpriteElementImage > * updateCssSprite(QList< CssSpriteElementImage > * images, int margin = 8);
-    static QPixmap createCssSprite(QList< CssSpriteElementImage > * images, int margin = 8);
+    enum Layout {
+        LAYOUT_HORIZONTAL,
+        LAYOUT_VERTICAL
+    };
+
+    static QList< CssSpriteElementImage > * updateCssSprite(
+        QList< CssSpriteElementImage > * images,
+        int xMargin = 8,
+        int yMargin = 8,
+        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
+    );
+    static QPixmap createCssSprite(
+        QList< CssSpriteElementImage > * images,
+        int xMargin = 8,
+        int yMargin = 8,
+        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
+    );
 
 private:
-    SpriteWidget ( QList< CssSpriteElementImage > * images, int margin, QWidget* parent = 0, Qt::WFlags fl = 0 );
+    SpriteWidget (
+        QList< CssSpriteElementImage > * images,
+        int xMargin,
+        int yMargin,
+        SpriteWidget::Layout layout,
+        QWidget* parent = 0,
+        Qt::WFlags fl = 0
+    );
     QSize _spriteSize();
     void _init();
     void _calcImage();
     QPixmap _spriteImage;
     QList< CssSpriteElementImage > * _images;
-    int _elementMargin;
+    int _elementXMargin;
+    int _elementYMargin;
+    SpriteWidget::Layout _layout;
 
 private slots:
     void paintEvent(QPaintEvent * e);

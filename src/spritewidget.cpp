@@ -20,24 +20,38 @@
 
 #include "spritewidget.h"
 
-QPixmap SpriteWidget::createCssSprite(QList< CssSpriteElementImage > * images, int margin) {
-    SpriteWidget swObject(images, margin);
+QPixmap SpriteWidget::createCssSprite(
+    QList< CssSpriteElementImage > * images,
+    int xMargin,
+    int yMargin,
+    Layout layout
+) {
+    SpriteWidget swObject(images, xMargin, yMargin, layout);
     return swObject._spriteImage;
 }
 
-QList< CssSpriteElementImage > * SpriteWidget::updateCssSprite(QList< CssSpriteElementImage > * images, int margin) {
-    SpriteWidget swObject(images, margin);
+QList< CssSpriteElementImage > * SpriteWidget::updateCssSprite(
+    QList< CssSpriteElementImage > * images,
+    int xMargin,
+    int yMargin,
+    Layout layout
+) {
+    SpriteWidget swObject(images, xMargin, yMargin, layout);
     return swObject._images;
 }
 
 SpriteWidget::SpriteWidget (
     QList< CssSpriteElementImage > * images,
-    int margin,
+    int xMargin,
+    int yMargin,
+    Layout layout,
     QWidget * parent,
     Qt::WFlags fl
 ) : QWidget ( parent, fl ) {
     this->_images = images;
-    this->_elementMargin = margin;
+    this->_elementXMargin = xMargin;
+    this->_elementYMargin = yMargin;
+    this->_layout = layout;
     this->update();
     this->_init();
     this->_calcImage();
@@ -58,28 +72,56 @@ void SpriteWidget::_calcImage() {
 }
 
 void SpriteWidget::paintEvent(QPaintEvent* e) {
-    int xPos = this->_elementMargin;
-    int yPos = this->_elementMargin;
+    int xPos = this->_elementXMargin;
+    int yPos = this->_elementYMargin;
 
     QPainter painter(this);
 
-    foreach(CssSpriteElementImage image, * this->_images) {
-        CssSpriteElementDescription * descr = new CssSpriteElementDescription(QPoint(xPos,yPos),image.image().size());
-        image.updateDescription(descr);
-        painter.drawImage(xPos,yPos,image.image());
-        yPos += image.image().size().height() + this->_elementMargin;
-        this->_images->replace(this->_images->indexOf(image),image);
+    switch (this->_layout) {
+    case SpriteWidget::LAYOUT_HORIZONTAL:
+        foreach(CssSpriteElementImage image, * this->_images) {
+            CssSpriteElementDescription * descr = new CssSpriteElementDescription(QPoint(xPos,yPos),image.image().size());
+            image.updateDescription(descr);
+            painter.drawImage(xPos,yPos,image.image());
+            xPos += image.image().size().width() + this->_elementXMargin;
+            this->_images->replace(this->_images->indexOf(image),image);
+        }
+        break;
+    default:
+    case SpriteWidget::LAYOUT_VERTICAL:
+        foreach(CssSpriteElementImage image, * this->_images) {
+            CssSpriteElementDescription * descr = new CssSpriteElementDescription(QPoint(xPos,yPos),image.image().size());
+            image.updateDescription(descr);
+            painter.drawImage(xPos,yPos,image.image());
+            yPos += image.image().size().height() + this->_elementYMargin;
+            this->_images->replace(this->_images->indexOf(image),image);
+        }
+        break;
     }
 }
 
 QSize SpriteWidget::_spriteSize() {
-    int x = this->_elementMargin;
-    int y = this->_elementMargin;
-    foreach(CssSpriteElementImage image, * this->_images) {
-        y = (y + this->_elementMargin + image.image().size().height());
-        if (x < image.image().size().width()) {
-            x = image.image().size().width();
+    int x = this->_elementXMargin;
+    int y = this->_elementYMargin;
+    switch (this->_layout) {
+    case SpriteWidget::LAYOUT_HORIZONTAL:
+        foreach(CssSpriteElementImage image, * this->_images) {
+            x = (x + this->_elementYMargin + image.image().size().width());
+            if (y < image.image().size().height()) {
+                y = image.image().size().height();
+            }
         }
+        return QSize(x+this->_elementXMargin,y+(2*this->_elementYMargin));
+        break;
+    default:
+    case SpriteWidget::LAYOUT_VERTICAL:
+        foreach(CssSpriteElementImage image, * this->_images) {
+            y = (y + this->_elementYMargin + image.image().size().height());
+            if (x < image.image().size().width()) {
+                x = image.image().size().width();
+            }
+        }
+        return QSize(x+(2*this->_elementXMargin),y+this->_elementYMargin);
+        break;
     }
-    return QSize(x+(2*this->_elementMargin),y+this->_elementMargin);
 }
