@@ -24,6 +24,8 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
         : QMainWindow ( parent, fl ), Ui::MainWindow() {
     setupUi ( this );
 
+    this->repeatSettingsInfoWidget->setVisible(false);
+
     this->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     this->listWidget->addActions(this->toolBar->actions());
 
@@ -221,7 +223,9 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
             this->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
             this->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
             this->resultingCssTextBrowser->setText(
-                "background: url(<SPRITE URL>) no-repeat;\nbackground-position: -"
+                "background: url(<SPRITE URL>) "
+                + this->spriteRepeatComboBox->currentText()
+                + ";\nbackground-position: -"
                 + QString::number(elem.description()->startPosition().x(),10)
                 + "px -"
                 + QString::number(elem.description()->startPosition().y(),10)
@@ -254,7 +258,10 @@ void MainWindow::on_actionInfo_triggered() {
 }
 
 void MainWindow::on_xMarginSpinBox_valueChanged(int i) {
-    if (this->lockMarginToolButton->isChecked()) {
+    if (
+        this->lockMarginToolButton->isChecked()
+        && (this->spriteRepeatComboBox->currentIndex() != (int)SpriteWidget::REPEAT_REPEAT_Y)
+    ) {
         this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
     }
 
@@ -287,7 +294,53 @@ void MainWindow::on_elementLayoutComboBox_currentIndexChanged(int index) {
     this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
 }
 
+// Refacs!
+
+void MainWindow::on_spriteRepeatComboBox_currentIndexChanged(int index) {
+    this->repeatSettingsInfoWidget->setVisible(false);
+    this->resultingCssTextBrowser->setVisible(true);
+    this->lockMarginToolButton->setEnabled(true);
+
+    if ((index == (int)SpriteWidget::REPEAT_REPEAT_X) || (index == (int)SpriteWidget::REPEAT_REPEAT_Y)) {
+        this->repeatSettingsInfoWidget->setVisible(true);
+        this->resultingCssTextBrowser->setVisible(false);
+        this->lockMarginToolButton->setEnabled(false);
+    }
+
+    if (index == (int) SpriteWidget::REPEAT_NO_REPEAT) {
+        this->xMarginSpinBox->setEnabled(true);
+        this->yMarginSpinBox->setEnabled(!this->lockMarginToolButton->isChecked());
+    }
+}
+
 void MainWindow::on_lockMarginToolButton_toggled(bool checked) {
     this->yMarginSpinBox->setEnabled(!checked);
     this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
+}
+
+void MainWindow::on_changeSettingsButton_clicked() {
+    int repeatIndex = this->spriteRepeatComboBox->currentIndex();
+
+    if (repeatIndex == (int)SpriteWidget::REPEAT_REPEAT_X) {
+        this->xMarginSpinBox->setEnabled(false);
+        this->yMarginSpinBox->setEnabled(true);
+        this->xMarginSpinBox->setValue(0);
+        this->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_VERTICAL);
+    }
+    else if (repeatIndex == (int)SpriteWidget::REPEAT_REPEAT_Y) {
+        this->xMarginSpinBox->setEnabled(true);
+        this->yMarginSpinBox->setEnabled(false);
+        this->yMarginSpinBox->setValue(0);
+        this->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_HORIZONTAL);
+    }
+
+    this->repeatSettingsInfoWidget->setVisible(false);
+    this->resultingCssTextBrowser->setVisible(true);
+    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+}
+
+void MainWindow::on_abortChangeSettingsButton_clicked() {
+    this->repeatSettingsInfoWidget->setVisible(false);
+    this->resultingCssTextBrowser->setVisible(true);
+    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
 }

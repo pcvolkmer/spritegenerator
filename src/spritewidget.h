@@ -34,6 +34,12 @@ public:
         LAYOUT_VERTICAL
     };
 
+    enum Repeat {
+        REPEAT_NO_REPEAT,
+        REPEAT_REPEAT_X,
+        REPEAT_REPEAT_Y
+    };
+
     static QList< CssSpriteElementImage > * updateCssSprite(
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,

@@ -37,7 +37,7 @@ private:
     void updateListWidget();
 
     QList< CssSpriteElementImage > * _images;
-    
+
     QString stripFileName(QString filePath) {
         return filePath.split("/").last();
     }
@@ -54,7 +54,10 @@ protected slots:
     void on_xMarginSpinBox_valueChanged(int i);
     void on_yMarginSpinBox_valueChanged(int i);
     void on_elementLayoutComboBox_currentIndexChanged(int index);
+    void on_spriteRepeatComboBox_currentIndexChanged(int index);
     void on_lockMarginToolButton_toggled(bool checked);
+    void on_changeSettingsButton_clicked();
+    void on_abortChangeSettingsButton_clicked();
 };
 
 #endif
