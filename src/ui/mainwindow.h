@@ -25,6 +25,7 @@
 #include "ui_mainwindow.h"
 #include "spritewidget.h"
 #include "infodialog.h"
+#include "previewpage.h"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow {
     Q_OBJECT
@@ -35,12 +36,9 @@ public:
 
 private:
     void updateListWidget();
-
     QList< CssSpriteElementImage > * _images;
-
-    QString stripFileName(QString filePath) {
-        return filePath.split("/").last();
-    }
+    QString stripFileName(QString filePath);
+    bool createPreviewPage(QString dirName);
 
 protected slots:
     void on_actionAddFile_triggered();
