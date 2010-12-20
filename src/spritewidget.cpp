@@ -106,12 +106,12 @@ QSize SpriteWidget::_spriteSize() {
     switch (this->_layout) {
     case SpriteWidget::LAYOUT_HORIZONTAL:
         foreach(CssSpriteElementImage image, * this->_images) {
-            x = (x + this->_elementYMargin + image.image().size().width());
+            x = (x + this->_elementXMargin + image.image().size().width());
             if (y < image.image().size().height()) {
                 y = image.image().size().height();
             }
         }
-        return QSize(x+this->_elementXMargin,y+(2*this->_elementYMargin));
+        return QSize(x,y+(2*this->_elementYMargin));
         break;
     default:
     case SpriteWidget::LAYOUT_VERTICAL:
@@ -121,7 +121,7 @@ QSize SpriteWidget::_spriteSize() {
                 x = image.image().size().width();
             }
         }
-        return QSize(x+(2*this->_elementXMargin),y+this->_elementYMargin);
+        return QSize(x+(2*this->_elementXMargin),y);
         break;
     }
 }
