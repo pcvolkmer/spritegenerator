@@ -167,7 +167,7 @@ bool MainWindow::createPreviewPage(QString dirName) {
     if (!htmlFile.isWritable()) return false;
 
     htmlFile.write(PreviewPage::create(*this->_images));
-    
+
     htmlFile.close();
     return true;
 }
@@ -181,7 +181,8 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
             this->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
             this->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
             this->resultingCssTextBrowser->setText(
-                "background: url(<SPRITE URL>) "
+                "background-image: url(<SPRITE URL>);\n"
+                + QString("background-repeat: ")
                 + this->spriteRepeatComboBox->currentText()
                 + ";\nbackground-position: -"
                 + QString::number(elem.description()->startPosition().x(),10)
