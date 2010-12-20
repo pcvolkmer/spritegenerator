@@ -342,12 +342,27 @@
               <widget class="QComboBox" name="elementLayoutComboBox">
                <item>
                 <property name="text">
+                 <string>optimize for best file size</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>optimize for best fit</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
                  <string>horizontal</string>
                 </property>
                </item>
                <item>
                 <property name="text">
                  <string>vertical</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>block</string>
                 </property>
                </item>
               </widget>

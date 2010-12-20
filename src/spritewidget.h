@@ -22,6 +22,7 @@
 #define SPRITEWIDGET_H
 
 #include <QtGui>
+#include <cmath>
 #include "cssspriteelementdescription.h"
 #include "cssspriteelementimage.h"
 
@@ -30,8 +31,11 @@ class SpriteWidget : public QWidget {
 
 public:
     enum Layout {
+        LAYOUT_BESTFILESIZE,
+        LAYOUT_BESTFIT,
         LAYOUT_HORIZONTAL,
-        LAYOUT_VERTICAL
+        LAYOUT_VERTICAL,
+        LAYOUT_BLOCK
     };
 
     enum Repeat {
@@ -61,6 +65,19 @@ private:
         SpriteWidget::Layout layout,
         QWidget* parent = 0,
         Qt::WFlags fl = 0
+    );
+    static SpriteWidget::Layout bestfit(
+        QList< CssSpriteElementImage > * images,
+        int xMargin = 8,
+        int yMargin = 8
+    );
+    static SpriteWidget::Layout bestFileSize(
+        QList< CssSpriteElementImage > * images,
+        int xMargin = 8,
+        int yMargin = 8
+    );
+    static QPair< QSize, QSize > extremeSizes(
+        QList< CssSpriteElementImage > * images
     );
     QSize _spriteSize();
     void _init();
