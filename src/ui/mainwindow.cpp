@@ -32,12 +32,15 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     this->actionRemoveFile->setEnabled(false);
     this->createSpriteCommandButton->setEnabled(false);
     this->previewPageCommandButton->setEnabled(false);
+    this->addQualityComboBox();
 
     this->_images = new QList< CssSpriteElementImage >();
 }
 
 MainWindow::~MainWindow() {
     delete this->_images;
+    delete this->_qualityComboBox;
+    delete this->_qualityLabel;
 }
 
 void MainWindow::updateListWidget() {
@@ -97,7 +100,6 @@ void MainWindow::on_actionAddFile_triggered() {
             this->listWidget->addItem(fileName);
         }
     }
-
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
                         this->xMarginSpinBox->value(),
@@ -139,7 +141,8 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
         this->_images,
         this->xMarginSpinBox->value(),
         this->yMarginSpinBox->value(),
-        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex(),
+        (SpriteWidget::Format) this->_qualityComboBox->currentIndex()
     ).save(fileName);
 }
 
@@ -151,7 +154,8 @@ void MainWindow::on_previewPageCommandButton_clicked() {
         this->_images,
         this->xMarginSpinBox->value(),
         this->yMarginSpinBox->value(),
-        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex(),
+        (SpriteWidget::Format) this->_qualityComboBox->currentIndex()
     ).save(dirName + "/sprite.png");
 
 #ifdef WIN32
@@ -309,4 +313,16 @@ void MainWindow::on_abortChangeSettingsButton_clicked() {
 
 QString MainWindow::stripFileName(QString filePath) {
     return filePath.split("/").last();
+}
+
+void MainWindow::addQualityComboBox() {
+    this->toolBar->addSeparator();
+    this->_qualityLabel = new QLabel(tr("Sprite format"));
+    this->toolBar->addWidget(this->_qualityLabel);
+    this->_qualityComboBox = new QComboBox();
+    this->_qualityComboBox->addItem(tr("32 bit RGBA (best quality)"));
+    this->_qualityComboBox->addItem(tr("24 bit RGBA"));
+    this->_qualityComboBox->addItem(tr("16 bit RGBA"));
+    this->_qualityComboBox->addItem(tr("8 bit indexed (smallest file size)"));
+    this->toolBar->addWidget(this->_qualityComboBox);
 }

@@ -44,17 +44,25 @@ public:
         REPEAT_REPEAT_Y
     };
 
+    enum Format {
+        FORMAT_RGBA32,
+        FORMAT_RGBA24,
+        FORMAT_RGBA16,
+        FORMAT_INDEXED8
+    };
+
     static QList< CssSpriteElementImage > * updateCssSprite(
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8,
         SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
     );
-    static QPixmap createCssSprite(
+    static QImage createCssSprite(
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8,
-        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
+        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
+        SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
     );
 
 private:

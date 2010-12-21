@@ -20,14 +20,33 @@
 
 #include "spritewidget.h"
 
-QPixmap SpriteWidget::createCssSprite(
+QImage SpriteWidget::createCssSprite(
     QList< CssSpriteElementImage > * images,
     int xMargin,
     int yMargin,
-    Layout layout
+    Layout layout,
+    SpriteWidget::Format format
 ) {
     SpriteWidget swObject(images, xMargin, yMargin, layout);
-    return swObject._spriteImage;
+    QImage image = swObject._spriteImage.toImage();
+    if (!image.isNull()) {
+        switch (format) {
+        case SpriteWidget::FORMAT_INDEXED8:
+            return image.convertToFormat(QImage::Format_Indexed8);
+            break;
+        case SpriteWidget::FORMAT_RGBA16:
+            return image.convertToFormat(QImage::Format_ARGB4444_Premultiplied);
+            break;
+        case SpriteWidget::FORMAT_RGBA24:
+            return image.convertToFormat(QImage::Format_ARGB8565_Premultiplied);
+            break;
+        default:
+        case SpriteWidget::FORMAT_RGBA32:
+            return image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+            break;
+        }
+    }
+    return QImage();
 }
 
 QList< CssSpriteElementImage > * SpriteWidget::updateCssSprite(
@@ -212,7 +231,7 @@ QSize SpriteWidget::_spriteSize() {
                            :verticalElements;
         return QSize(
                    x + (horizontalElements * x) + (horizontalElements * maxSize.width()),
-                   y + (verticalElements * x) + (verticalElements * maxSize.height())
+                   y + (verticalElements * y) + (verticalElements * maxSize.height())
                );
 
         break;

@@ -37,8 +37,11 @@ public:
 private:
     void updateListWidget();
     QList< CssSpriteElementImage > * _images;
+    QComboBox * _qualityComboBox;
+    QLabel * _qualityLabel;
     QString stripFileName(QString filePath);
     bool createPreviewPage(QString dirName);
+    void addQualityComboBox();
 
 protected slots:
     void on_actionAddFile_triggered();
