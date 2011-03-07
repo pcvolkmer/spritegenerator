@@ -22,6 +22,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
+#include <omp.h>
 #include "ui_mainwindow.h"
 #include "spritewidget.h"
 #include "infodialog.h"
@@ -39,6 +40,8 @@ private:
     QList< CssSpriteElementImage > * _images;
     QComboBox * _qualityComboBox;
     QLabel * _qualityLabel;
+    QProgressBar * _progressBar;
+    QPushButton * _statusWarningPushButton;
     QString stripFileName(QString filePath);
     bool createPreviewPage(QString dirName);
     void addQualityComboBox();

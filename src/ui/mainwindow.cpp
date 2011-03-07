@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -22,7 +22,19 @@
 
 MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
         : QMainWindow ( parent, fl ), Ui::MainWindow() {
+    this->_progressBar = new QProgressBar();
+
+    this->_statusWarningPushButton = new QPushButton();
+    this->_statusWarningPushButton->setIcon(QIcon(":images/images/16x16/dialog-warning.png"));
+    this->_statusWarningPushButton->setEnabled(false);
+
+    this->_images = new QList< CssSpriteElementImage >();
+
     setupUi ( this );
+
+    this->addQualityComboBox();
+    this->statusBar()->addPermanentWidget(this->_progressBar);
+    this->statusBar()->addPermanentWidget(this->_statusWarningPushButton);
 
     this->repeatSettingsInfoWidget->setVisible(false);
 
@@ -32,15 +44,13 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     this->actionRemoveFile->setEnabled(false);
     this->createSpriteCommandButton->setEnabled(false);
     this->previewPageCommandButton->setEnabled(false);
-    this->addQualityComboBox();
-
-    this->_images = new QList< CssSpriteElementImage >();
 }
 
 MainWindow::~MainWindow() {
     delete this->_images;
     delete this->_qualityComboBox;
     delete this->_qualityLabel;
+    delete this->_progressBar;
 }
 
 void MainWindow::updateListWidget() {
@@ -61,17 +71,52 @@ void MainWindow::on_actionAddDirectory_triggered() {
                           "./",
                           QFileDialog::ReadOnly
                       );
+    if (dirName.isEmpty()) return;
+    this->statusBar()->clearMessage();
     this->setCursor(Qt::WaitCursor);
     QDir directory(dirName);
+    this->_progressBar->setMinimum(0);
+    this->_progressBar->setMaximum(directory.count()-1);
+
+    int importCounter = 0;
+    int failCounter = 0;
     foreach (QString fileName, directory.entryList()) {
+        QFileInfo fileInfo(dirName + "/" + fileName);
+        this->_progressBar->setValue(this->_progressBar->value()+1);
+        if (fileInfo.isDir()) continue;
         QImage image(dirName + "/" + fileName);
+
         if (!image.isNull()) {
             CssSpriteElementImage img(dirName + "/" + fileName,image);
             if (!this->_images->contains(img)) {
                 this->_images->append(img);
                 this->listWidget->addItem(dirName + "/" + fileName);
             }
+            importCounter++;
         }
+        else {
+            failCounter++;
+        }
+    }
+
+    if ((importCounter > 0) && (failCounter == 0)) {
+        this->statusBar()->showMessage(
+            tr("Import of %n image(s) succeed.","",importCounter),
+            15000
+        );
+    }
+    if ((importCounter == 0) && (failCounter > 0)) {
+        this->statusBar()->showMessage(
+            tr("No usable images were found."),
+            15000
+        );
+    }
+    if ((importCounter > 0) && (failCounter > 0)) {
+        this->statusBar()->showMessage(
+            tr("Import of %n image(s) succeed, ","",importCounter)
+            + tr("import of %n file(s) failed. ","",failCounter),
+            15000
+        );
     }
 
     this->_images = SpriteWidget::updateCssSprite(
@@ -80,6 +125,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
                         this->yMarginSpinBox->value(),
                         (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
                     );
+    this->_progressBar->reset();
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
 }
@@ -90,7 +136,8 @@ void MainWindow::on_actionAddFile_triggered() {
                            tr ( "Add file" ),
                            "./"
                        );
-
+    if (fileName.isEmpty()) return;
+    this->statusBar()->clearMessage();
     this->setCursor(Qt::WaitCursor);
     QImage image(fileName);
     if (!image.isNull()) {
@@ -99,6 +146,16 @@ void MainWindow::on_actionAddFile_triggered() {
             this->_images->append(img);
             this->listWidget->addItem(fileName);
         }
+        this->statusBar()->showMessage(
+            tr("Import of 1 image succeed."),
+            10000
+        );
+    }
+    else {
+        this->statusBar()->showMessage(
+            tr("Could not import file: Not a useable image format."),
+            10000
+        );
     }
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,

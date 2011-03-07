@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -77,7 +77,7 @@ SpriteWidget::Layout SpriteWidget::bestfit(
 
     if (minSize == horizontalSize) return SpriteWidget::LAYOUT_HORIZONTAL;
     if (minSize == verticalSize) return SpriteWidget::LAYOUT_VERTICAL;
-    if (minSize == blockSize) return SpriteWidget::LAYOUT_BLOCK;
+    return SpriteWidget::LAYOUT_BLOCK;
 }
 
 SpriteWidget::Layout SpriteWidget::bestFileSize(
@@ -105,7 +105,7 @@ SpriteWidget::Layout SpriteWidget::bestFileSize(
 
     if (minSize == horizontalFileSize) return SpriteWidget::LAYOUT_HORIZONTAL;
     if (minSize == verticalFileSize) return SpriteWidget::LAYOUT_VERTICAL;
-    if (minSize == blockFileSize) return SpriteWidget::LAYOUT_BLOCK;
+    return SpriteWidget::LAYOUT_BLOCK;
 }
 
 QPair< QSize, QSize > SpriteWidget::extremeSizes(QList< CssSpriteElementImage > * images) {
