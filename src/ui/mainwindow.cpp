@@ -242,7 +242,8 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
             this->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
             this->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
             this->resultingCssTextBrowser->setText(
-                "background-image: url(<SPRITE URL>);\n"
+                "/* " + this->stripFileName(fileName) + " */\n"
+                + QString("background-image: url(<SPRITE URL>);\n")
                 + QString("background-repeat: ")
                 + this->spriteRepeatComboBox->currentText()
                 + ";\nbackground-position: -"
