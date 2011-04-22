@@ -6,6 +6,7 @@ set(spritegenerator_SRCS
   spritewidget.cpp
   cssspriteelementdescription.cpp
   cssspriteelementimage.cpp
+  cssspriteelementimagelist.cpp
   previewpage.cpp
   main.cpp
 )

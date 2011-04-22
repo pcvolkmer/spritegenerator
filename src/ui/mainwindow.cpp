@@ -28,7 +28,7 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     this->_statusWarningPushButton->setIcon(QIcon(":images/images/16x16/dialog-warning.png"));
     this->_statusWarningPushButton->setEnabled(false);
 
-    this->_images = new QList< CssSpriteElementImage >();
+    this->_images = new CssSpriteElementImageList();
 
     ui->setupUi ( this );
 
@@ -124,12 +124,14 @@ void MainWindow::on_actionAddDirectory_triggered() {
         );
     }
 
-    this->_images = SpriteWidget::updateCssSprite(
-                        this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
-                    );
+    this->_images = new CssSpriteElementImageList(
+        SpriteWidget::updateCssSprite(
+            this->_images,
+            ui->xMarginSpinBox->value(),
+            ui->yMarginSpinBox->value(),
+            (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+        )
+    );
     this->_progressBar->reset();
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
@@ -162,12 +164,12 @@ void MainWindow::on_actionAddFile_triggered() {
             10000
         );
     }
-    this->_images = SpriteWidget::updateCssSprite(
-                        this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
-                    );
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
 }
@@ -180,12 +182,12 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 this->_images->removeOne(image);
             }
         }
-        this->_images = SpriteWidget::updateCssSprite(
-                            this->_images,
-                            ui->xMarginSpinBox->value(),
-                            ui->yMarginSpinBox->value(),
-                            (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
-                        );
+        this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                    this->_images,
+                    ui->xMarginSpinBox->value(),
+                    ui->yMarginSpinBox->value(),
+                    (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+                ));
         delete item;
     }
     this->updateListWidget();
@@ -291,32 +293,32 @@ void MainWindow::on_xMarginSpinBox_valueChanged(int i) {
         ui->yMarginSpinBox->setValue(ui->xMarginSpinBox->value());
     }
 
-    this->_images = SpriteWidget::updateCssSprite(
-                        this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
-                    );
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
     this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 void MainWindow::on_yMarginSpinBox_valueChanged(int i) {
-    this->_images = SpriteWidget::updateCssSprite(
-                        this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
-                    );
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
     this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 void MainWindow::on_elementLayoutComboBox_currentIndexChanged(int index) {
-    this->_images = SpriteWidget::updateCssSprite(
-                        this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) index
-                    );
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) index
+            ));
     this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
@@ -370,6 +372,48 @@ void MainWindow::on_abortChangeSettingsButton_clicked() {
     ui->repeatSettingsInfoWidget->setVisible(false);
     ui->resultingCssTextBrowser->setVisible(true);
     this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
+}
+
+void MainWindow::on_moveDownToolButton_clicked() {
+    foreach(QListWidgetItem * item, ui->listWidget->selectedItems()) {
+        foreach(CssSpriteElementImage image, *this->_images) {
+            if (image.fileName() == item->text()) {
+                this->_images->moveDown(image);
+            }
+        }
+    }
+    ui->listWidget->clear();
+    foreach(CssSpriteElementImage image, *this->_images) {
+        ui->listWidget->addItem(image.fileName());
+    }
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
+    this->updateListWidget();
+}
+
+void MainWindow::on_moveUpToolButton_clicked() {
+    foreach(QListWidgetItem * item, ui->listWidget->selectedItems()) {
+        foreach(CssSpriteElementImage image, *this->_images) {
+            if (image.fileName() == item->text()) {
+                this->_images->moveUp(image);
+            }
+        }
+    }
+    ui->listWidget->clear();
+    foreach(CssSpriteElementImage image, *this->_images) {
+        ui->listWidget->addItem(image.fileName());
+    }
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
+    this->updateListWidget();
 }
 
 QString MainWindow::stripFileName(QString filePath) {

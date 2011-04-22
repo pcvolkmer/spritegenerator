@@ -27,6 +27,7 @@
 #include "spritewidget.h"
 #include "infodialog.h"
 #include "previewpage.h"
+#include "cssspriteelementimagelist.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -35,11 +36,15 @@ public:
     MainWindow ( QWidget* parent = 0, Qt::WFlags fl = 0 );
     ~MainWindow();
 
+    Ui::MainWindow * getUi() {
+        return this->ui;
+    }
+
 private:
     Ui::MainWindow * ui;
-  
+
     void updateListWidget();
-    QList< CssSpriteElementImage > * _images;
+    CssSpriteElementImageList * _images;
     QComboBox * _qualityComboBox;
     QLabel * _qualityLabel;
     QProgressBar * _progressBar;
@@ -64,6 +69,8 @@ protected slots:
     void on_lockMarginToolButton_toggled(bool checked);
     void on_changeSettingsButton_clicked();
     void on_abortChangeSettingsButton_clicked();
+    void on_moveUpToolButton_clicked();
+    void on_moveDownToolButton_clicked();
 };
 
 #endif
