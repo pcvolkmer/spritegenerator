@@ -21,7 +21,7 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
-        : QMainWindow ( parent, fl ), Ui::MainWindow() {
+        : QMainWindow ( parent, fl ), ui(new Ui::MainWindow()) {
     this->_progressBar = new QProgressBar();
 
     this->_statusWarningPushButton = new QPushButton();
@@ -30,20 +30,24 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     this->_images = new QList< CssSpriteElementImage >();
 
-    setupUi ( this );
+    ui->setupUi ( this );
 
     this->addQualityComboBox();
     this->statusBar()->addPermanentWidget(this->_progressBar);
     this->statusBar()->addPermanentWidget(this->_statusWarningPushButton);
 
-    this->repeatSettingsInfoWidget->setVisible(false);
+    ui->repeatSettingsInfoWidget->setVisible(false);
 
-    this->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-    this->listWidget->addActions(this->toolBar->actions());
+    ui->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    foreach(QAction * action, ui->toolBar->actions()) {
+        if (! (action->text() == NULL)) {
+            ui->listWidget->addAction(action);
+        }
+    }
 
-    this->actionRemoveFile->setEnabled(false);
-    this->createSpriteCommandButton->setEnabled(false);
-    this->previewPageCommandButton->setEnabled(false);
+    ui->actionRemoveFile->setEnabled(false);
+    ui->createSpriteCommandButton->setEnabled(false);
+    ui->previewPageCommandButton->setEnabled(false);
 }
 
 MainWindow::~MainWindow() {
@@ -51,16 +55,17 @@ MainWindow::~MainWindow() {
     delete this->_qualityComboBox;
     delete this->_qualityLabel;
     delete this->_progressBar;
+    delete this->ui;
 }
 
 void MainWindow::updateListWidget() {
-    this->actionRemoveFile->setEnabled(false);
-    this->createSpriteCommandButton->setEnabled(false);
-    this->previewPageCommandButton->setEnabled(false);
-    if (this->listWidget->count() > 0) {
-        this->actionRemoveFile->setEnabled(true);
-        this->createSpriteCommandButton->setEnabled(true);
-        this->previewPageCommandButton->setEnabled(true);
+    ui->actionRemoveFile->setEnabled(false);
+    ui->createSpriteCommandButton->setEnabled(false);
+    ui->previewPageCommandButton->setEnabled(false);
+    if (ui->listWidget->count() > 0) {
+        ui->actionRemoveFile->setEnabled(true);
+        ui->createSpriteCommandButton->setEnabled(true);
+        ui->previewPageCommandButton->setEnabled(true);
     }
 }
 
@@ -90,7 +95,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
             CssSpriteElementImage img(dirName + "/" + fileName,image);
             if (!this->_images->contains(img)) {
                 this->_images->append(img);
-                this->listWidget->addItem(dirName + "/" + fileName);
+                ui->listWidget->addItem(dirName + "/" + fileName);
             }
             importCounter++;
         }
@@ -121,9 +126,9 @@ void MainWindow::on_actionAddDirectory_triggered() {
 
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
-                        this->xMarginSpinBox->value(),
-                        this->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
                     );
     this->_progressBar->reset();
     this->setCursor(Qt::ArrowCursor);
@@ -144,7 +149,7 @@ void MainWindow::on_actionAddFile_triggered() {
         CssSpriteElementImage img(fileName,image);
         if (!this->_images->contains(img)) {
             this->_images->append(img);
-            this->listWidget->addItem(fileName);
+            ui->listWidget->addItem(fileName);
         }
         this->statusBar()->showMessage(
             tr("Import of 1 image succeed."),
@@ -159,16 +164,16 @@ void MainWindow::on_actionAddFile_triggered() {
     }
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
-                        this->xMarginSpinBox->value(),
-                        this->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
                     );
     this->setCursor(Qt::ArrowCursor);
     this->updateListWidget();
 }
 
 void MainWindow::on_actionRemoveFile_triggered() {
-    QList<QListWidgetItem*> itemlist = this->listWidget->selectedItems();
+    QList<QListWidgetItem*> itemlist = ui->listWidget->selectedItems();
     foreach (QListWidgetItem * item, itemlist) {
         foreach (CssSpriteElementImage image, *this->_images) {
             if (image.fileName() == item->text()) {
@@ -177,9 +182,9 @@ void MainWindow::on_actionRemoveFile_triggered() {
         }
         this->_images = SpriteWidget::updateCssSprite(
                             this->_images,
-                            this->xMarginSpinBox->value(),
-                            this->yMarginSpinBox->value(),
-                            (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                            ui->xMarginSpinBox->value(),
+                            ui->yMarginSpinBox->value(),
+                            (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
                         );
         delete item;
     }
@@ -196,9 +201,9 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
     if (fileName.isEmpty()) return;
     SpriteWidget::createCssSprite(
         this->_images,
-        this->xMarginSpinBox->value(),
-        this->yMarginSpinBox->value(),
-        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex(),
+        ui->xMarginSpinBox->value(),
+        ui->yMarginSpinBox->value(),
+        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex(),
         (SpriteWidget::Format) this->_qualityComboBox->currentIndex()
     ).save(fileName);
 }
@@ -209,9 +214,9 @@ void MainWindow::on_previewPageCommandButton_clicked() {
     this->createPreviewPage(dirName);
     SpriteWidget::createCssSprite(
         this->_images,
-        this->xMarginSpinBox->value(),
-        this->yMarginSpinBox->value(),
-        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex(),
+        ui->xMarginSpinBox->value(),
+        ui->yMarginSpinBox->value(),
+        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex(),
         (SpriteWidget::Format) this->_qualityComboBox->currentIndex()
     ).save(dirName + "/sprite.png");
 
@@ -238,14 +243,14 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
 
     foreach (CssSpriteElementImage elem, * this->_images) {
         if (elem.fileName() == fileName) {
-            this->fileName->setText(this->stripFileName(fileName));
-            this->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
-            this->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
-            this->resultingCssTextBrowser->setText(
+            ui->fileName->setText(this->stripFileName(fileName));
+            ui->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
+            ui->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
+            ui->resultingCssTextBrowser->setText(
                 "/* " + this->stripFileName(fileName) + " */\n"
                 + QString("background-image: url(<SPRITE URL>);\n")
                 + QString("background-repeat: ")
-                + this->spriteRepeatComboBox->currentText()
+                + ui->spriteRepeatComboBox->currentText()
                 + ";\nbackground-position: -"
                 + QString::number(elem.description()->startPosition().x(),10)
                 + "px -"
@@ -257,18 +262,18 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
                 + QString::number(elem.description()->size().height(),10)
                 + "px;"
             );
-            this->elementImageLabel->setPixmap(QPixmap::fromImage(elem.image()));
+            ui->elementImageLabel->setPixmap(QPixmap::fromImage(elem.image()));
             return;
         }
     }
 }
 
 void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem* item) {
-    this->fileName->clear();
-    this->imageSizeX->clear();
-    this->imageSizeY->clear();
-    this->resultingCssTextBrowser->clear();
-    this->elementImageLabel->clear();
+    ui->fileName->clear();
+    ui->imageSizeX->clear();
+    ui->imageSizeY->clear();
+    ui->resultingCssTextBrowser->clear();
+    ui->elementImageLabel->clear();
     if (item == NULL) return;
     this->on_listWidget_itemPressed(item);
 }
@@ -280,93 +285,91 @@ void MainWindow::on_actionInfo_triggered() {
 
 void MainWindow::on_xMarginSpinBox_valueChanged(int i) {
     if (
-        this->lockMarginToolButton->isChecked()
-        && (this->spriteRepeatComboBox->currentIndex() != (int)SpriteWidget::REPEAT_REPEAT_Y)
+        ui->lockMarginToolButton->isChecked()
+        && (ui->spriteRepeatComboBox->currentIndex() != (int)SpriteWidget::REPEAT_REPEAT_Y)
     ) {
-        this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
+        ui->yMarginSpinBox->setValue(ui->xMarginSpinBox->value());
     }
 
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
-                        this->xMarginSpinBox->value(),
-                        this->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
                     );
-    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+    this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 void MainWindow::on_yMarginSpinBox_valueChanged(int i) {
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
-                        this->xMarginSpinBox->value(),
-                        this->yMarginSpinBox->value(),
-                        (SpriteWidget::Layout) this->elementLayoutComboBox->currentIndex()
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
                     );
-    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+    this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 void MainWindow::on_elementLayoutComboBox_currentIndexChanged(int index) {
     this->_images = SpriteWidget::updateCssSprite(
                         this->_images,
-                        this->xMarginSpinBox->value(),
-                        this->yMarginSpinBox->value(),
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
                         (SpriteWidget::Layout) index
                     );
-    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+    this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 // Refacs!
 
 void MainWindow::on_spriteRepeatComboBox_currentIndexChanged(int index) {
-    this->repeatSettingsInfoWidget->setVisible(false);
-    this->resultingCssTextBrowser->setVisible(true);
-    this->lockMarginToolButton->setEnabled(true);
-    this->elementLayoutComboBox->setEnabled(true);
+    ui->repeatSettingsInfoWidget->setVisible(false);
+    ui->resultingCssTextBrowser->setVisible(true);
+    ui->lockMarginToolButton->setEnabled(true);
+    ui->elementLayoutComboBox->setEnabled(true);
 
     if ((index == (int)SpriteWidget::REPEAT_REPEAT_X) || (index == (int)SpriteWidget::REPEAT_REPEAT_Y)) {
-        this->repeatSettingsInfoWidget->setVisible(true);
-        this->resultingCssTextBrowser->setVisible(false);
-        this->lockMarginToolButton->setEnabled(false);
+        ui->repeatSettingsInfoWidget->setVisible(true);
+        ui->resultingCssTextBrowser->setVisible(false);
+        ui->lockMarginToolButton->setEnabled(false);
     }
 
     if (index == (int) SpriteWidget::REPEAT_NO_REPEAT) {
-        this->xMarginSpinBox->setEnabled(true);
-        this->yMarginSpinBox->setEnabled(!this->lockMarginToolButton->isChecked());
+        ui->xMarginSpinBox->setEnabled(true);
+        ui->yMarginSpinBox->setEnabled(! ui->lockMarginToolButton->isChecked());
     }
 }
 
 void MainWindow::on_lockMarginToolButton_toggled(bool checked) {
-    this->yMarginSpinBox->setEnabled(!checked);
-    this->yMarginSpinBox->setValue(this->xMarginSpinBox->value());
+    ui->yMarginSpinBox->setEnabled(!checked);
+    ui->yMarginSpinBox->setValue(ui->xMarginSpinBox->value());
 }
 
 void MainWindow::on_changeSettingsButton_clicked() {
-    int repeatIndex = this->spriteRepeatComboBox->currentIndex();
+    int repeatIndex = ui->spriteRepeatComboBox->currentIndex();
 
     if (repeatIndex == (int)SpriteWidget::REPEAT_REPEAT_X) {
-        this->xMarginSpinBox->setEnabled(false);
-        this->yMarginSpinBox->setEnabled(true);
-        this->xMarginSpinBox->setValue(0);
-        this->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_VERTICAL);
+        ui->xMarginSpinBox->setEnabled(false);
+        ui->yMarginSpinBox->setEnabled(true);
+        ui->xMarginSpinBox->setValue(0);
+        ui->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_VERTICAL);
     }
     else if (repeatIndex == (int)SpriteWidget::REPEAT_REPEAT_Y) {
-        this->xMarginSpinBox->setEnabled(true);
-        this->yMarginSpinBox->setEnabled(false);
-        this->yMarginSpinBox->setValue(0);
-        this->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_HORIZONTAL);
+        ui->xMarginSpinBox->setEnabled(true);
+        ui->yMarginSpinBox->setEnabled(false);
+        ui->yMarginSpinBox->setValue(0);
+        ui->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::LAYOUT_HORIZONTAL);
     }
 
-    this->elementLayoutComboBox->setEnabled(false);
+    ui->elementLayoutComboBox->setEnabled(false);
 
-    this->repeatSettingsInfoWidget->setVisible(false);
-    this->resultingCssTextBrowser->setVisible(true);
-    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+    this->on_abortChangeSettingsButton_clicked();
 }
 
 void MainWindow::on_abortChangeSettingsButton_clicked() {
-    this->repeatSettingsInfoWidget->setVisible(false);
-    this->resultingCssTextBrowser->setVisible(true);
-    this->on_listWidget_currentItemChanged(this->listWidget->currentItem());
+    ui->repeatSettingsInfoWidget->setVisible(false);
+    ui->resultingCssTextBrowser->setVisible(true);
+    this->on_listWidget_currentItemChanged(ui->listWidget->currentItem());
 }
 
 QString MainWindow::stripFileName(QString filePath) {
@@ -374,13 +377,13 @@ QString MainWindow::stripFileName(QString filePath) {
 }
 
 void MainWindow::addQualityComboBox() {
-    this->toolBar->addSeparator();
+    ui->toolBar->addSeparator();
     this->_qualityLabel = new QLabel(tr("Sprite format"));
-    this->toolBar->addWidget(this->_qualityLabel);
+    ui->toolBar->addWidget(this->_qualityLabel);
     this->_qualityComboBox = new QComboBox();
     this->_qualityComboBox->addItem(tr("32 bit RGBA (best quality)"));
     this->_qualityComboBox->addItem(tr("24 bit RGBA"));
     this->_qualityComboBox->addItem(tr("16 bit RGBA"));
     this->_qualityComboBox->addItem(tr("8 bit indexed (smallest file size)"));
-    this->toolBar->addWidget(this->_qualityComboBox);
+    ui->toolBar->addWidget(this->_qualityComboBox);
 }

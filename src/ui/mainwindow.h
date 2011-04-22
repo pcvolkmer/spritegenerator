@@ -28,7 +28,7 @@
 #include "infodialog.h"
 #include "previewpage.h"
 
-class MainWindow : public QMainWindow, private Ui::MainWindow {
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -36,6 +36,8 @@ public:
     ~MainWindow();
 
 private:
+    Ui::MainWindow * ui;
+  
     void updateListWidget();
     QList< CssSpriteElementImage > * _images;
     QComboBox * _qualityComboBox;
