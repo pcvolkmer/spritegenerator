@@ -22,7 +22,6 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
-#include <omp.h>
 #include "ui_mainwindow.h"
 #include "spritewidget.h"
 #include "infodialog.h"

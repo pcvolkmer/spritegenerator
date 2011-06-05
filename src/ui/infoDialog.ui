@@ -99,7 +99,7 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>SpriteGenerator is a simple generator for CSS sprites.
 
-Copyright (c) 2010  Paul-Christian Volkmer</string>
+Copyright (c) 2011  Paul-Christian Volkmer</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

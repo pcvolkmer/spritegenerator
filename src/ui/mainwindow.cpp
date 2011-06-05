@@ -375,11 +375,22 @@ void MainWindow::on_abortChangeSettingsButton_clicked() {
 }
 
 void MainWindow::on_moveDownToolButton_clicked() {
-    foreach(QListWidgetItem * item, ui->listWidget->selectedItems()) {
-        foreach(CssSpriteElementImage image, *this->_images) {
+    QList<QListWidgetItem *> selectedItems = ui->listWidget->selectedItems();
+    QList<QString> selectedItemLabels;
+
+    if (selectedItems.count() == 0) return;
+
+    QList<CssSpriteElementImage> images;
+    foreach(CssSpriteElementImage image, *this->_images) {
+        images.push_front(image);
+    }
+
+    foreach(CssSpriteElementImage image, images) {
+        foreach(QListWidgetItem * item, selectedItems) {
             if (image.fileName() == item->text()) {
                 this->_images->moveDown(image);
             }
+            selectedItemLabels.append(item->text());
         }
     }
     ui->listWidget->clear();
@@ -393,14 +404,27 @@ void MainWindow::on_moveDownToolButton_clicked() {
                 (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
             ));
     this->updateListWidget();
+
+    for (int i = 0; i < ui->listWidget->count(); i++) {
+        if (selectedItemLabels.contains(ui->listWidget->item(i)->text())) {
+            ui->listWidget->item(i)->setSelected(true);
+            this->on_listWidget_itemPressed(ui->listWidget->item(i));
+        }
+    }
 }
 
 void MainWindow::on_moveUpToolButton_clicked() {
-    foreach(QListWidgetItem * item, ui->listWidget->selectedItems()) {
-        foreach(CssSpriteElementImage image, *this->_images) {
+    QList<QListWidgetItem *> selectedItems = ui->listWidget->selectedItems();
+    QList<QString> selectedItemLabels;
+
+    if (selectedItems.count() == 0) return;
+
+    foreach(CssSpriteElementImage image, *this->_images) {
+        foreach(QListWidgetItem * item, selectedItems) {
             if (image.fileName() == item->text()) {
                 this->_images->moveUp(image);
             }
+            selectedItemLabels.append(item->text());
         }
     }
     ui->listWidget->clear();
@@ -414,6 +438,13 @@ void MainWindow::on_moveUpToolButton_clicked() {
                 (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
             ));
     this->updateListWidget();
+
+    for (int i = 0; i < ui->listWidget->count(); i++) {
+        if (selectedItemLabels.contains(ui->listWidget->item(i)->text())) {
+            ui->listWidget->item(i)->setSelected(true);
+            this->on_listWidget_itemPressed(ui->listWidget->item(i));
+        }
+    }
 }
 
 QString MainWindow::stripFileName(QString filePath) {
@@ -431,3 +462,4 @@ void MainWindow::addQualityComboBox() {
     this->_qualityComboBox->addItem(tr("8 bit indexed (smallest file size)"));
     ui->toolBar->addWidget(this->_qualityComboBox);
 }
+
