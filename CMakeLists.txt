@@ -6,7 +6,7 @@ find_package(Qt4 REQUIRED)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
-set(VERSION_RELEASE 20110605)
+set(VERSION_RELEASE 20110606)
 
 set(EXECUTABLE_OUTPUT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/bin
@@ -26,10 +26,10 @@ add_subdirectory(src)
 
 IF (UNIX AND NOT APPLE)
   INSTALL(FILES ${DESKTOP}
-    DESTINATION /usr/share/applications
+    DESTINATION share/applications
   )
   INSTALL(FILES ${FILES}
-    DESTINATION /opt/spritegenerator
+    DESTINATION share/spritegenerator
   )
 ENDIF (UNIX AND NOT APPLE)
 
