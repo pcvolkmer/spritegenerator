@@ -48,6 +48,10 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     ui->actionRemoveFile->setEnabled(false);
     ui->createSpriteCommandButton->setEnabled(false);
     ui->previewPageCommandButton->setEnabled(false);
+
+    this->fsWatcher = new QFileSystemWatcher();
+
+    connect(fsWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));
 }
 
 MainWindow::~MainWindow() {
@@ -66,6 +70,19 @@ void MainWindow::updateListWidget() {
         ui->actionRemoveFile->setEnabled(true);
         ui->createSpriteCommandButton->setEnabled(true);
         ui->previewPageCommandButton->setEnabled(true);
+    }
+}
+
+void MainWindow::onFileChanged(QString path) {
+    QListWidgetItem * item = ui->listWidget->findItems(path, Qt::MatchExactly).at(0);
+    item->setTextColor(QColor::fromRgb(qRgb(240,0,0)));
+    QFileInfo fileInfo(path);
+    if (fileInfo.exists()) {
+      item->setIcon(QIcon(":images/images/16x16/vcs-update-required.png"));
+      item->setToolTip("Image changed on disk");
+    } else {
+      item->setIcon(QIcon(":images/images/16x16/vcs-removed.png"));
+      item->setToolTip("Image deleted from disk");
     }
 }
 
@@ -96,6 +113,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
             if (!this->_images->contains(img)) {
                 this->_images->append(img);
                 ui->listWidget->addItem(dirName + "/" + fileName);
+                this->fsWatcher->addPath(dirName + "/" + fileName);
             }
             importCounter++;
         }
@@ -152,6 +170,7 @@ void MainWindow::on_actionAddFile_triggered() {
         if (!this->_images->contains(img)) {
             this->_images->append(img);
             ui->listWidget->addItem(fileName);
+            this->fsWatcher->addPath(fileName);
         }
         this->statusBar()->showMessage(
             tr("Import of 1 image succeed."),
@@ -182,6 +201,7 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 this->_images->removeOne(image);
             }
         }
+        this->fsWatcher->removePath(item->text());
         this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
                     this->_images,
                     ui->xMarginSpinBox->value(),

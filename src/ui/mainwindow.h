@@ -41,6 +41,7 @@ public:
 
 private:
     Ui::MainWindow * ui;
+    QFileSystemWatcher * fsWatcher;
 
     void updateListWidget();
     CssSpriteElementImageList * _images;
@@ -53,6 +54,8 @@ private:
     void addQualityComboBox();
 
 protected slots:
+    void onFileChanged(QString path);
+  
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
     void on_actionRemoveFile_triggered();
