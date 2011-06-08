@@ -56,6 +56,9 @@ protected slots:
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
     void on_actionRemoveFile_triggered();
+    void on_actionExport_triggered();
+    void on_actionImport_triggered();
+    void on_actionSyncFilesystem_triggered();
     void on_createSpriteCommandButton_clicked();
     void on_previewPageCommandButton_clicked();
     void on_listWidget_itemPressed(QListWidgetItem* item);

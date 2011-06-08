@@ -46,6 +46,7 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     }
 
     ui->actionRemoveFile->setEnabled(false);
+    ui->actionExport->setEnabled(false);
     ui->createSpriteCommandButton->setEnabled(false);
     ui->previewPageCommandButton->setEnabled(false);
 }
@@ -60,10 +61,12 @@ MainWindow::~MainWindow() {
 
 void MainWindow::updateListWidget() {
     ui->actionRemoveFile->setEnabled(false);
+    ui->actionExport->setEnabled(false);
     ui->createSpriteCommandButton->setEnabled(false);
     ui->previewPageCommandButton->setEnabled(false);
     if (ui->listWidget->count() > 0) {
         ui->actionRemoveFile->setEnabled(true);
+        ui->actionExport->setEnabled(true);
         ui->createSpriteCommandButton->setEnabled(true);
         ui->previewPageCommandButton->setEnabled(true);
     }
@@ -193,6 +196,131 @@ void MainWindow::on_actionRemoveFile_triggered() {
     this->updateListWidget();
 }
 
+void MainWindow::on_actionExport_triggered() {
+    QString fileName = QFileDialog::getSaveFileName(
+                           this,
+                           tr ( "Export spriteset" ),
+                           "./",
+                           "Spriteset (*.sprite)"
+                       );
+
+    if (fileName.isEmpty()) return;
+
+    SpriteWidget::exportToFile(
+        fileName,
+        this->_images,
+        ui->xMarginSpinBox->value(),
+        ui->yMarginSpinBox->value(),
+        (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex(),
+        (SpriteWidget::Format) this->_qualityComboBox->currentIndex()
+    );
+}
+
+void MainWindow::on_actionImport_triggered() {
+    if (ui->listWidget->count() > 0) {
+        if (
+            QMessageBox::question(
+                this,
+                "Import spriteset",
+                "A spriteset should be imported. This will discard the actual sprite.",
+                QMessageBox::Ok|QMessageBox::Abort,
+                QMessageBox::Abort
+            ) == QMessageBox::Abort
+        ) return;
+    }
+
+    QString fileName = QFileDialog::getOpenFileName(
+                           this,
+                           tr ( "Import spriteset" ),
+                           "./",
+                           "Spriteset (*.sprite)"
+                       );
+
+    if (fileName.isEmpty()) return;
+
+    foreach(CssSpriteElementImage image, * SpriteWidget::importFromFile(fileName)) {
+        ui->listWidget->addItem(image.fileName());
+        this->_images->append(image);
+        QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
+        item->setIcon(QIcon(":images/images/16x16/vcs-added.png"));
+    }
+
+    this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
+                this->_images,
+                ui->xMarginSpinBox->value(),
+                ui->yMarginSpinBox->value(),
+                (SpriteWidget::Layout) ui->elementLayoutComboBox->currentIndex()
+            ));
+
+    this->updateListWidget();
+}
+
+void MainWindow::on_actionSyncFilesystem_triggered() {
+    QString dirName = QFileDialog::getExistingDirectory(
+                          this,
+                          tr ( "Select directory to store imported files" ),
+                          "./",
+                          QFileDialog::ReadOnly
+                      );
+
+    if (dirName.isEmpty()) return;
+
+    bool conflicts = false;
+
+    QListIterator<CssSpriteElementImage> i(* this->_images);
+
+    while (i.hasNext()) {
+        CssSpriteElementImage * image = (CssSpriteElementImage *)&i.next();
+        if (image->isVirtual()) {
+            QFile file(dirName + "/" + image->fileName());
+            QFileInfo fileInfo(file.fileName());
+            QListWidgetItem * item = ui->listWidget->findItems(image->fileName(), Qt::MatchExactly).at(0);
+            image->setFileName(dirName + "/" + image->fileName());
+            item->setText(image->fileName());
+            if (fileInfo.exists()) {
+                item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));
+                conflicts = true;
+                image->setVirtual(false);
+                continue;
+            }
+            QDir dir;
+            dir.mkpath(fileInfo.path());
+            file.open(QIODevice::WriteOnly);
+            if (file.write(image->fileData())) {
+                item->setIcon(QIcon());
+                image->setVirtual(false);
+            }
+            file.close();
+        }
+    }
+
+    if (conflicts) {
+        if (
+            QMessageBox::question(
+                this,
+                "Sync filesystem",
+                "Some conflicts occure. Should I overwrite files on filesystem?",
+                QMessageBox::Ok|QMessageBox::Abort,
+                QMessageBox::Abort
+            ) == QMessageBox::Ok
+        ) {
+            foreach(CssSpriteElementImage image, * this->_images) {
+                QFile file(image.fileName());
+                QFileInfo fileInfo(file.fileName());
+                QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
+                QDir dir;
+                dir.mkpath(fileInfo.path());
+                file.open(QIODevice::WriteOnly);
+                if (file.write(image.fileData())) {
+                    item->setIcon(QIcon());
+                    image.setVirtual(false);
+                }
+                file.close();
+            }
+        }
+    }
+}
+
 void MainWindow::on_createSpriteCommandButton_clicked() {
     QString fileName = QFileDialog::getSaveFileName(
                            this,
@@ -200,7 +328,9 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
                            "./",
                            "PNG Image (*.png)"
                        );
+
     if (fileName.isEmpty()) return;
+
     SpriteWidget::createCssSprite(
         this->_images,
         ui->xMarginSpinBox->value(),
@@ -462,4 +592,6 @@ void MainWindow::addQualityComboBox() {
     this->_qualityComboBox->addItem(tr("8 bit indexed (smallest file size)"));
     ui->toolBar->addWidget(this->_qualityComboBox);
 }
+
+
 

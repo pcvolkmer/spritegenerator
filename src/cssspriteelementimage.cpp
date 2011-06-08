@@ -25,9 +25,14 @@ CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
     this->_image = image;
     this->_description = NULL;
     QFile imageFile(fileName);
-    imageFile.open(QIODevice::ReadOnly);
-    this->_fileData = imageFile.readAll();
-    imageFile.close();
+    if (imageFile.exists()) {
+        imageFile.open(QIODevice::ReadOnly);
+        this->_fileData = imageFile.readAll();
+        imageFile.close();
+    }
+    else {
+        this->_virtual = true;
+    }
 }
 
 bool CssSpriteElementImage::operator==(CssSpriteElementImage obj) {
@@ -41,12 +46,32 @@ QImage CssSpriteElementImage::image() {
     return this->_image;
 }
 
+void CssSpriteElementImage::setImage(QImage image) {
+    this->_image = image;
+}
+
 QString CssSpriteElementImage::fileName() {
     return this->_fileName;
 }
 
+void CssSpriteElementImage::setFileName(QString fileName) {
+    this->_fileName = fileName;
+}
+
 QByteArray CssSpriteElementImage::fileData() {
     return this->_fileData;
+}
+
+void CssSpriteElementImage::setFileData(QByteArray data) {
+    this->_fileData = data;
+}
+
+bool CssSpriteElementImage::isVirtual() {
+    return this->_virtual;
+}
+
+void CssSpriteElementImage::setVirtual(bool isVirtual) {
+    this->_virtual = isVirtual;
 }
 
 CssSpriteElementDescription * CssSpriteElementImage::description() {

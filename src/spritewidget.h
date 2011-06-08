@@ -82,10 +82,32 @@ public:
         rootElement.setAttribute("yMargin",QString::number(yMargin,10));
         rootElement.setAttribute("layout",QString::number((int)layout,10));
         rootElement.setAttribute("format",QString::number((int)format));
+
+        // Gemeinsamer Pfadanteil
+        QString minSeperatorsPath;
+        int minSeperators = 0;
+        foreach(CssSpriteElementImage image, * images) {
+            if (QDir::fromNativeSeparators(image.fileName()).count() < minSeperators || minSeperators == 0) {
+                minSeperators = QDir::fromNativeSeparators(image.fileName()).count();
+                minSeperatorsPath = QDir::fromNativeSeparators(image.fileName());
+            }
+        }
+        QFileInfo fileInfo(minSeperatorsPath);
+        minSeperatorsPath = fileInfo.path();
+
+        QDir baseDir(minSeperatorsPath);
+
+        foreach(CssSpriteElementImage image, * images) {
+            if (! QDir::fromNativeSeparators(image.fileName()).startsWith(minSeperatorsPath)) {
+                baseDir.cdUp();
+                minSeperatorsPath = baseDir.path();
+            }
+        }
+
         QDomElement imagesElement = doc.createElement("images");
         foreach(CssSpriteElementImage image, * images) {
             QDomElement imageElement = doc.createElement("image");
-            imageElement.setAttribute("file", image.fileName());
+            imageElement.setAttribute("file", baseDir.relativeFilePath(image.fileName()));
             QDomNode imageData = doc.createTextNode(image.fileData().toBase64());
             imageElement.appendChild(imageData);
             imagesElement.appendChild(imageElement);
@@ -118,10 +140,11 @@ public:
             QString fileName = doc.elementsByTagName("image").at(i).toElement().attribute("file");
             QImage image;
             image.loadFromData(QByteArray::fromBase64(doc.elementsByTagName("image").at(i).toElement().text().toUtf8()));
-	    if (image.isNull()) {
-	      continue;
-	    }
+            if (image.isNull()) {
+                continue;
+            }
             CssSpriteElementImage cssSpriteElementImage(fileName, image);
+            cssSpriteElementImage.setFileData(QByteArray::fromBase64(doc.elementsByTagName("image").at(i).toElement().text().toUtf8()));
             result->append(cssSpriteElementImage);
         }
 

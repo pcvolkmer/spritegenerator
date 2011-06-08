@@ -29,9 +29,16 @@ public:
     CssSpriteElementImage(QString fileName, QImage image) ;
 
     QString fileName();
+    void setFileName(QString fileName);
 
     QImage image();
+    void setImage(QImage image);
+    
     QByteArray fileData();
+    void setFileData(QByteArray data);
+    
+    bool isVirtual();
+    void setVirtual(bool isVirtual);
     
     CssSpriteElementDescription * description();
     void updateDescription(CssSpriteElementDescription * description);
@@ -43,6 +50,7 @@ private:
     QImage _image;
     QByteArray _fileData;
     CssSpriteElementDescription * _description;
+    bool _virtual;
 };
 
 #endif

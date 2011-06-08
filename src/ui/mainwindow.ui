@@ -623,7 +623,7 @@
     <bool>false</bool>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -634,6 +634,9 @@
    <addaction name="actionAddFile"/>
    <addaction name="actionAddDirectory"/>
    <addaction name="actionRemoveFile"/>
+   <addaction name="actionSyncFilesystem"/>
+   <addaction name="actionExport"/>
+   <addaction name="actionImport"/>
   </widget>
   <action name="actionAddFile">
    <property name="icon">
@@ -674,6 +677,42 @@
   <action name="actionInfo">
    <property name="text">
     <string>Info</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/document-export.png</normaloff>:/images/images/22x22/document-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/document-import.png</normaloff>:/images/images/22x22/document-import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="actionSyncFilesystem">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/folder-sync.png</normaloff>:/images/images/22x22/folder-sync.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sync filesystem</string>
+   </property>
+   <property name="toolTip">
+    <string>Sync filesystem</string>
    </property>
   </action>
  </widget>
