@@ -268,7 +268,7 @@ void MainWindow::on_actionImport_triggered() {
     if (fileName.isEmpty()) return;
 
     this->isSynced = false;
-    
+
     ui->listWidget->clear();
     this->_images->clear();
 
@@ -329,6 +329,8 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
                 image->setVirtual(false);
             }
             file.close();
+
+            this->fsWatcher->addPath(image->fileName());
         }
     }
 
@@ -361,10 +363,12 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
                     image->setConflicting(false);
                 }
                 file.close();
+
+                this->fsWatcher->addPath(image->fileName());
             }
         }
     }
-    
+
     this->updateListWidget();
 }
 
