@@ -28,9 +28,10 @@ class CssSpriteElementImage {
 public:
     CssSpriteElementImage(QString fileName, QImage image) ;
 
-    QString fileName() ;
+    QString fileName();
 
-    QImage image() ;
+    QImage image();
+    QByteArray fileData();
     
     CssSpriteElementDescription * description();
     void updateDescription(CssSpriteElementDescription * description);
@@ -40,6 +41,7 @@ public:
 private:
     QString _fileName;
     QImage _image;
+    QByteArray _fileData;
     CssSpriteElementDescription * _description;
 };
 

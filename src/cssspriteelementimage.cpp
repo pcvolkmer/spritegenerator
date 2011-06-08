@@ -24,6 +24,10 @@ CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
     this->_fileName = fileName;
     this->_image = image;
     this->_description = NULL;
+    QFile imageFile(fileName);
+    imageFile.open(QIODevice::ReadOnly);
+    this->_fileData = imageFile.readAll();
+    imageFile.close();
 }
 
 bool CssSpriteElementImage::operator==(CssSpriteElementImage obj) {
@@ -39,6 +43,10 @@ QImage CssSpriteElementImage::image() {
 
 QString CssSpriteElementImage::fileName() {
     return this->_fileName;
+}
+
+QByteArray CssSpriteElementImage::fileData() {
+    return this->_fileData;
 }
 
 CssSpriteElementDescription * CssSpriteElementImage::description() {

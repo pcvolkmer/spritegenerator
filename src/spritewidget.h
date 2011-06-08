@@ -22,9 +22,12 @@
 #define SPRITEWIDGET_H
 
 #include <QtGui>
+#include <QtCore>
+#include <QtXml>
 #include <cmath>
 #include "cssspriteelementdescription.h"
 #include "cssspriteelementimage.h"
+#include "cssspriteelementimagelist.h"
 
 class SpriteWidget : public QWidget {
     Q_OBJECT
@@ -64,6 +67,66 @@ public:
         SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
         SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
     );
+
+    static bool exportToFile(
+        QString fileName,
+        QList< CssSpriteElementImage > * images,
+        int xMargin = 8,
+        int yMargin = 8,
+        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
+        SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
+    ) {
+        QDomDocument doc;
+        QDomElement rootElement = doc.createElement("spritewidget");
+        rootElement.setAttribute("xMargin",QString::number(xMargin,10));
+        rootElement.setAttribute("yMargin",QString::number(yMargin,10));
+        rootElement.setAttribute("layout",QString::number((int)layout,10));
+        rootElement.setAttribute("format",QString::number((int)format));
+        QDomElement imagesElement = doc.createElement("images");
+        foreach(CssSpriteElementImage image, * images) {
+            QDomElement imageElement = doc.createElement("image");
+            imageElement.setAttribute("file", image.fileName());
+            QDomNode imageData = doc.createTextNode(image.fileData().toBase64());
+            imageElement.appendChild(imageData);
+            imagesElement.appendChild(imageElement);
+        }
+        rootElement.appendChild(imagesElement);
+        doc.appendChild(rootElement);
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly|QIODevice::Truncate);
+        qint64 bytesWritten = file.write((doc.toByteArray()));
+        file.close();
+
+        return (bool)bytesWritten;
+    }
+
+    static CssSpriteElementImageList * importFromFile(
+        QString fileName
+    ) {
+        CssSpriteElementImageList * result = new CssSpriteElementImageList();
+        QDomDocument doc;
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly))
+            return NULL;
+        if (!doc.setContent((file.readAll()))) {
+            file.close();
+            return NULL;
+        }
+        file.close();
+
+        for (int i = 0; i < doc.elementsByTagName("image").count(); i++) {
+            QString fileName = doc.elementsByTagName("image").at(i).toElement().attribute("file");
+            QImage image;
+            image.loadFromData(QByteArray::fromBase64(doc.elementsByTagName("image").at(i).toElement().text().toUtf8()));
+	    if (image.isNull()) {
+	      continue;
+	    }
+            CssSpriteElementImage cssSpriteElementImage(fileName, image);
+            result->append(cssSpriteElementImage);
+        }
+
+        return result;
+    }
 
 private:
     SpriteWidget (
