@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -51,6 +51,7 @@ private:
     QString stripFileName(QString filePath);
     bool createPreviewPage(QString dirName);
     void addQualityComboBox();
+    void updateListWidgetItems();
 
 protected slots:
     void on_actionAddFile_triggered();

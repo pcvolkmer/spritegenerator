@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -40,6 +40,9 @@ public:
     bool isVirtual();
     void setVirtual(bool isVirtual);
     
+    bool isConflicting();
+    void setConflicting(bool isConflicting);
+    
     CssSpriteElementDescription * description();
     void updateDescription(CssSpriteElementDescription * description);
 
@@ -51,6 +54,7 @@ private:
     QByteArray _fileData;
     CssSpriteElementDescription * _description;
     bool _virtual;
+    bool _conflicting;
 };
 
 #endif

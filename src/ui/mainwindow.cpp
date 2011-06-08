@@ -70,6 +70,8 @@ void MainWindow::updateListWidget() {
         ui->createSpriteCommandButton->setEnabled(true);
         ui->previewPageCommandButton->setEnabled(true);
     }
+    
+    this->updateListWidgetItems();
 }
 
 void MainWindow::on_actionAddDirectory_triggered() {
@@ -281,6 +283,7 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
                 item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));
                 conflicts = true;
                 image->setVirtual(false);
+                image->setConflicting(true);
                 continue;
             }
             QDir dir;
@@ -314,6 +317,7 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
                 if (file.write(image.fileData())) {
                     item->setIcon(QIcon());
                     image.setVirtual(false);
+                    image.setConflicting(false);
                 }
                 file.close();
             }
@@ -593,5 +597,14 @@ void MainWindow::addQualityComboBox() {
     ui->toolBar->addWidget(this->_qualityComboBox);
 }
 
-
-
+void MainWindow::updateListWidgetItems() {
+    foreach(CssSpriteElementImage image, * this->_images) {
+        QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
+        if (image.isVirtual()) {
+            item->setIcon(QIcon(":images/images/16x16/vcs-added.png"));
+        }
+        if (image.isConflicting()) {
+            item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));
+        }
+    }
+}

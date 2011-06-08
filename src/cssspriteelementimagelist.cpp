@@ -37,3 +37,9 @@ bool CssSpriteElementImageList::moveDown(CssSpriteElementImage image) {
     }
     return false;
 }
+
+CssSpriteElementImage CssSpriteElementImageList::find(QString fileName) {
+    foreach(CssSpriteElementImage image, * this) {
+      if (image.fileName() == fileName) return image;
+    }
+}

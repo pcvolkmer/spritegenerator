@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -25,6 +25,8 @@ CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
     this->_image = image;
     this->_description = NULL;
     QFile imageFile(fileName);
+    this->_conflicting = false;
+    this->_virtual = false;
     if (imageFile.exists()) {
         imageFile.open(QIODevice::ReadOnly);
         this->_fileData = imageFile.readAll();
@@ -72,6 +74,14 @@ bool CssSpriteElementImage::isVirtual() {
 
 void CssSpriteElementImage::setVirtual(bool isVirtual) {
     this->_virtual = isVirtual;
+}
+
+bool CssSpriteElementImage::isConflicting() {
+    return this->_conflicting;
+}
+
+void CssSpriteElementImage::setConflicting(bool isConflicting) {
+    this->_conflicting = isConflicting;
 }
 
 CssSpriteElementDescription * CssSpriteElementImage::description() {
