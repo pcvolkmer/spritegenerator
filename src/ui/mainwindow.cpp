@@ -240,6 +240,9 @@ void MainWindow::on_actionImport_triggered() {
 
     if (fileName.isEmpty()) return;
 
+    ui->listWidget->clear();
+    this->_images->clear();
+    
     foreach(CssSpriteElementImage image, * SpriteWidget::importFromFile(fileName)) {
         ui->listWidget->addItem(image.fileName());
         this->_images->append(image);

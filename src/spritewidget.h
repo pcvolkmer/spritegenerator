@@ -115,8 +115,8 @@ public:
         rootElement.appendChild(imagesElement);
         doc.appendChild(rootElement);
         QFile file(fileName);
-        file.open(QIODevice::WriteOnly|QIODevice::Truncate);
-        qint64 bytesWritten = file.write((doc.toByteArray()));
+        file.open(QIODevice::WriteOnly);
+        qint64 bytesWritten = file.write(qCompress(doc.toByteArray()));
         file.close();
 
         return (bool)bytesWritten;
@@ -130,7 +130,7 @@ public:
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly))
             return NULL;
-        if (!doc.setContent((file.readAll()))) {
+        if (!doc.setContent(qUncompress(file.readAll()))) {
             file.close();
             return NULL;
         }
