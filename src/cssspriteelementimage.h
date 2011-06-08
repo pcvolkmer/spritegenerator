@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -28,9 +28,20 @@ class CssSpriteElementImage {
 public:
     CssSpriteElementImage(QString fileName, QImage image) ;
 
-    QString fileName() ;
+    QString fileName();
+    void setFileName(QString fileName);
 
-    QImage image() ;
+    QImage image();
+    void setImage(QImage image);
+    
+    QByteArray fileData();
+    void setFileData(QByteArray data);
+    
+    bool isVirtual();
+    void setVirtual(bool isVirtual);
+    
+    bool isConflicting();
+    void setConflicting(bool isConflicting);
     
     CssSpriteElementDescription * description();
     void updateDescription(CssSpriteElementDescription * description);
@@ -40,7 +51,10 @@ public:
 private:
     QString _fileName;
     QImage _image;
+    QByteArray _fileData;
     CssSpriteElementDescription * _description;
+    bool _virtual;
+    bool _conflicting;
 };
 
 #endif

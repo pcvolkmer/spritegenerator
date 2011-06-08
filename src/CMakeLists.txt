@@ -52,6 +52,7 @@ add_executable(spritegenerator MACOSX_BUNDLE WIN32
 target_link_libraries(spritegenerator
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
+  ${QT_QTXML_LIBRARY}
 )
 
 IF(APPLE)

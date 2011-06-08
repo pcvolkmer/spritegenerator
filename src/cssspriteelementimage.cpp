@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.th-mittelhessen.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -24,6 +24,17 @@ CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
     this->_fileName = fileName;
     this->_image = image;
     this->_description = NULL;
+    QFile imageFile(fileName);
+    this->_conflicting = false;
+    this->_virtual = false;
+    if (imageFile.exists()) {
+        imageFile.open(QIODevice::ReadOnly);
+        this->_fileData = imageFile.readAll();
+        imageFile.close();
+    }
+    else {
+        this->_virtual = true;
+    }
 }
 
 bool CssSpriteElementImage::operator==(CssSpriteElementImage obj) {
@@ -37,8 +48,40 @@ QImage CssSpriteElementImage::image() {
     return this->_image;
 }
 
+void CssSpriteElementImage::setImage(QImage image) {
+    this->_image = image;
+}
+
 QString CssSpriteElementImage::fileName() {
     return this->_fileName;
+}
+
+void CssSpriteElementImage::setFileName(QString fileName) {
+    this->_fileName = fileName;
+}
+
+QByteArray CssSpriteElementImage::fileData() {
+    return this->_fileData;
+}
+
+void CssSpriteElementImage::setFileData(QByteArray data) {
+    this->_fileData = data;
+}
+
+bool CssSpriteElementImage::isVirtual() {
+    return this->_virtual;
+}
+
+void CssSpriteElementImage::setVirtual(bool isVirtual) {
+    this->_virtual = isVirtual;
+}
+
+bool CssSpriteElementImage::isConflicting() {
+    return this->_conflicting;
+}
+
+void CssSpriteElementImage::setConflicting(bool isConflicting) {
+    this->_conflicting = isConflicting;
 }
 
 CssSpriteElementDescription * CssSpriteElementImage::description() {

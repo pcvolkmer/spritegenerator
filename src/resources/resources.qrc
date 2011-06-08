@@ -1,7 +1,12 @@
 <RCC>
   <qresource prefix="images">
+    <file>images/22x22/folder-sync.png</file>
+    <file>images/22x22/document-export.png</file>
+    <file>images/22x22/document-import.png</file>
     <file>images/16x16/arrow-down.png</file>
     <file>images/16x16/arrow-up.png</file>
+    <file>images/16x16/vcs-added.png</file>
+    <file>images/16x16/vcs-conflicting.png</file>
     <file>images/22x22/task-attention.png</file>
     <file>images/16x16/dialog-warning.png</file>
     <file>images/16x16/emblem-locked.png</file>
