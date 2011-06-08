@@ -92,3 +92,10 @@ void CssSpriteElementImage::updateDescription(CssSpriteElementDescription* descr
     this->_description = description;
 }
 
+CssSpriteElementImage::FileState CssSpriteElementImage::fileState() {
+    return this->_fileState;
+}
+
+void CssSpriteElementImage::setFileState(CssSpriteElementImage::FileState fileState) {
+    this->_fileState = fileState;
+}

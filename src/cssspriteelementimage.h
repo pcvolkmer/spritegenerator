@@ -28,21 +28,30 @@ class CssSpriteElementImage {
 public:
     CssSpriteElementImage(QString fileName, QImage image) ;
 
+    enum FileState {
+        FILE_VIRTUAL,
+        FILE_DELETED,
+        FILE_CHANGED
+    };
+
     QString fileName();
     void setFileName(QString fileName);
 
     QImage image();
     void setImage(QImage image);
-    
+
     QByteArray fileData();
     void setFileData(QByteArray data);
-    
+
     bool isVirtual();
     void setVirtual(bool isVirtual);
-    
+
     bool isConflicting();
     void setConflicting(bool isConflicting);
-    
+
+    CssSpriteElementImage::FileState fileState();
+    void setFileState(CssSpriteElementImage::FileState fileState);
+
     CssSpriteElementDescription * description();
     void updateDescription(CssSpriteElementDescription * description);
 
@@ -55,6 +64,7 @@ private:
     CssSpriteElementDescription * _description;
     bool _virtual;
     bool _conflicting;
+    CssSpriteElementImage::FileState _fileState;
 };
 
 #endif

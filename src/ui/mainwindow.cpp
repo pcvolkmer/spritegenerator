@@ -47,10 +47,12 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     ui->actionRemoveFile->setEnabled(false);
     ui->actionExport->setEnabled(false);
+    ui->actionSyncFilesystem->setEnabled(false);
     ui->createSpriteCommandButton->setEnabled(false);
     ui->previewPageCommandButton->setEnabled(false);
 
     this->fsWatcher = new QFileSystemWatcher();
+    this->isSynced = true;
 
     connect(fsWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));
 }
@@ -66,15 +68,17 @@ MainWindow::~MainWindow() {
 void MainWindow::updateListWidget() {
     ui->actionRemoveFile->setEnabled(false);
     ui->actionExport->setEnabled(false);
+    ui->actionSyncFilesystem->setEnabled(false);
     ui->createSpriteCommandButton->setEnabled(false);
     ui->previewPageCommandButton->setEnabled(false);
     if (ui->listWidget->count() > 0) {
         ui->actionRemoveFile->setEnabled(true);
-        ui->actionExport->setEnabled(true);
+        if (this->isSynced) ui->actionExport->setEnabled(true);
+        ui->actionSyncFilesystem->setEnabled(true);
         ui->createSpriteCommandButton->setEnabled(true);
         ui->previewPageCommandButton->setEnabled(true);
     }
-    
+
     this->updateListWidgetItems();
 }
 
@@ -82,12 +86,15 @@ void MainWindow::onFileChanged(QString path) {
     QListWidgetItem * item = ui->listWidget->findItems(path, Qt::MatchExactly).at(0);
     item->setTextColor(QColor::fromRgb(qRgb(240,0,0)));
     QFileInfo fileInfo(path);
+    CssSpriteElementImage * image = this->_images->find(path);
     if (fileInfo.exists()) {
-      item->setIcon(QIcon(":images/images/16x16/vcs-update-required.png"));
-      item->setToolTip("Image changed on disk");
+        item->setIcon(QIcon(":images/images/16x16/vcs-update-required.png"));
+        item->setToolTip("Image changed on disk");
+        image->setFileState(CssSpriteElementImage::FILE_CHANGED);
     } else {
-      item->setIcon(QIcon(":images/images/16x16/vcs-removed.png"));
-      item->setToolTip("Image deleted from disk");
+        item->setIcon(QIcon(":images/images/16x16/vcs-removed.png"));
+        item->setToolTip("Image deleted from disk");
+        image->setFileState(CssSpriteElementImage::FILE_DELETED);
     }
 }
 
@@ -260,14 +267,17 @@ void MainWindow::on_actionImport_triggered() {
 
     if (fileName.isEmpty()) return;
 
+    this->isSynced = false;
+    
     ui->listWidget->clear();
     this->_images->clear();
-    
+
     foreach(CssSpriteElementImage image, * SpriteWidget::importFromFile(fileName)) {
         ui->listWidget->addItem(image.fileName());
         this->_images->append(image);
         QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
         item->setIcon(QIcon(":images/images/16x16/vcs-added.png"));
+        item->setTextColor(QColor::fromRgb(qRgb(0,100,0)));
     }
 
     this->_images = new CssSpriteElementImageList(SpriteWidget::updateCssSprite(
@@ -304,6 +314,7 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
             item->setText(image->fileName());
             if (fileInfo.exists()) {
                 item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));
+                item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
                 conflicts = true;
                 image->setVirtual(false);
                 image->setConflicting(true);
@@ -314,38 +325,47 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
             file.open(QIODevice::WriteOnly);
             if (file.write(image->fileData())) {
                 item->setIcon(QIcon());
+                item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
                 image->setVirtual(false);
             }
             file.close();
         }
     }
 
+    this->isSynced = true;
+
     if (conflicts) {
         if (
             QMessageBox::question(
                 this,
                 "Sync filesystem",
-                "Some conflicts occure. Should I overwrite files on filesystem?",
+                "Some conflicts occure. Do you wish to overwrite files on filesystem?",
                 QMessageBox::Ok|QMessageBox::Abort,
                 QMessageBox::Abort
             ) == QMessageBox::Ok
         ) {
-            foreach(CssSpriteElementImage image, * this->_images) {
-                QFile file(image.fileName());
+            QListIterator<CssSpriteElementImage> i(* this->_images);
+
+            while (i.hasNext()) {
+                CssSpriteElementImage * image = (CssSpriteElementImage *)&i.next();
+                QFile file(image->fileName());
                 QFileInfo fileInfo(file.fileName());
-                QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
+                QListWidgetItem * item = ui->listWidget->findItems(image->fileName(), Qt::MatchExactly).at(0);
                 QDir dir;
                 dir.mkpath(fileInfo.path());
                 file.open(QIODevice::WriteOnly);
-                if (file.write(image.fileData())) {
+                if (file.write(image->fileData())) {
                     item->setIcon(QIcon());
-                    image.setVirtual(false);
-                    image.setConflicting(false);
+                    item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
+                    image->setVirtual(false);
+                    image->setConflicting(false);
                 }
                 file.close();
             }
         }
     }
+    
+    this->updateListWidget();
 }
 
 void MainWindow::on_createSpriteCommandButton_clicked() {
@@ -623,11 +643,24 @@ void MainWindow::addQualityComboBox() {
 void MainWindow::updateListWidgetItems() {
     foreach(CssSpriteElementImage image, * this->_images) {
         QListWidgetItem * item = ui->listWidget->findItems(image.fileName(), Qt::MatchExactly).at(0);
+        item->setIcon(QIcon());
+        item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
         if (image.isVirtual()) {
             item->setIcon(QIcon(":images/images/16x16/vcs-added.png"));
+            item->setTextColor(QColor::fromRgb(qRgb(0,100,0)));
         }
         if (image.isConflicting()) {
             item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));
+        }
+        if (image.fileState() == CssSpriteElementImage::FILE_CHANGED) {
+            item->setIcon(QIcon(":images/images/16x16/vcs-update-required.png"));
+            item->setToolTip("Image changed on disk");
+            item->setTextColor(QColor::fromRgb(qRgb(240,0,0)));
+        }
+        if (image.fileState() == CssSpriteElementImage::FILE_DELETED) {
+            item->setIcon(QIcon(":images/images/16x16/vcs-removed.png"));
+            item->setToolTip("Image deleted from disk");
+            item->setTextColor(QColor::fromRgb(qRgb(240,0,0)));
         }
     }
 }

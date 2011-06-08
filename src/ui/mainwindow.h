@@ -42,6 +42,7 @@ public:
 private:
     Ui::MainWindow * ui;
     QFileSystemWatcher * fsWatcher;
+    bool isSynced;
 
     void updateListWidget();
     CssSpriteElementImageList * _images;

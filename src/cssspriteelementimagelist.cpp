@@ -38,8 +38,11 @@ bool CssSpriteElementImageList::moveDown(CssSpriteElementImage image) {
     return false;
 }
 
-CssSpriteElementImage CssSpriteElementImageList::find(QString fileName) {
-    foreach(CssSpriteElementImage image, * this) {
-      if (image.fileName() == fileName) return image;
+CssSpriteElementImage * CssSpriteElementImageList::find(QString fileName) {
+    QListIterator<CssSpriteElementImage> i(* this);
+    CssSpriteElementImage * image;
+    while (i.hasNext()) {
+      image = (CssSpriteElementImage *) & i.next();
+      if (image->fileName() == fileName) return image;
     }
 }

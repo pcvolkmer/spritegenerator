@@ -34,7 +34,7 @@ public:
     bool moveUp(CssSpriteElementImage image);
     bool moveDown(CssSpriteElementImage image);
     
-    CssSpriteElementImage find(QString fileName);
+    CssSpriteElementImage * find(QString fileName);
 };
 
 #endif // CSSSPRITEELEMENTIMAGELIST_H
