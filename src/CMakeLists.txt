@@ -24,6 +24,7 @@ SET(resources_RCCS
 set(spritegenerator_UIS
   ui/mainwindow.ui
   ui/infoDialog.ui
+  ui/spriteFormatSelector.ui
 )
 
 qt4_add_resources(resources_RCC_SRCS ${resources_RCCS})

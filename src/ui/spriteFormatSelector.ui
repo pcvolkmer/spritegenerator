@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SpriteFormatSelector</class>
+ <widget class="QWidget" name="SpriteFormatSelector">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>31</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Sprite format:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="qualityComboBox">
+     <item>
+      <property name="text">
+       <string>32 bit RGBA (best quality)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>24 bit RGBA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>16 bit RGBA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>8 bit indexed (smallest file size)</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

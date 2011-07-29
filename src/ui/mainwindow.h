@@ -23,6 +23,7 @@
 
 #include <QtGui>
 #include "ui_mainwindow.h"
+#include "ui_spriteFormatSelector.h"
 #include "spritewidget.h"
 #include "infodialog.h"
 #include "previewpage.h"
@@ -61,6 +62,7 @@ private:
     bool createPreviewPage(QString dirName);
     void addQualityComboBox();
     void updateListWidgetItems();
+    SpriteWidget::Format selectedSpriteFormat();
 
 protected slots:
     void onFileChanged(QString path);
