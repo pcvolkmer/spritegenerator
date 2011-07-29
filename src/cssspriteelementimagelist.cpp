@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -42,7 +42,7 @@ CssSpriteElementImage * CssSpriteElementImageList::find(QString fileName) {
     QListIterator<CssSpriteElementImage> i(* this);
     CssSpriteElementImage * image;
     while (i.hasNext()) {
-      image = (CssSpriteElementImage *) & i.next();
-      if (image->fileName() == fileName) return image;
+        image = (CssSpriteElementImage *) & i.next();
+        if (image->fileName() == fileName) return image;
     }
 }

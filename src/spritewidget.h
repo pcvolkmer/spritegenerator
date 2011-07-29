@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -60,6 +60,7 @@ public:
         int yMargin = 8,
         SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
     );
+
     static QImage createCssSprite(
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
@@ -75,81 +76,11 @@ public:
         int yMargin = 8,
         SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
         SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
-    ) {
-        QDomDocument doc;
-        QDomElement rootElement = doc.createElement("spritewidget");
-        rootElement.setAttribute("xMargin",QString::number(xMargin,10));
-        rootElement.setAttribute("yMargin",QString::number(yMargin,10));
-        rootElement.setAttribute("layout",QString::number((int)layout,10));
-        rootElement.setAttribute("format",QString::number((int)format));
-
-        // Gemeinsamer Pfadanteil
-        QString minSeperatorsPath;
-        int minSeperators = 0;
-        foreach(CssSpriteElementImage image, * images) {
-            if (QDir::fromNativeSeparators(image.fileName()).count() < minSeperators || minSeperators == 0) {
-                minSeperators = QDir::fromNativeSeparators(image.fileName()).count();
-                minSeperatorsPath = QDir::fromNativeSeparators(image.fileName());
-            }
-        }
-        QFileInfo fileInfo(minSeperatorsPath);
-        minSeperatorsPath = fileInfo.path();
-
-        QDir baseDir(minSeperatorsPath);
-
-        foreach(CssSpriteElementImage image, * images) {
-            if (! QDir::fromNativeSeparators(image.fileName()).startsWith(minSeperatorsPath)) {
-                baseDir.cdUp();
-                minSeperatorsPath = baseDir.path();
-            }
-        }
-
-        QDomElement imagesElement = doc.createElement("images");
-        foreach(CssSpriteElementImage image, * images) {
-            QDomElement imageElement = doc.createElement("image");
-            imageElement.setAttribute("file", baseDir.relativeFilePath(image.fileName()));
-            QDomNode imageData = doc.createTextNode(image.fileData().toBase64());
-            imageElement.appendChild(imageData);
-            imagesElement.appendChild(imageElement);
-        }
-        rootElement.appendChild(imagesElement);
-        doc.appendChild(rootElement);
-        QFile file(fileName);
-        file.open(QIODevice::WriteOnly);
-        qint64 bytesWritten = file.write(qCompress(doc.toByteArray()));
-        file.close();
-
-        return (bool)bytesWritten;
-    }
+    ) ;
 
     static CssSpriteElementImageList * importFromFile(
         QString fileName
-    ) {
-        CssSpriteElementImageList * result = new CssSpriteElementImageList();
-        QDomDocument doc;
-        QFile file(fileName);
-        if (!file.open(QIODevice::ReadOnly))
-            return NULL;
-        if (!doc.setContent(qUncompress(file.readAll()))) {
-            file.close();
-            return NULL;
-        }
-        file.close();
-
-        for (int i = 0; i < doc.elementsByTagName("image").count(); i++) {
-            QString fileName = doc.elementsByTagName("image").at(i).toElement().attribute("file");
-            QImage image;
-            image.loadFromData(QByteArray::fromBase64(doc.elementsByTagName("image").at(i).toElement().text().toUtf8()));
-            if (image.isNull()) {
-                continue;
-            }
-            CssSpriteElementImage cssSpriteElementImage(fileName, image);
-            cssSpriteElementImage.setFileData(QByteArray::fromBase64(doc.elementsByTagName("image").at(i).toElement().text().toUtf8()));
-            result->append(cssSpriteElementImage);
-        }
-
-        return result;
-    }
+    ) ;
 
 private:
     SpriteWidget (

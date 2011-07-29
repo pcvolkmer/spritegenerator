@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -25,15 +25,13 @@ CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
     this->_image = image;
     this->_description = NULL;
     QFile imageFile(fileName);
-    this->_conflicting = false;
-    this->_virtual = false;
     if (imageFile.exists()) {
         imageFile.open(QIODevice::ReadOnly);
         this->_fileData = imageFile.readAll();
         imageFile.close();
     }
     else {
-        this->_virtual = true;
+        this->_fileState = FILE_VIRTUAL;
     }
 }
 
@@ -69,19 +67,21 @@ void CssSpriteElementImage::setFileData(QByteArray data) {
 }
 
 bool CssSpriteElementImage::isVirtual() {
-    return this->_virtual;
+    return this->_fileState == CssSpriteElementImage::FILE_VIRTUAL;
 }
 
 void CssSpriteElementImage::setVirtual(bool isVirtual) {
-    this->_virtual = isVirtual;
+    if (isVirtual)
+        this->_fileState = CssSpriteElementImage::FILE_VIRTUAL;
 }
 
 bool CssSpriteElementImage::isConflicting() {
-    return this->_conflicting;
+    return this->_fileState == CssSpriteElementImage::FILE_CONFLICT;
 }
 
 void CssSpriteElementImage::setConflicting(bool isConflicting) {
-    this->_conflicting = isConflicting;
+    if (isConflicting)
+        this->_fileState = CssSpriteElementImage::FILE_CONFLICT;
 }
 
 CssSpriteElementDescription * CssSpriteElementImage::description() {

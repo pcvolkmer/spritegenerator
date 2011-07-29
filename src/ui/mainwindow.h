@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -42,7 +42,12 @@ public:
 private:
     Ui::MainWindow * ui;
     QFileSystemWatcher * fsWatcher;
-    bool isSynced;
+    bool isSynced() {
+        foreach(CssSpriteElementImage image, * this->_images) {
+            if (image.fileState() != CssSpriteElementImage::FILE_MODIFIED) return false;
+        }
+        return true;
+    }
 
     void updateListWidget();
     CssSpriteElementImageList * _images;
@@ -57,7 +62,7 @@ private:
 
 protected slots:
     void onFileChanged(QString path);
-  
+
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
     void on_actionRemoveFile_triggered();

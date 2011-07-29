@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -29,9 +29,13 @@ public:
     CssSpriteElementImage(QString fileName, QImage image) ;
 
     enum FileState {
-        FILE_VIRTUAL,
-        FILE_DELETED,
-        FILE_CHANGED
+        FILE_VIRTUAL = 1,
+        FILE_DELETED = 2,
+        FILE_CHANGED = 4,
+        FILE_ADDED = 8,
+        FILE_CONFLICT = 16,
+        FILE_MODIFY = 32,
+        FILE_MODIFIED = 64
     };
 
     QString fileName();
@@ -62,8 +66,6 @@ private:
     QImage _image;
     QByteArray _fileData;
     CssSpriteElementDescription * _description;
-    bool _virtual;
-    bool _conflicting;
     CssSpriteElementImage::FileState _fileState;
 };
 
