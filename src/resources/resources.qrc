@@ -20,6 +20,9 @@
     <file>images/22x22/archive-insert-directory.png</file>
     <file>images/22x22/archive-insert.png</file>
     <file>images/22x22/archive-remove.png</file>
+    <file>images/16x16/folder-blue.png</file>
+    <file>images/16x16/drive-harddisk.png</file>
+    <file>images/16x16/image-x-generic.png</file>
   </qresource>
   <qresource prefix="others">
     <file>others/license</file>

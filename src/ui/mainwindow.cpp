@@ -79,6 +79,44 @@ void MainWindow::updateListWidget() {
     }
 
     this->updateListWidgetItems();
+    this->updateTreeWidget();
+}
+
+void MainWindow::updateTreeWidget() {
+    ui->treeWidget->clear();
+    QTreeWidgetItem * topItem = new QTreeWidgetItem();
+    QTreeWidgetItem * topVirtualItem = new QTreeWidgetItem();
+    QTreeWidgetItem * item = new QTreeWidgetItem();
+    QTreeWidgetItem * subItem;
+    bool allreadyPresent = false;
+    topItem->setText(0,"Filesystem");
+    topItem->setIcon(0,QIcon(":images/images/16x16/drive-harddisk.png"));
+    topVirtualItem->setText(0,"Sprite file");
+    topVirtualItem->setIcon(0,QIcon(":images/images/16x16/image-stack.png"));
+    ui->treeWidget->addTopLevelItem(topVirtualItem);
+    ui->treeWidget->addTopLevelItem(topItem);
+    foreach (CssSpriteElementImage image, *this->_images) {
+        item = new QTreeWidgetItem();
+        QList<QString> pathParts = QDir::fromNativeSeparators(image.fileName()).split("/");
+        item = (image.isVirtual()) ? topVirtualItem : topItem;
+        foreach (QString pathPart, pathParts) {
+            for (int childIndex = 0; childIndex < item->childCount(); childIndex++) {
+                if (item->child(childIndex)->text(0) == pathPart) {
+                    item = item->child(childIndex);
+                    continue;
+                }
+            }
+            if (item->text(0) == pathPart) continue;
+            QTreeWidgetItem * subItem = new QTreeWidgetItem();
+            subItem->setText(0, pathPart.isEmpty() ? "/" : pathPart);
+            item->addChild(subItem);
+            item = subItem;
+            item->setIcon(0,QIcon(":images/images/16x16/folder-blue.png"));
+        }
+        item->setIcon(0,QIcon(":images/images/16x16/image-x-generic.png"));
+    }
+    ui->treeWidget->sortItems(0,Qt::AscendingOrder);
+    ui->treeWidget->expandAll();
 }
 
 void MainWindow::onFileChanged(QString path) {
@@ -474,6 +512,43 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem * item) {
     }
 }
 
+void MainWindow::on_treeWidget_itemPressed(QTreeWidgetItem * item) {
+    QString fileName;
+
+    while (item->parent()) {
+        fileName.prepend(item->text(0));
+        if (item->text(0) != "/") fileName.prepend("/");
+        item = item->parent();
+    }
+    fileName.remove(0,1);
+
+    foreach (CssSpriteElementImage elem, * this->_images) {
+        if (elem.fileName() == fileName) {
+            ui->fileName->setText(this->stripFileName(fileName));
+            ui->imageSizeX->setText(QString::number(elem.description()->size().width(),10) + "px");
+            ui->imageSizeY->setText(QString::number(elem.description()->size().height(),10) + "px");
+            ui->resultingCssTextBrowser->setText(
+                "/* " + this->stripFileName(fileName) + " */\n"
+                + QString("background-image: url(<SPRITE URL>);\n")
+                + QString("background-repeat: ")
+                + ui->spriteRepeatComboBox->currentText()
+                + ";\nbackground-position: -"
+                + QString::number(elem.description()->startPosition().x(),10)
+                + "px -"
+                + QString::number(elem.description()->startPosition().y(),10)
+                + "px;\n"
+                + "width: "
+                + QString::number(elem.description()->size().width(),10)
+                + "px;\nheight: "
+                + QString::number(elem.description()->size().height(),10)
+                + "px;"
+            );
+            ui->elementImageLabel->setPixmap(QPixmap::fromImage(elem.image()));
+            return;
+        }
+    }
+}
+
 void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem* item) {
     ui->fileName->clear();
     ui->imageSizeX->clear();
@@ -482,6 +557,16 @@ void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem* item) {
     ui->elementImageLabel->clear();
     if (item == NULL) return;
     this->on_listWidget_itemPressed(item);
+}
+
+void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* item) {
+    ui->fileName->clear();
+    ui->imageSizeX->clear();
+    ui->imageSizeY->clear();
+    ui->resultingCssTextBrowser->clear();
+    ui->elementImageLabel->clear();
+    if (item == NULL) return;
+    this->on_treeWidget_itemPressed(item);
 }
 
 void MainWindow::on_actionInfo_triggered() {
@@ -674,17 +759,17 @@ void MainWindow::updateListWidgetItems() {
         if (image.fileState() == CssSpriteElementImage::FILE_VIRTUAL) {
             item->setIcon(QIcon(":images/images/16x16/image-stack.png"));
             item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
-            item->setToolTip("This image is not synchronised with the filesystem.");
+            item->setToolTip("This image is present in a sprite file and not synchronised with the filesystem.");
         }
         if (image.fileState() == CssSpriteElementImage::FILE_MODIFIED) {
             item->setIcon(QIcon(":images/images/16x16/vcs-locally-modified.png"));
             item->setTextColor(QColor::fromRgb(qRgb(0,100,0)));
-            item->setToolTip("This image ready to be exported.");
+            item->setToolTip("This image is ready to be exported.");
         }
         if (image.fileState() == CssSpriteElementImage::FILE_ADDED) {
             item->setIcon(QIcon(":images/images/16x16/vcs-added.png"));
-            item->setTextColor(QColor::fromRgb(qRgb(0,100,0)));
-            item->setToolTip("This image has just been added.");
+            item->setTextColor(QColor::fromRgb(qRgb(0,0,0)));
+            item->setToolTip("This image has just been added from filesystem.");
         }
         if (image.fileState() == CssSpriteElementImage::FILE_CONFLICT) {
             item->setIcon(QIcon(":images/images/16x16/vcs-conflicting.png"));

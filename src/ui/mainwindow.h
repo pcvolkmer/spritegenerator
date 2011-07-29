@@ -42,6 +42,12 @@ public:
 private:
     Ui::MainWindow * ui;
     QFileSystemWatcher * fsWatcher;
+    CssSpriteElementImageList * _images;
+    QComboBox * _qualityComboBox;
+    QLabel * _qualityLabel;
+    QProgressBar * _progressBar;
+    QPushButton * _statusWarningPushButton;
+
     bool isSynced() {
         foreach(CssSpriteElementImage image, * this->_images) {
             if (image.fileState() != CssSpriteElementImage::FILE_MODIFIED) return false;
@@ -50,11 +56,7 @@ private:
     }
 
     void updateListWidget();
-    CssSpriteElementImageList * _images;
-    QComboBox * _qualityComboBox;
-    QLabel * _qualityLabel;
-    QProgressBar * _progressBar;
-    QPushButton * _statusWarningPushButton;
+    void updateTreeWidget();
     QString stripFileName(QString filePath);
     bool createPreviewPage(QString dirName);
     void addQualityComboBox();
@@ -73,6 +75,8 @@ protected slots:
     void on_previewPageCommandButton_clicked();
     void on_listWidget_itemPressed(QListWidgetItem* item);
     void on_listWidget_currentItemChanged(QListWidgetItem* item);
+    void on_treeWidget_itemPressed(QTreeWidgetItem* item);
+    void on_treeWidget_currentItemChanged(QTreeWidgetItem* item);
     void on_actionInfo_triggered();
     void on_xMarginSpinBox_valueChanged(int i);
     void on_yMarginSpinBox_valueChanged(int i);
