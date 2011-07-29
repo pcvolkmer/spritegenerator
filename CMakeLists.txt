@@ -45,14 +45,16 @@ IF (WIN32)
   )
   SET(WINQTFILES
     # This part should contain DLL files to be included in package e.g.:
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/libgcc_s_dw2-1.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/libgcc_s_sjlj-1.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/libstdc++-6.dll
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/mingwm10.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/QtCore4.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/QtGui4.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/QtSvg4.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/QtXml4.dll
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/QtXmlPatterns4.dll
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/QtNetwork4.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/libjpeg-8.dll 
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/libpng15-15.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/libtiff-3.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/zlib1.dll
   )
   INSTALL(FILES ${WINQTFILES}
     DESTINATION .
@@ -63,8 +65,8 @@ ENDIF (WIN32)
 INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_RESOURCE_FILE_LICENSE "COPYING")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SpriteGenerator is a simple generator for CSS sprites.")
-SET(CPACK_PACKAGE_VENDOR "Paul-Christian Volkmer <pcvolkmer@users.sourceforge.net>")
-SET(CPACK_PACKAGE_CONTACT "Paul-Christian Volkmer <pcvolkmer@users.sourceforge.net>")
+SET(CPACK_PACKAGE_VENDOR "Paul-Christian Volkmer <paul-christian.volkmer@mni.thm.de>")
+SET(CPACK_PACKAGE_CONTACT "Paul-Christian Volkmer <paul-christian.volkmer@mni.thm.de>")
 SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${VERSION_RELEASE})
@@ -73,9 +75,12 @@ IF (UNIX AND NOT APPLE)
   SET(CPACK_SYSTEM_NAME "i586")
   SET(CPACK_RPM_PACKAGE_RELEASE "1")
   SET(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
-  SET(CPACK_RPM_PACKAGE_DESCRIPTION "SpriteGenerator is a simple generator for CSS sprites.")
+  SET(
+    CPACK_RPM_PACKAGE_DESCRIPTION
+    "SpriteGenerator generates a css sprite out of several images and shows css needed to use the sprite image. Several options can be used to customize sprite generation like sprite orientation and color depth from 32 bit RGBA to 8 bit indexed color."
+  )
   #SET(CPACK_RPM_CHANGELOG_FILE ${CMAKE_CURRENT_BINARY_DIR}/CHANGES)
-  #SET(CPACK_STRIP_FILES "/opt/spritegenerator/spritegenerator")
+  SET(CPACK_STRIP_FILES  ${CMAKE_CURRENT_BINARY_DIR}/bin/spritegenerator)
 ENDIF (UNIX AND NOT APPLE)
 IF (WIN32)
   SET(CPACK_GENERATOR  "NSIS")
@@ -88,6 +93,7 @@ IF (WIN32)
   SET(CPACK_PACKAGE_EXECUTABLES  ..\\\\spritegenerator;SpriteGenerator)
   SET(CPACK_CREATE_DESKTOP_LINKS ..\\\\spritegenerator)
   SET(CPACK_PACKAGE_INSTALL_DIRECTORY spritegenerator)
+  SET(CPACK_STRIP_FILES  ${CMAKE_CURRENT_BINARY_DIR}/bin/spritegenerator.exe)
 ENDIF (WIN32)
 IF (APPLE)
   SET(CPACK_GENERATOR  "Bundle")

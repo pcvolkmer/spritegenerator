@@ -34,7 +34,7 @@ IF( WIN32 AND MINGW )
   # To cross compile on Linux use: 'i686-w64-mingw32-windres' or similar command shipped with mingw cross compiler.
   # Change resources/spritegeneratoricon.rc to use the correct path seperator depending on used plattform.
   ADD_CUSTOM_COMMAND( OUTPUT spritegeneratoricon.rc.obj
-    COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/resources/spritegeneratoricon.rc 
+    COMMAND i686-w64-mingw32-windres -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/resources/spritegeneratoricon.rc 
 	-o spritegeneratoricon.rc.obj
   )
   SET(spritegenerator_SRCS ${spritegenerator_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/spritegeneratoricon.rc.obj)
