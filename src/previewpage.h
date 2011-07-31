@@ -25,17 +25,16 @@
 #include "cssspriteelementimage.h"
 #include "version.h"
 
-class PreviewPage
-{
+class PreviewPage {
 public:
-    static QByteArray create(QList<CssSpriteElementImage> images);
+    static QByteArray create ( QList<CssSpriteElementImage> images );
 
 private:
-    PreviewPage(QList<CssSpriteElementImage> images);
+    PreviewPage ( QList<CssSpriteElementImage> images );
     ~PreviewPage();
-    
+
     QByteArray create();
-    
+
     QString * _outPuffer;
     QList<CssSpriteElementImage> _images;
 };

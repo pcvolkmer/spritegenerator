@@ -49,23 +49,16 @@ private:
     QProgressBar * _progressBar;
     QPushButton * _statusWarningPushButton;
 
-    bool isSynced() {
-        foreach(CssSpriteElementImage image, * this->_images) {
-            if (image.fileState() != CssSpriteElementImage::FILE_MODIFIED) return false;
-        }
-        return true;
-    }
-
+    bool isSynced() ;
     void updateListWidget();
-    void updateTreeWidget();
-    QString stripFileName(QString filePath);
-    bool createPreviewPage(QString dirName);
+    QString stripFileName ( QString filePath );
+    bool createPreviewPage ( QString dirName );
     void addQualityComboBox();
     void updateListWidgetItems();
     SpriteWidget::Format selectedSpriteFormat();
 
 protected slots:
-    void onFileChanged(QString path);
+    void onFileChanged ( QString path );
 
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
@@ -75,16 +68,23 @@ protected slots:
     void on_actionSyncFilesystem_triggered();
     void on_createSpriteCommandButton_clicked();
     void on_previewPageCommandButton_clicked();
-    void on_listWidget_itemPressed(QListWidgetItem* item);
-    void on_listWidget_currentItemChanged(QListWidgetItem* item);
-    void on_treeWidget_itemPressed(QTreeWidgetItem* item);
-    void on_treeWidget_currentItemChanged(QTreeWidgetItem* item);
+    void on_listWidget_itemPressed ( QListWidgetItem* item );
+    void on_listWidget_currentItemChanged ( QListWidgetItem* item );
+    void on_treeWidget_itemPressed ( QTreeWidgetItem* item );
+    void on_treeWidget_currentItemChanged ( QTreeWidgetItem* item );
+    void on_treeWidget_itemMoved() {
+        ui->listWidget->clear();
+        foreach ( CssSpriteElementImage image, *this->_images ) {
+            ui->listWidget->addItem ( image.fileName() );
+        }
+        this->updateListWidget();
+    }
     void on_actionInfo_triggered();
-    void on_xMarginSpinBox_valueChanged(int i);
-    void on_yMarginSpinBox_valueChanged(int i);
-    void on_elementLayoutComboBox_currentIndexChanged(int index);
-    void on_spriteRepeatComboBox_currentIndexChanged(int index);
-    void on_lockMarginToolButton_toggled(bool checked);
+    void on_xMarginSpinBox_valueChanged ( int i );
+    void on_yMarginSpinBox_valueChanged ( int i );
+    void on_elementLayoutComboBox_currentIndexChanged ( int index );
+    void on_spriteRepeatComboBox_currentIndexChanged ( int index );
+    void on_lockMarginToolButton_toggled ( bool checked );
     void on_changeSettingsButton_clicked();
     void on_abortChangeSettingsButton_clicked();
     void on_moveUpToolButton_clicked();

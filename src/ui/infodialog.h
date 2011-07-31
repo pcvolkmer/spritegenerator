@@ -30,7 +30,7 @@ class InfoDialog : public QDialog, private Ui::InfoDialog {
     Q_OBJECT
 
 public:
-    InfoDialog(QWidget* parent = 0, Qt::WFlags fl = 0 );
+    InfoDialog ( QWidget* parent = 0, Qt::WFlags fl = 0 );
     ~InfoDialog();
 
 public slots:

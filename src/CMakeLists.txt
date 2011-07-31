@@ -3,6 +3,7 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 set(spritegenerator_SRCS
   ui/mainwindow.cpp
   ui/infodialog.cpp
+  ui/filesystemtreewidget.cpp
   spritewidget.cpp
   cssspriteelementdescription.cpp
   cssspriteelementimage.cpp
@@ -14,6 +15,7 @@ set(spritegenerator_SRCS
 set(spritegenerator_MOC_SRCS
   ui/mainwindow.h
   ui/infodialog.h
+  ui/filesystemtreewidget.h
   spritewidget.h
 ) 
 

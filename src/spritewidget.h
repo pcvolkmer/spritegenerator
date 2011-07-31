@@ -54,14 +54,14 @@ public:
         FORMAT_INDEXED8
     };
 
-    static QList< CssSpriteElementImage > * updateCssSprite(
+    static QList< CssSpriteElementImage > * updateCssSprite (
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8,
         SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
     );
 
-    static QImage createCssSprite(
+    static QImage createCssSprite (
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8,
@@ -69,7 +69,7 @@ public:
         SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
     );
 
-    static bool exportToFile(
+    static bool exportToFile (
         QString fileName,
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
@@ -78,7 +78,7 @@ public:
         SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
     ) ;
 
-    static CssSpriteElementImageList * importFromFile(
+    static CssSpriteElementImageList * importFromFile (
         QString fileName
     ) ;
 
@@ -91,17 +91,17 @@ private:
         QWidget* parent = 0,
         Qt::WFlags fl = 0
     );
-    static SpriteWidget::Layout bestfit(
+    static SpriteWidget::Layout bestfit (
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8
     );
-    static SpriteWidget::Layout bestFileSize(
+    static SpriteWidget::Layout bestFileSize (
         QList< CssSpriteElementImage > * images,
         int xMargin = 8,
         int yMargin = 8
     );
-    static QPair< QSize, QSize > extremeSizes(
+    static QPair< QSize, QSize > extremeSizes (
         QList< CssSpriteElementImage > * images
     );
     QSize _spriteSize();
@@ -114,7 +114,7 @@ private:
     SpriteWidget::Layout _layout;
 
 private slots:
-    void paintEvent(QPaintEvent * e);
+    void paintEvent ( QPaintEvent * e );
 };
 
 #endif

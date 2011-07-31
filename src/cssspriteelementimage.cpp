@@ -20,22 +20,21 @@
 
 #include "cssspriteelementimage.h"
 
-CssSpriteElementImage::CssSpriteElementImage(QString fileName, QImage image) {
+CssSpriteElementImage::CssSpriteElementImage ( QString fileName, QImage image ) {
     this->_fileName = fileName;
     this->_image = image;
     this->_description = NULL;
-    QFile imageFile(fileName);
-    if (imageFile.exists()) {
-        imageFile.open(QIODevice::ReadOnly);
+    QFile imageFile ( fileName );
+    if ( imageFile.exists() ) {
+        imageFile.open ( QIODevice::ReadOnly );
         this->_fileData = imageFile.readAll();
         imageFile.close();
-    }
-    else {
+    } else {
         this->_fileState = FILE_VIRTUAL;
     }
 }
 
-bool CssSpriteElementImage::operator==(CssSpriteElementImage obj) {
+bool CssSpriteElementImage::operator== ( CssSpriteElementImage obj ) {
     return (
                this->fileName() == obj.fileName()
                && this->image() == obj.image()
@@ -46,7 +45,7 @@ QImage CssSpriteElementImage::image() {
     return this->_image;
 }
 
-void CssSpriteElementImage::setImage(QImage image) {
+void CssSpriteElementImage::setImage ( QImage image ) {
     this->_image = image;
 }
 
@@ -54,7 +53,7 @@ QString CssSpriteElementImage::fileName() {
     return this->_fileName;
 }
 
-void CssSpriteElementImage::setFileName(QString fileName) {
+void CssSpriteElementImage::setFileName ( QString fileName ) {
     this->_fileName = fileName;
 }
 
@@ -62,7 +61,7 @@ QByteArray CssSpriteElementImage::fileData() {
     return this->_fileData;
 }
 
-void CssSpriteElementImage::setFileData(QByteArray data) {
+void CssSpriteElementImage::setFileData ( QByteArray data ) {
     this->_fileData = data;
 }
 
@@ -70,8 +69,8 @@ bool CssSpriteElementImage::isVirtual() {
     return this->_fileState == CssSpriteElementImage::FILE_VIRTUAL;
 }
 
-void CssSpriteElementImage::setVirtual(bool isVirtual) {
-    if (isVirtual)
+void CssSpriteElementImage::setVirtual ( bool isVirtual ) {
+    if ( isVirtual )
         this->_fileState = CssSpriteElementImage::FILE_VIRTUAL;
 }
 
@@ -79,8 +78,8 @@ bool CssSpriteElementImage::isConflicting() {
     return this->_fileState == CssSpriteElementImage::FILE_CONFLICT;
 }
 
-void CssSpriteElementImage::setConflicting(bool isConflicting) {
-    if (isConflicting)
+void CssSpriteElementImage::setConflicting ( bool isConflicting ) {
+    if ( isConflicting )
         this->_fileState = CssSpriteElementImage::FILE_CONFLICT;
 }
 
@@ -88,7 +87,7 @@ CssSpriteElementDescription * CssSpriteElementImage::description() {
     return this->_description;
 }
 
-void CssSpriteElementImage::updateDescription(CssSpriteElementDescription* description) {
+void CssSpriteElementImage::updateDescription ( CssSpriteElementDescription* description ) {
     this->_description = description;
 }
 
@@ -96,6 +95,6 @@ CssSpriteElementImage::FileState CssSpriteElementImage::fileState() {
     return this->_fileState;
 }
 
-void CssSpriteElementImage::setFileState(CssSpriteElementImage::FileState fileState) {
+void CssSpriteElementImage::setFileState ( CssSpriteElementImage::FileState fileState ) {
     this->_fileState = fileState;
 }

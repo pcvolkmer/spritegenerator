@@ -20,29 +20,30 @@
 
 #include "cssspriteelementimagelist.h"
 
-bool CssSpriteElementImageList::moveUp(CssSpriteElementImage image) {
-    int index = this->indexOf(image);
-    if (index >= 1) {
-        this->move(index, index-1);
+bool CssSpriteElementImageList::moveUp ( CssSpriteElementImage image ) {
+    int index = this->indexOf ( image );
+    if ( index >= 1 ) {
+        this->move ( index, index-1 );
         return true;
     }
     return false;
 }
 
-bool CssSpriteElementImageList::moveDown(CssSpriteElementImage image) {
-    int index = this->indexOf(image);
-    if (index < this->count()-1) {
-        this->move(index, index+1);
+bool CssSpriteElementImageList::moveDown ( CssSpriteElementImage image ) {
+    int index = this->indexOf ( image );
+    if ( index < this->count()-1 ) {
+        this->move ( index, index+1 );
         return true;
     }
     return false;
 }
 
-CssSpriteElementImage * CssSpriteElementImageList::find(QString fileName) {
-    QListIterator<CssSpriteElementImage> i(* this);
+CssSpriteElementImage * CssSpriteElementImageList::find ( QString fileName ) {
+    QListIterator<CssSpriteElementImage> i ( * this );
     CssSpriteElementImage * image;
-    while (i.hasNext()) {
-        image = (CssSpriteElementImage *) & i.next();
-        if (image->fileName() == fileName) return image;
+    while ( i.hasNext() ) {
+        image = ( CssSpriteElementImage * ) & i.next();
+        if ( image->fileName() == fileName ) return image;
     }
+    return NULL;
 }

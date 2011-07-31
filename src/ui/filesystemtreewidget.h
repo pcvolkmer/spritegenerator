@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -18,22 +18,31 @@
  *   along with SpriteGenerator.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef CSSSPRITEELEMENTDESCRIPTION_H
-#define CSSSPRITEELEMENTDESCRIPTION_H
+#ifndef FILESYSTEMTREEWIDGET_H
+#define FILESYSTEMTREEWIDGET_H
 
 #include <QtGui>
+#include <QtCore>
+#include "cssspriteelementimage.h"
+#include "cssspriteelementimagelist.h"
 
-class CssSpriteElementDescription {
+class FileSystemTreeWidget : public QTreeWidget {
+    Q_OBJECT
+
 public:
-    CssSpriteElementDescription ( QPoint start, QSize size ) ;
-
-    QPoint startPosition() ;
-
-    QSize size() ;
+    FileSystemTreeWidget ( QWidget * parent = 0 );
+    ~FileSystemTreeWidget();
+    void update ( CssSpriteElementImageList * images );
 
 private:
-    QPoint _position;
-    QSize _size;
+    CssSpriteElementImageList * _images;
+
+    void dropEvent ( QDropEvent * event );
+    QString fileName ( QTreeWidgetItem * item );
+
+signals:
+    void itemMoved();
+    void itemMoveError();
 };
 
 #endif

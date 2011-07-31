@@ -20,7 +20,7 @@
 
 #include "cssspriteelementdescription.h"
 
-CssSpriteElementDescription::CssSpriteElementDescription(QPoint start, QSize size) {
+CssSpriteElementDescription::CssSpriteElementDescription ( QPoint start, QSize size ) {
     this->_position = start;
     this->_size = size;
 }

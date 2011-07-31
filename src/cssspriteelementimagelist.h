@@ -27,14 +27,14 @@ class CssSpriteElementImageList : public QList<CssSpriteElementImage> {
 
 public:
     inline CssSpriteElementImageList() {}
-    inline CssSpriteElementImageList(const CssSpriteElementImageList &l) : QList<CssSpriteElementImage>(l) { }
-    inline CssSpriteElementImageList(const QList<CssSpriteElementImage> &l) : QList<CssSpriteElementImage>(l) { }
-    inline CssSpriteElementImageList(const QList<CssSpriteElementImage> *l) : QList<CssSpriteElementImage>(*l) { }
-  
-    bool moveUp(CssSpriteElementImage image);
-    bool moveDown(CssSpriteElementImage image);
-    
-    CssSpriteElementImage * find(QString fileName);
+    inline CssSpriteElementImageList ( const CssSpriteElementImageList &l ) : QList<CssSpriteElementImage> ( l ) { }
+    inline CssSpriteElementImageList ( const QList<CssSpriteElementImage> &l ) : QList<CssSpriteElementImage> ( l ) { }
+    inline CssSpriteElementImageList ( const QList<CssSpriteElementImage> *l ) : QList<CssSpriteElementImage> ( *l ) { }
+
+    bool moveUp ( CssSpriteElementImage image );
+    bool moveDown ( CssSpriteElementImage image );
+
+    CssSpriteElementImage * find ( QString fileName );
 };
 
 #endif // CSSSPRITEELEMENTIMAGELIST_H
