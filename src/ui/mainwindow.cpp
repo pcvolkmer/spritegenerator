@@ -206,21 +206,44 @@ void MainWindow::on_actionAddFile_triggered() {
 }
 
 void MainWindow::on_actionRemoveFile_triggered() {
-    QList<QListWidgetItem*> itemlist = ui->listWidget->selectedItems();
-    foreach ( QListWidgetItem * item, itemlist ) {
-        foreach ( CssSpriteElementImage image, *this->_images ) {
-            if ( image.fileName() == item->text() ) {
-                this->_images->removeOne ( image );
+    if ( ui->tabWidget->currentIndex() == 0 ) {
+        QList<QListWidgetItem*> itemlist = ui->listWidget->selectedItems();
+        foreach ( QListWidgetItem * item, itemlist ) {
+            foreach ( CssSpriteElementImage image, *this->_images ) {
+                if ( image.fileName() == item->text() ) {
+                    this->_images->removeOne ( image );
+                }
             }
+            this->fsWatcher->removePath ( item->text() );
+            this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
+                        this->_images,
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                    ) );
+            delete item;
         }
-        this->fsWatcher->removePath ( item->text() );
-        this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                    this->_images,
-                    ui->xMarginSpinBox->value(),
-                    ui->yMarginSpinBox->value(),
-                    ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
-                ) );
-        delete item;
+    } else if ( ui->tabWidget->currentIndex() == 1 ) {
+        QList<QTreeWidgetItem*> itemlist = ui->treeWidget->selectedItems();
+        foreach ( QTreeWidgetItem * item, itemlist ) {
+            foreach ( CssSpriteElementImage image, *this->_images ) {
+                if ( image.fileName() == ui->treeWidget->fileName ( item ) ) {
+                    this->_images->removeOne ( image );
+                }
+            }
+            this->fsWatcher->removePath ( ui->treeWidget->fileName ( item ) );
+            this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
+                        this->_images,
+                        ui->xMarginSpinBox->value(),
+                        ui->yMarginSpinBox->value(),
+                        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                    ) );
+            delete item;
+        }
+    }
+    ui->listWidget->clear();
+    foreach ( CssSpriteElementImage image, *this->_images ) {
+        ui->listWidget->addItem ( image.fileName() );
     }
     this->updateListWidget();
 }

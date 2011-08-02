@@ -26,22 +26,42 @@
 #include "cssspriteelementimage.h"
 #include "cssspriteelementimagelist.h"
 
+/**
+ * @brief The class FileSystemTreeWidget extends a QTreeWidget to perform special operation on a CssSpriteElementImageList.
+ **/
 class FileSystemTreeWidget : public QTreeWidget {
     Q_OBJECT
 
 public:
     FileSystemTreeWidget ( QWidget * parent = 0 );
     ~FileSystemTreeWidget();
+    /**
+     * @brief Updates the tree widget with image list.
+     *
+     * @param images List of images to be shown in tree widget.
+     **/
     void update ( CssSpriteElementImageList * images );
+    /**
+     * @brief Selects filename related to item
+     *
+     * @param item QTreeWidgetItem to fetch filename from
+     * @return Fetched file name from item
+     **/
+    QString fileName ( QTreeWidgetItem * item );
 
 private:
     CssSpriteElementImageList * _images;
 
     void dropEvent ( QDropEvent * event );
-    QString fileName ( QTreeWidgetItem * item );
 
 signals:
+    /**
+     * @brief This signal is sent if an item was moved in tree widget.
+     **/
     void itemMoved();
+    /**
+     * @brief This signal is sent if an error occured during moving an image.
+     **/
     void itemMoveError();
 };
 

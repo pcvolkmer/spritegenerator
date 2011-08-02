@@ -89,6 +89,8 @@ void FileSystemTreeWidget::update ( CssSpriteElementImageList * images ) {
         item = new QTreeWidgetItem();
         QList<QString> pathParts = QDir::fromNativeSeparators ( fileName ).split ( "/" );
         item = ( image.isVirtual() ) ? topVirtualItem : topItem;
+        if (QDir::fromNativeSeparators ( fileName ).startsWith("/"))
+            pathParts.prepend("/");
         foreach ( QString pathPart, pathParts ) {
             if ( pathPart.isEmpty() ) continue;
             for ( int childIndex = 0; childIndex < item->childCount(); childIndex++ ) {
