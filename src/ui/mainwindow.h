@@ -49,7 +49,7 @@ private:
     QProgressBar * _progressBar;
     QPushButton * _statusWarningPushButton;
 
-    bool isSynced() ;
+    bool readyToExportSprite() ;
     void updateListWidget();
     QString stripFileName ( QString filePath );
     bool createPreviewPage ( QString dirName );

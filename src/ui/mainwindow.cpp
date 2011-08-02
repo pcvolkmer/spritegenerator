@@ -71,7 +71,7 @@ void MainWindow::updateListWidget() {
     ui->previewPageCommandButton->setEnabled ( false );
     if ( ui->listWidget->count() > 0 ) {
         ui->actionRemoveFile->setEnabled ( true );
-        if ( this->isSynced() ) ui->actionExport->setEnabled ( true );
+        if ( this->readyToExportSprite() ) ui->actionExport->setEnabled ( true );
         ui->actionSyncFilesystem->setEnabled ( true );
         ui->createSpriteCommandButton->setEnabled ( true );
         ui->previewPageCommandButton->setEnabled ( true );
@@ -771,9 +771,22 @@ SpriteWidget::Format MainWindow::selectedSpriteFormat() {
     return ( SpriteWidget::Format ) this->ui->toolBar->findChild<QComboBox *> ( "qualityComboBox" )->currentIndex();
 }
 
-bool MainWindow::isSynced() {
+bool MainWindow::readyToExportSprite() {
+    bool pureVirtual = true;
     foreach ( CssSpriteElementImage image, * this->_images ) {
-        if ( image.fileState() != CssSpriteElementImage::FILE_MODIFIED ) return false;
+        if ( ! ( image.fileState() & CssSpriteElementImage::FILE_VIRTUAL ) ) {
+            pureVirtual = false;
+            continue;
+        }
+    }
+
+    if ( pureVirtual ) return true;
+
+    foreach ( CssSpriteElementImage image, * this->_images ) {
+        if (
+            ! ( image.fileState() & CssSpriteElementImage::FILE_MODIFIED )
+            || ! ( image.fileState() & CssSpriteElementImage::FILE_ADDED )
+        ) return false;
     }
     return true;
 }

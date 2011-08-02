@@ -42,7 +42,12 @@ void FileSystemTreeWidget::dropEvent ( QDropEvent* event ) {
         CssSpriteElementImage * image = this->_images->find ( oldPath )
                                         ? this->_images->find ( oldPath )
                                         : this->_images->find ( oldPath.remove ( 0,1 ) );
+        if ( this->_images->find ( newPath ) ) {
+            this->update ( this->_images );
+            return;
+        }
         image->setFileName ( newPath );
+        if ( ! newPath.startsWith ( "/" ) ) image->setVirtual ( true );
         emit itemMoved();
     }
 }
@@ -89,8 +94,8 @@ void FileSystemTreeWidget::update ( CssSpriteElementImageList * images ) {
         item = new QTreeWidgetItem();
         QList<QString> pathParts = QDir::fromNativeSeparators ( fileName ).split ( "/" );
         item = ( image.isVirtual() ) ? topVirtualItem : topItem;
-        if (QDir::fromNativeSeparators ( fileName ).startsWith("/"))
-            pathParts.prepend("/");
+        if ( QDir::fromNativeSeparators ( fileName ).startsWith ( "/" ) )
+            pathParts.prepend ( "/" );
         foreach ( QString pathPart, pathParts ) {
             if ( pathPart.isEmpty() ) continue;
             for ( int childIndex = 0; childIndex < item->childCount(); childIndex++ ) {
@@ -111,11 +116,7 @@ void FileSystemTreeWidget::update ( CssSpriteElementImageList * images ) {
                 item->setFlags ( Qt::ItemIsEnabled );
         }
         item->setIcon ( 0,QIcon ( ":images/images/16x16/image-x-generic.png" ) );
-
-        if ( image.fileState() == CssSpriteElementImage::FILE_VIRTUAL )
-            item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
-        else
-            item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsEnabled );
+        item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
     }
     this->sortItems ( 0,Qt::AscendingOrder );
     this->expandAll();
