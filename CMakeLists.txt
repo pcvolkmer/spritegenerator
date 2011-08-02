@@ -6,13 +6,14 @@ find_package(Qt4 REQUIRED)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
-set(VERSION_RELEASE 20110731)
+set(VERSION_RELEASE 20110802)
 
 set(EXECUTABLE_OUTPUT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/bin
 )
 
 CONFIGURE_FILE( version.h.cmake src/version.h )
+CONFIGURE_FILE( Doxyfile.cmake Doxyfile )
 
 SET(DESKTOP
   spritegenerator.desktop
