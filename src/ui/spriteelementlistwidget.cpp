@@ -55,13 +55,11 @@ void SpriteElementListWidget::update(CssSpriteElementImageList* images) {
         }
         if ( image.fileState() == CssSpriteElementImage::FILE_CHANGED ) {
             item->setIcon ( QIcon ( ":images/images/16x16/vcs-update-required.png" ) );
-            item->setToolTip ( "Image changed on disk" );
             item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
             item->setToolTip ( "This image has just been changed on filesystem." );
         }
         if ( image.fileState() == CssSpriteElementImage::FILE_DELETED ) {
             item->setIcon ( QIcon ( ":images/images/16x16/vcs-removed.png" ) );
-            item->setToolTip ( "Image deleted from disk" );
             item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
             item->setToolTip ( "This image has just been removed from filesystem." );
         }

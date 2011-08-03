@@ -52,6 +52,7 @@ public:
 private:
     CssSpriteElementImageList * _images;
     void dropEvent ( QDropEvent * event );
+    void updateItem(CssSpriteElementImage image, QTreeWidgetItem * item);
 
 signals:
     /**

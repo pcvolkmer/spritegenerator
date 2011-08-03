@@ -63,12 +63,14 @@ void MainWindow::update() {
     ui->actionSyncFilesystem->setEnabled ( false );
     ui->createSpriteCommandButton->setEnabled ( false );
     ui->previewPageCommandButton->setEnabled ( false );
-    if ( ui->listWidget->count() > 0 ) {
+    if ( this->_images->count() > 0 ) {
+        if ( this->readyToExportSprite() ) {
+            ui->actionExport->setEnabled ( true );
+            ui->createSpriteCommandButton->setEnabled ( true );
+            ui->previewPageCommandButton->setEnabled ( true );
+        }
         ui->actionRemoveFile->setEnabled ( true );
-        if ( this->readyToExportSprite() ) ui->actionExport->setEnabled ( true );
         ui->actionSyncFilesystem->setEnabled ( true );
-        ui->createSpriteCommandButton->setEnabled ( true );
-        ui->previewPageCommandButton->setEnabled ( true );
     }
 
     ui->listWidget->update ( this->_images );
@@ -82,14 +84,11 @@ void MainWindow::onFileChanged ( QString path ) {
     CssSpriteElementImage * image = this->_images->find ( path );
     if ( image->fileState() == CssSpriteElementImage::FILE_MODIFY ) return;
     if ( fileInfo.exists() ) {
-        item->setIcon ( QIcon ( ":images/images/16x16/vcs-update-required.png" ) );
-        item->setToolTip ( "Image changed on disk" );
         image->setFileState ( CssSpriteElementImage::FILE_CHANGED );
     } else {
-        item->setIcon ( QIcon ( ":images/images/16x16/vcs-removed.png" ) );
-        item->setToolTip ( "Image deleted from disk" );
         image->setFileState ( CssSpriteElementImage::FILE_DELETED );
     }
+    this->update();
 }
 
 void MainWindow::on_actionAddDirectory_triggered() {
@@ -655,7 +654,7 @@ void MainWindow::on_moveDownToolButton_clicked() {
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
 
-    ui->listWidget->update(this->_images);
+    ui->listWidget->update ( this->_images );
 
     for ( int i = 0; i < ui->listWidget->count(); i++ ) {
         if ( selectedItemLabels.contains ( ui->listWidget->item ( i )->text() ) ) {
@@ -686,7 +685,7 @@ void MainWindow::on_moveUpToolButton_clicked() {
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
 
-    ui->listWidget->update(this->_images);
+    ui->listWidget->update ( this->_images );
 
     for ( int i = 0; i < ui->listWidget->count(); i++ ) {
         if ( selectedItemLabels.contains ( ui->listWidget->item ( i )->text() ) ) {
@@ -716,20 +715,9 @@ SpriteWidget::Format MainWindow::selectedSpriteFormat() {
 bool MainWindow::readyToExportSprite() {
     bool pureVirtual = true;
     foreach ( CssSpriteElementImage image, * this->_images ) {
-        if ( ! ( image.fileState() & CssSpriteElementImage::FILE_VIRTUAL ) ) {
-            pureVirtual = false;
-            continue;
+        if ( ! ( image.fileState() & ( CssSpriteElementImage::FILE_VIRTUAL|CssSpriteElementImage::FILE_MODIFIED ) ) ) {
+            return false;
         }
-    }
-
-    if ( pureVirtual ) return true;
-
-    foreach ( CssSpriteElementImage image, * this->_images ) {
-        if (
-            ! ( image.fileState() & CssSpriteElementImage::FILE_MODIFIED )
-            || ! ( image.fileState() & CssSpriteElementImage::FILE_ADDED )
-        ) return false;
     }
     return true;
 }
-

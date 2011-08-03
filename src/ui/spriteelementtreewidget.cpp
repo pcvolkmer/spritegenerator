@@ -39,14 +39,14 @@ void SpriteElementTreeWidget::dropEvent ( QDropEvent* event ) {
         QString newPath = this->fileName ( item );
         if ( newPath.isEmpty() ) return;
 
-        if (item->childCount() > 0) {
+        if ( item->childCount() > 0 ) {
             QListIterator<CssSpriteElementImage> i ( * this->_images );
 
             while ( i.hasNext() ) {
                 CssSpriteElementImage * image = ( CssSpriteElementImage * ) &i.next();
-                if (image->fileName().startsWith(oldPath)) {
-                    QString newFilePath = image->fileName().replace(oldPath, newPath);
-                    image->setFileName(newFilePath);
+                if ( image->fileName().startsWith ( oldPath ) ) {
+                    QString newFilePath = image->fileName().replace ( oldPath, newPath );
+                    image->setFileName ( newFilePath );
                     image->setVirtual ( true );
                 }
             }
@@ -83,7 +83,7 @@ QString SpriteElementTreeWidget::fileName ( QTreeWidgetItem* item ) {
         fileName.append ( pathParts.at ( pathParts.size()-1 ) );
     }
 
-    return fileName.replace("//","/");
+    return fileName.replace ( "//","/" );
 }
 
 void SpriteElementTreeWidget::update ( CssSpriteElementImageList * images ) {
@@ -129,9 +129,42 @@ void SpriteElementTreeWidget::update ( CssSpriteElementImageList * images ) {
             else
                 item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
         }
-        item->setIcon ( 0,QIcon ( ":images/images/16x16/image-x-generic.png" ) );
-        item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
+        this->updateItem ( image, item );
     }
     this->sortItems ( 0,Qt::AscendingOrder );
     this->expandAll();
+}
+
+void SpriteElementTreeWidget::updateItem ( CssSpriteElementImage image, QTreeWidgetItem * item ) {
+    if ( image.fileState() == CssSpriteElementImage::FILE_VIRTUAL ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/image-stack.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 0,0,0 ) ) );
+        item->setToolTip ( 0, "This image is present in a sprite file and not synchronised with the filesystem." );
+    }
+    if ( image.fileState() == CssSpriteElementImage::FILE_MODIFIED ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/vcs-locally-modified.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 0,100,0 ) ) );
+        item->setToolTip ( 0, "This image is ready to be exported." );
+    }
+    if ( image.fileState() == CssSpriteElementImage::FILE_ADDED ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/vcs-added.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 0,0,0 ) ) );
+        item->setToolTip ( 0, "This image has just been added from filesystem." );
+    }
+    if ( image.fileState() == CssSpriteElementImage::FILE_CONFLICT ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/vcs-conflicting.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
+        item->setToolTip ( 0, "This image conflicts with filesystem." );
+    }
+    if ( image.fileState() == CssSpriteElementImage::FILE_CHANGED ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/vcs-update-required.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
+        item->setToolTip ( 0, "This image has just been changed on filesystem." );
+    }
+    if ( image.fileState() == CssSpriteElementImage::FILE_DELETED ) {
+        item->setIcon ( 0, QIcon ( ":images/images/16x16/vcs-removed.png" ) );
+        item->setTextColor ( 0, QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
+        item->setToolTip ( 0, "This image has just been removed from filesystem." );
+    }
+    item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
 }
