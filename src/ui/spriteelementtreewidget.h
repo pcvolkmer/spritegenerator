@@ -51,7 +51,6 @@ public:
 
 private:
     CssSpriteElementImageList * _images;
-
     void dropEvent ( QDropEvent * event );
 
 signals:

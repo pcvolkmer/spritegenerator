@@ -732,3 +732,4 @@ bool MainWindow::readyToExportSprite() {
     }
     return true;
 }
+

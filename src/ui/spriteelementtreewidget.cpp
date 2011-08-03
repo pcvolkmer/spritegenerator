@@ -39,9 +39,23 @@ void SpriteElementTreeWidget::dropEvent ( QDropEvent* event ) {
         QString newPath = this->fileName ( item );
         if ( newPath.isEmpty() ) return;
 
-        CssSpriteElementImage * image = this->_images->find ( oldPath )
-                                        ? this->_images->find ( oldPath )
-                                        : this->_images->find ( oldPath.remove ( 0,1 ) );
+        if (item->childCount() > 0) {
+            QListIterator<CssSpriteElementImage> i ( * this->_images );
+
+            while ( i.hasNext() ) {
+                CssSpriteElementImage * image = ( CssSpriteElementImage * ) &i.next();
+                if (image->fileName().startsWith(oldPath)) {
+                    QString newFilePath = image->fileName().replace(oldPath, newPath);
+                    image->setFileName(newFilePath);
+                    image->setVirtual ( true );
+                }
+            }
+            emit itemMoved();
+            return;
+        }
+
+        CssSpriteElementImage * image = this->_images->find ( oldPath );
+
         if ( this->_images->find ( newPath ) ) {
             this->update ( this->_images );
             return;
@@ -69,7 +83,7 @@ QString SpriteElementTreeWidget::fileName ( QTreeWidgetItem* item ) {
         fileName.append ( pathParts.at ( pathParts.size()-1 ) );
     }
 
-    return fileName;
+    return fileName.replace("//","/");
 }
 
 void SpriteElementTreeWidget::update ( CssSpriteElementImageList * images ) {
@@ -111,9 +125,9 @@ void SpriteElementTreeWidget::update ( CssSpriteElementImageList * images ) {
             item = subItem;
             item->setIcon ( 0,QIcon ( ":images/images/16x16/folder-blue.png" ) );
             if ( image.fileState() == CssSpriteElementImage::FILE_VIRTUAL )
-                item->setFlags ( Qt::ItemIsDropEnabled|Qt::ItemIsEnabled );
+                item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsDropEnabled|Qt::ItemIsEnabled );
             else
-                item->setFlags ( Qt::ItemIsEnabled );
+                item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
         }
         item->setIcon ( 0,QIcon ( ":images/images/16x16/image-x-generic.png" ) );
         item->setFlags ( Qt::ItemIsSelectable|Qt::ItemIsDragEnabled|Qt::ItemIsEnabled );
