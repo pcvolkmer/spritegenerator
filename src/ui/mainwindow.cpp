@@ -45,14 +45,8 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
         }
     }
 
-    ui->actionRemoveFile->setEnabled ( false );
-    ui->actionExport->setEnabled ( false );
-    ui->actionSyncFilesystem->setEnabled ( false );
-    ui->createSpriteCommandButton->setEnabled ( false );
-    ui->previewPageCommandButton->setEnabled ( false );
-
+    this->update();
     this->fsWatcher = new QFileSystemWatcher();
-    ui->treeWidget->update ( this->_images );
 
     connect ( fsWatcher, SIGNAL ( fileChanged ( QString ) ), this, SLOT ( onFileChanged ( QString ) ) );
 }
@@ -63,7 +57,7 @@ MainWindow::~MainWindow() {
     delete this->ui;
 }
 
-void MainWindow::updateListWidget() {
+void MainWindow::update() {
     ui->actionRemoveFile->setEnabled ( false );
     ui->actionExport->setEnabled ( false );
     ui->actionSyncFilesystem->setEnabled ( false );
@@ -77,7 +71,7 @@ void MainWindow::updateListWidget() {
         ui->previewPageCommandButton->setEnabled ( true );
     }
 
-    this->updateListWidgetItems();
+    ui->listWidget->update ( this->_images );
     ui->treeWidget->update ( this->_images );
 }
 
@@ -164,7 +158,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
     );
     this->_progressBar->reset();
     this->setCursor ( Qt::ArrowCursor );
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_actionAddFile_triggered() {
@@ -202,7 +196,7 @@ void MainWindow::on_actionAddFile_triggered() {
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
     this->setCursor ( Qt::ArrowCursor );
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_actionRemoveFile_triggered() {
@@ -241,11 +235,7 @@ void MainWindow::on_actionRemoveFile_triggered() {
             delete item;
         }
     }
-    ui->listWidget->clear();
-    foreach ( CssSpriteElementImage image, *this->_images ) {
-        ui->listWidget->addItem ( image.fileName() );
-    }
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_actionExport_triggered() {
@@ -267,11 +257,7 @@ void MainWindow::on_actionExport_triggered() {
         ( SpriteWidget::Format ) this->selectedSpriteFormat()
     );
 
-    ui->listWidget->clear();
-    foreach ( CssSpriteElementImage image, *this->_images ) {
-        ui->listWidget->addItem ( image.fileName() );
-    }
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_actionImport_triggered() {
@@ -314,7 +300,7 @@ void MainWindow::on_actionImport_triggered() {
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
 
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_actionSyncFilesystem_triggered() {
@@ -410,7 +396,7 @@ void MainWindow::on_actionSyncFilesystem_triggered() {
         }
     }
 
-    this->updateListWidget();
+    this->update();
 }
 
 void MainWindow::on_createSpriteCommandButton_clicked() {
@@ -661,17 +647,15 @@ void MainWindow::on_moveDownToolButton_clicked() {
             selectedItemLabels.append ( item->text() );
         }
     }
-    ui->listWidget->clear();
-    foreach ( CssSpriteElementImage image, *this->_images ) {
-        ui->listWidget->addItem ( image.fileName() );
-    }
+
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
                 ui->xMarginSpinBox->value(),
                 ui->yMarginSpinBox->value(),
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
-    this->updateListWidget();
+
+    ui->listWidget->update(this->_images);
 
     for ( int i = 0; i < ui->listWidget->count(); i++ ) {
         if ( selectedItemLabels.contains ( ui->listWidget->item ( i )->text() ) ) {
@@ -695,17 +679,14 @@ void MainWindow::on_moveUpToolButton_clicked() {
             selectedItemLabels.append ( item->text() );
         }
     }
-    ui->listWidget->clear();
-    foreach ( CssSpriteElementImage image, *this->_images ) {
-        ui->listWidget->addItem ( image.fileName() );
-    }
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
                 ui->xMarginSpinBox->value(),
                 ui->yMarginSpinBox->value(),
                 ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
             ) );
-    this->updateListWidget();
+
+    ui->listWidget->update(this->_images);
 
     for ( int i = 0; i < ui->listWidget->count(); i++ ) {
         if ( selectedItemLabels.contains ( ui->listWidget->item ( i )->text() ) ) {
@@ -726,45 +707,6 @@ void MainWindow::addQualityComboBox() {
 
     ui->toolBar->addSeparator();
     ui->toolBar->addWidget ( spriteFormatWidget );
-}
-
-void MainWindow::updateListWidgetItems() {
-    foreach ( CssSpriteElementImage image, * this->_images ) {
-        QListWidgetItem * item = ui->listWidget->findItems ( image.fileName(), Qt::MatchExactly ).at ( 0 );
-
-        if ( image.fileState() == CssSpriteElementImage::FILE_VIRTUAL ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/image-stack.png" ) );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 0,0,0 ) ) );
-            item->setToolTip ( "This image is present in a sprite file and not synchronised with the filesystem." );
-        }
-        if ( image.fileState() == CssSpriteElementImage::FILE_MODIFIED ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/vcs-locally-modified.png" ) );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 0,100,0 ) ) );
-            item->setToolTip ( "This image is ready to be exported." );
-        }
-        if ( image.fileState() == CssSpriteElementImage::FILE_ADDED ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/vcs-added.png" ) );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 0,0,0 ) ) );
-            item->setToolTip ( "This image has just been added from filesystem." );
-        }
-        if ( image.fileState() == CssSpriteElementImage::FILE_CONFLICT ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/vcs-conflicting.png" ) );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
-            item->setToolTip ( "This image conflicts with filesystem." );
-        }
-        if ( image.fileState() == CssSpriteElementImage::FILE_CHANGED ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/vcs-update-required.png" ) );
-            item->setToolTip ( "Image changed on disk" );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
-            item->setToolTip ( "This image has just been changed on filesystem." );
-        }
-        if ( image.fileState() == CssSpriteElementImage::FILE_DELETED ) {
-            item->setIcon ( QIcon ( ":images/images/16x16/vcs-removed.png" ) );
-            item->setToolTip ( "Image deleted from disk" );
-            item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
-            item->setToolTip ( "This image has just been removed from filesystem." );
-        }
-    }
 }
 
 SpriteWidget::Format MainWindow::selectedSpriteFormat() {

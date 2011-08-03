@@ -18,8 +18,8 @@
  *   along with SpriteGenerator.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef FILESYSTEMTREEWIDGET_H
-#define FILESYSTEMTREEWIDGET_H
+#ifndef SPRITEELEMENTTREEWIDGET_H
+#define SPRITEELEMENTTREEWIDGET_H
 
 #include <QtGui>
 #include <QtCore>
@@ -27,14 +27,14 @@
 #include "cssspriteelementimagelist.h"
 
 /**
- * @brief The class FileSystemTreeWidget extends a QTreeWidget to perform special operation on a CssSpriteElementImageList.
+ * @brief The class SpriteElementTreeWidget extends a QTreeWidget to perform special operation on a CssSpriteElementImageList.
  **/
-class FileSystemTreeWidget : public QTreeWidget {
+class SpriteElementTreeWidget : public QTreeWidget {
     Q_OBJECT
 
 public:
-    FileSystemTreeWidget ( QWidget * parent = 0 );
-    ~FileSystemTreeWidget();
+    SpriteElementTreeWidget ( QWidget * parent = 0 );
+    ~SpriteElementTreeWidget();
     /**
      * @brief Updates the tree widget with image list.
      *

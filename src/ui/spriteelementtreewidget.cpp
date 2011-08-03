@@ -18,17 +18,17 @@
  *   along with SpriteGenerator.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include "filesystemtreewidget.h"
+#include "spriteelementtreewidget.h"
 
-FileSystemTreeWidget::FileSystemTreeWidget ( QWidget * parent )
+SpriteElementTreeWidget::SpriteElementTreeWidget ( QWidget * parent )
         : QTreeWidget ( parent ) {
     this->_images = new CssSpriteElementImageList;
     this->invisibleRootItem()->setFlags ( Qt::NoItemFlags );
 }
 
-FileSystemTreeWidget::~FileSystemTreeWidget() {}
+SpriteElementTreeWidget::~SpriteElementTreeWidget() {}
 
-void FileSystemTreeWidget::dropEvent ( QDropEvent* event ) {
+void SpriteElementTreeWidget::dropEvent ( QDropEvent* event ) {
     if ( this->selectedItems().count() == 1 ) {
         QTreeWidgetItem * item = this->selectedItems().at ( 0 );
 
@@ -52,7 +52,7 @@ void FileSystemTreeWidget::dropEvent ( QDropEvent* event ) {
     }
 }
 
-QString FileSystemTreeWidget::fileName ( QTreeWidgetItem* item ) {
+QString SpriteElementTreeWidget::fileName ( QTreeWidgetItem* item ) {
     QString fileName;
 
     QList<QString> pathParts;
@@ -72,7 +72,7 @@ QString FileSystemTreeWidget::fileName ( QTreeWidgetItem* item ) {
     return fileName;
 }
 
-void FileSystemTreeWidget::update ( CssSpriteElementImageList * images ) {
+void SpriteElementTreeWidget::update ( CssSpriteElementImageList * images ) {
     this->_images = images;
     this->clear();
 

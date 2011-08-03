@@ -50,11 +50,10 @@ private:
     QPushButton * _statusWarningPushButton;
 
     bool readyToExportSprite() ;
-    void updateListWidget();
+    void update();
     QString stripFileName ( QString filePath );
     bool createPreviewPage ( QString dirName );
     void addQualityComboBox();
-    void updateListWidgetItems();
     SpriteWidget::Format selectedSpriteFormat();
 
 protected slots:
@@ -77,7 +76,7 @@ protected slots:
         foreach ( CssSpriteElementImage image, *this->_images ) {
             ui->listWidget->addItem ( image.fileName() );
         }
-        this->updateListWidget();
+        this->update();
     }
     void on_actionInfo_triggered();
     void on_xMarginSpinBox_valueChanged ( int i );

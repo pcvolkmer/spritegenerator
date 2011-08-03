@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>678</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -523,7 +523,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -545,7 +545,7 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QListWidget" name="listWidget">
+           <widget class="SpriteElementListWidget" name="listWidget">
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -619,7 +619,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
-         <widget class="FileSystemTreeWidget" name="treeWidget">
+         <widget class="SpriteElementTreeWidget" name="treeWidget">
           <property name="dragEnabled">
            <bool>true</bool>
           </property>
@@ -784,9 +784,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>FileSystemTreeWidget</class>
+   <class>SpriteElementTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>ui/filesystemtreewidget.h</header>
+   <header>ui/spriteelementtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SpriteElementListWidget</class>
+   <extends>QListWidget</extends>
+   <header>ui/spriteelementlistwidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
