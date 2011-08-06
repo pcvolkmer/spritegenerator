@@ -23,7 +23,7 @@
 
 #include <QtGui>
 #include "ui_mainwindow.h"
-#include "ui_spriteFormatSelector.h"
+#include "ui_spriteQualitySelector.h"
 #include "spritewidget.h"
 #include "infodialog.h"
 #include "previewpage.h"
@@ -53,11 +53,25 @@ private:
     void update();
     QString stripFileName ( QString filePath );
     bool createPreviewPage ( QString dirName );
-    void addQualityComboBox();
     SpriteWidget::Format selectedSpriteFormat();
+    void addQualityComboBox();
 
 protected slots:
     void onFileChanged ( QString path );
+    void onSettingsChanged() {
+        this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
+                    this->_images,
+                    ui->spriteSettingsToolBar->xMargin(),
+                    ui->spriteSettingsToolBar->yMargin(),
+                    ui->spriteSettingsToolBar->layout()
+                ) );
+        this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
+    }
+
+    void onShowAutoChangeForm(bool show) {
+        ui->repeatSettingsInfoWidget->setVisible ( show );
+        ui->resultingCssTextBrowser->setVisible ( ! show );
+    }
 
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
@@ -71,19 +85,8 @@ protected slots:
     void on_listWidget_currentItemChanged ( QListWidgetItem* item );
     void on_treeWidget_itemPressed ( QTreeWidgetItem* item );
     void on_treeWidget_currentItemChanged ( QTreeWidgetItem* item );
-    void on_treeWidget_itemMoved() {
-        ui->listWidget->clear();
-        foreach ( CssSpriteElementImage image, *this->_images ) {
-            ui->listWidget->addItem ( image.fileName() );
-        }
-        this->update();
-    }
+    void on_treeWidget_itemMoved();
     void on_actionInfo_triggered();
-    void on_xMarginSpinBox_valueChanged ( int i );
-    void on_yMarginSpinBox_valueChanged ( int i );
-    void on_elementLayoutComboBox_currentIndexChanged ( int index );
-    void on_spriteRepeatComboBox_currentIndexChanged ( int index );
-    void on_lockMarginToolButton_toggled ( bool checked );
     void on_changeSettingsButton_clicked();
     void on_abortChangeSettingsButton_clicked();
     void on_moveUpToolButton_clicked();

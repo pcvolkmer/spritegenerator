@@ -32,7 +32,6 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     ui->setupUi ( this );
 
-    this->addQualityComboBox();
     this->statusBar()->addPermanentWidget ( this->_progressBar );
     this->statusBar()->addPermanentWidget ( this->_statusWarningPushButton );
 
@@ -45,10 +44,14 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
         }
     }
 
+    this->addQualityComboBox();
+
     this->update();
     this->fsWatcher = new QFileSystemWatcher();
 
-    connect ( fsWatcher, SIGNAL ( fileChanged ( QString ) ), this, SLOT ( onFileChanged ( QString ) ) );
+    connect ( fsWatcher, SIGNAL ( fileChanged ( QString ) ), SLOT ( onFileChanged ( QString ) ) );
+    connect ( ui->spriteSettingsToolBar, SIGNAL(settingsChanged()), SLOT (onSettingsChanged()));
+    connect ( ui->spriteSettingsToolBar, SIGNAL(repeatNeedsAutoChange(bool)), SLOT (onShowAutoChangeForm(bool)));
 }
 
 MainWindow::~MainWindow() {
@@ -60,13 +63,13 @@ MainWindow::~MainWindow() {
 void MainWindow::update() {
     ui->actionRemoveFile->setEnabled ( false );
     ui->actionExport->setEnabled ( false );
-    ui->actionSyncFilesystem->setEnabled ( false );
+    ui->actionExportToFilesystem->setEnabled ( false );
     ui->createSpriteCommandButton->setEnabled ( false );
     ui->previewPageCommandButton->setEnabled ( false );
     if ( ui->listWidget->count() > 0 ) {
         ui->actionRemoveFile->setEnabled ( true );
         if ( this->readyToExportSprite() ) ui->actionExport->setEnabled ( true );
-        ui->actionSyncFilesystem->setEnabled ( true );
+        ui->actionExportToFilesystem->setEnabled ( true );
         ui->createSpriteCommandButton->setEnabled ( true );
         ui->previewPageCommandButton->setEnabled ( true );
     }
@@ -151,9 +154,9 @@ void MainWindow::on_actionAddDirectory_triggered() {
     this->_images = new CssSpriteElementImageList (
         SpriteWidget::updateCssSprite (
             this->_images,
-            ui->xMarginSpinBox->value(),
-            ui->yMarginSpinBox->value(),
-            ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+            ui->spriteSettingsToolBar->xMargin(),
+            ui->spriteSettingsToolBar->yMargin(),
+            ui->spriteSettingsToolBar->layout()
         )
     );
     this->_progressBar->reset();
@@ -191,9 +194,9 @@ void MainWindow::on_actionAddFile_triggered() {
     }
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                ui->spriteSettingsToolBar->xMargin(),
+                ui->spriteSettingsToolBar->yMargin(),
+                ui->spriteSettingsToolBar->layout()
             ) );
     this->setCursor ( Qt::ArrowCursor );
     this->update();
@@ -211,9 +214,9 @@ void MainWindow::on_actionRemoveFile_triggered() {
             this->fsWatcher->removePath ( item->text() );
             this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                         this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                        ui->spriteSettingsToolBar->xMargin(),
+                        ui->spriteSettingsToolBar->yMargin(),
+                        ui->spriteSettingsToolBar->layout()
                     ) );
             delete item;
         }
@@ -228,9 +231,9 @@ void MainWindow::on_actionRemoveFile_triggered() {
             this->fsWatcher->removePath ( ui->treeWidget->fileName ( item ) );
             this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                         this->_images,
-                        ui->xMarginSpinBox->value(),
-                        ui->yMarginSpinBox->value(),
-                        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                        ui->spriteSettingsToolBar->xMargin(),
+                        ui->spriteSettingsToolBar->yMargin(),
+                        ui->spriteSettingsToolBar->layout()
                     ) );
             delete item;
         }
@@ -251,9 +254,9 @@ void MainWindow::on_actionExport_triggered() {
     SpriteWidget::exportToFile (
         fileName,
         this->_images,
-        ui->xMarginSpinBox->value(),
-        ui->yMarginSpinBox->value(),
-        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex(),
+        ui->spriteSettingsToolBar->xMargin(),
+        ui->spriteSettingsToolBar->yMargin(),
+        ui->spriteSettingsToolBar->layout(),
         ( SpriteWidget::Format ) this->selectedSpriteFormat()
     );
 
@@ -295,9 +298,9 @@ void MainWindow::on_actionImport_triggered() {
 
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                ui->spriteSettingsToolBar->xMargin(),
+                ui->spriteSettingsToolBar->yMargin(),
+                ui->spriteSettingsToolBar->layout()
             ) );
 
     this->update();
@@ -411,9 +414,9 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
 
     SpriteWidget::createCssSprite (
         this->_images,
-        ui->xMarginSpinBox->value(),
-        ui->yMarginSpinBox->value(),
-        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex(),
+        ui->spriteSettingsToolBar->xMargin(),
+        ui->spriteSettingsToolBar->yMargin(),
+        ui->spriteSettingsToolBar->layout(),
         ( SpriteWidget::Format ) this->selectedSpriteFormat()
     ).save ( fileName );
 }
@@ -424,9 +427,9 @@ void MainWindow::on_previewPageCommandButton_clicked() {
     this->createPreviewPage ( dirName );
     SpriteWidget::createCssSprite (
         this->_images,
-        ui->xMarginSpinBox->value(),
-        ui->yMarginSpinBox->value(),
-        ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex(),
+        ui->spriteSettingsToolBar->xMargin(),
+        ui->spriteSettingsToolBar->yMargin(),
+        ui->spriteSettingsToolBar->layout(),
         ( SpriteWidget::Format ) this->selectedSpriteFormat()
     ).save ( dirName + "/sprite.png" );
 
@@ -460,7 +463,7 @@ void MainWindow::on_listWidget_itemPressed ( QListWidgetItem * item ) {
                 "/* " + this->stripFileName ( fileName ) + " */\n"
                 + QString ( "background-image: url(<SPRITE URL>);\n" )
                 + QString ( "background-repeat: " )
-                + ui->spriteRepeatComboBox->currentText()
+                + ui->spriteSettingsToolBar->repeat()
                 + ";\nbackground-position: -"
                 + QString::number ( elem.description()->startPosition().x(),10 )
                 + "px -"
@@ -497,7 +500,7 @@ void MainWindow::on_treeWidget_itemPressed ( QTreeWidgetItem * item ) {
                 "/* " + this->stripFileName ( fileName ) + " */\n"
                 + QString ( "background-image: url(<SPRITE URL>);\n" )
                 + QString ( "background-repeat: " )
-                + ui->spriteRepeatComboBox->currentText()
+                + ui->spriteSettingsToolBar->repeat()
                 + ";\nbackground-position: -"
                 + QString::number ( elem.description()->startPosition().x(),10 )
                 + "px -"
@@ -540,85 +543,8 @@ void MainWindow::on_actionInfo_triggered() {
     infoDialog.exec();
 }
 
-void MainWindow::on_xMarginSpinBox_valueChanged ( int i ) {
-    if (
-        ui->lockMarginToolButton->isChecked()
-        && ( ui->spriteRepeatComboBox->currentIndex() != ( int ) SpriteWidget::REPEAT_REPEAT_Y )
-    ) {
-        ui->yMarginSpinBox->setValue ( ui->xMarginSpinBox->value() );
-    }
-
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
-            ) );
-    this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
-}
-
-void MainWindow::on_yMarginSpinBox_valueChanged ( int i ) {
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
-            ) );
-    this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
-}
-
-void MainWindow::on_elementLayoutComboBox_currentIndexChanged ( int index ) {
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) index
-            ) );
-    this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
-}
-
-// Refacs!
-
-void MainWindow::on_spriteRepeatComboBox_currentIndexChanged ( int index ) {
-    ui->repeatSettingsInfoWidget->setVisible ( false );
-    ui->resultingCssTextBrowser->setVisible ( true );
-    ui->lockMarginToolButton->setEnabled ( true );
-    ui->elementLayoutComboBox->setEnabled ( true );
-
-    if ( ( index == ( int ) SpriteWidget::REPEAT_REPEAT_X ) || ( index == ( int ) SpriteWidget::REPEAT_REPEAT_Y ) ) {
-        ui->repeatSettingsInfoWidget->setVisible ( true );
-        ui->resultingCssTextBrowser->setVisible ( false );
-        ui->lockMarginToolButton->setEnabled ( false );
-    }
-
-    if ( index == ( int ) SpriteWidget::REPEAT_NO_REPEAT ) {
-        ui->xMarginSpinBox->setEnabled ( true );
-        ui->yMarginSpinBox->setEnabled ( ! ui->lockMarginToolButton->isChecked() );
-    }
-}
-
-void MainWindow::on_lockMarginToolButton_toggled ( bool checked ) {
-    ui->yMarginSpinBox->setEnabled ( !checked );
-    ui->yMarginSpinBox->setValue ( ui->xMarginSpinBox->value() );
-}
-
 void MainWindow::on_changeSettingsButton_clicked() {
-    int repeatIndex = ui->spriteRepeatComboBox->currentIndex();
-
-    if ( repeatIndex == ( int ) SpriteWidget::REPEAT_REPEAT_X ) {
-        ui->xMarginSpinBox->setEnabled ( false );
-        ui->yMarginSpinBox->setEnabled ( true );
-        ui->xMarginSpinBox->setValue ( 0 );
-        ui->elementLayoutComboBox->setCurrentIndex ( ( int ) SpriteWidget::LAYOUT_VERTICAL );
-    } else if ( repeatIndex == ( int ) SpriteWidget::REPEAT_REPEAT_Y ) {
-        ui->xMarginSpinBox->setEnabled ( true );
-        ui->yMarginSpinBox->setEnabled ( false );
-        ui->yMarginSpinBox->setValue ( 0 );
-        ui->elementLayoutComboBox->setCurrentIndex ( ( int ) SpriteWidget::LAYOUT_HORIZONTAL );
-    }
-
-    ui->elementLayoutComboBox->setEnabled ( false );
-
+    ui->spriteSettingsToolBar->autoChangeSettings();
     this->on_abortChangeSettingsButton_clicked();
 }
 
@@ -650,9 +576,9 @@ void MainWindow::on_moveDownToolButton_clicked() {
 
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                ui->spriteSettingsToolBar->xMargin(),
+                ui->spriteSettingsToolBar->yMargin(),
+                ui->spriteSettingsToolBar->layout()
             ) );
 
     ui->listWidget->update(this->_images);
@@ -681,9 +607,9 @@ void MainWindow::on_moveUpToolButton_clicked() {
     }
     this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
                 this->_images,
-                ui->xMarginSpinBox->value(),
-                ui->yMarginSpinBox->value(),
-                ( SpriteWidget::Layout ) ui->elementLayoutComboBox->currentIndex()
+                ui->spriteSettingsToolBar->xMargin(),
+                ui->spriteSettingsToolBar->yMargin(),
+                ui->spriteSettingsToolBar->layout()
             ) );
 
     ui->listWidget->update(this->_images);
@@ -700,17 +626,8 @@ QString MainWindow::stripFileName ( QString filePath ) {
     return filePath.split ( "/" ).last();
 }
 
-void MainWindow::addQualityComboBox() {
-    Ui_SpriteFormatSelector * spriteFormatSelector = new Ui_SpriteFormatSelector();
-    QWidget * spriteFormatWidget = new QWidget ( this );
-    spriteFormatSelector->setupUi ( spriteFormatWidget );
-
-    ui->toolBar->addSeparator();
-    ui->toolBar->addWidget ( spriteFormatWidget );
-}
-
 SpriteWidget::Format MainWindow::selectedSpriteFormat() {
-    return ( SpriteWidget::Format ) this->ui->toolBar->findChild<QComboBox *> ( "qualityComboBox" )->currentIndex();
+    return ( SpriteWidget::Format ) this->ui->spriteQualityToolBar->findChild<QComboBox *> ( "qualityComboBox" )->currentIndex();
 }
 
 bool MainWindow::readyToExportSprite() {
@@ -733,3 +650,17 @@ bool MainWindow::readyToExportSprite() {
     return true;
 }
 
+void MainWindow::on_treeWidget_itemMoved() {
+    ui->listWidget->clear();
+    foreach ( CssSpriteElementImage image, *this->_images ) {
+        ui->listWidget->addItem ( image.fileName() );
+    }
+    this->update();
+}
+
+void MainWindow::addQualityComboBox() {
+    Ui_SpriteQualitySelector * spriteQualitySelector = new Ui_SpriteQualitySelector();
+    QWidget * spriteQualityWidget = new QWidget ( this );
+    spriteQualitySelector->setupUi ( spriteQualityWidget );
+    ui->spriteQualityToolBar->addWidget ( spriteQualityWidget );
+}
