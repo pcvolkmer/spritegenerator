@@ -18,8 +18,8 @@
  *   along with SpriteGenerator.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef SPRITETOOLBARWIDGET_H
-#define SPRITETOOLBARWIDGET_H
+#ifndef SPRITEFORMATTOOLBAR_H
+#define SPRITEFORMATTOOLBAR_H
 
 #include <QtGui>
 #include <QtCore>
@@ -33,6 +33,10 @@ public:
     explicit SpriteFormatToolBar(QWidget * parent = 0);
     ~SpriteFormatToolBar();
 
+    const Ui_SpriteFormatSelector * ui() {
+      return _ui;
+    }
+    
     int xMargin();
     int yMargin();
     SpriteWidget::Layout layout();
@@ -48,7 +52,7 @@ private slots:
     void on_spriteRepeatComboBox_currentIndexChanged ( int index ) ;
 
 private:
-    Ui::SpriteFormatSelector * ui;
+    Ui::SpriteFormatSelector * _ui;
 
 signals:
     void settingsChanged();

@@ -25,6 +25,14 @@ SET(FILES
 
 add_subdirectory(src)
 
+if(TESTS)
+  message ("Build of tests is enabled")
+  enable_testing()
+  add_subdirectory(tests)
+else(TESTS)
+  message ("To enable build of tests use param '-DTESTS=ON'")
+endif(TESTS)
+
 IF (UNIX AND NOT APPLE)
   INSTALL(FILES ${DESKTOP}
     DESTINATION share/applications
