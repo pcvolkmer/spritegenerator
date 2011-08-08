@@ -18,33 +18,45 @@
  *   along with SpriteGenerator.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef SPRITEELEMENTLISTWIDGET_H
-#define SPRITEELEMENTLISTWIDGET_H
+#ifndef SPRITEFORMATTOOLBAR_H
+#define SPRITEFORMATTOOLBAR_H
 
 #include <QtGui>
 #include <QtCore>
-#include "cssspriteelementimage.h"
-#include "cssspriteelementimagelist.h"
+#include "ui_spriteFormatSelector.h"
+#include "spritewidget.h"
 
-/**
- * @brief The class SpriteElementListWidget extends a QListWidget to perform special operation on a CssSpriteElementImageList.
- **/
-class SpriteElementListWidget : public QListWidget {
+class SpriteFormatToolBar : public QToolBar {
     Q_OBJECT
 
 public:
-    explicit SpriteElementListWidget(QWidget* parent = 0);
-    ~SpriteElementListWidget();
+    explicit SpriteFormatToolBar(QWidget * parent = 0);
+    ~SpriteFormatToolBar();
 
-    /**
-     * @brief Updates list widget with given image list
-     *
-     * @param images The images this widget should display and handle
-     **/
-    void update(CssSpriteElementImageList * images) ;
+    const Ui_SpriteFormatSelector * ui() {
+      return _ui;
+    }
+    
+    int xMargin();
+    int yMargin();
+    SpriteWidget::Layout layout();
+    QString repeat();
+    int repeatIndex();
+    void autoChangeSettings();
+
+private slots:
+    void on_xMarginSpinBox_valueChanged ( int i ) ;
+    void on_yMarginSpinBox_valueChanged ( int i ) ;
+    void on_elementLayoutComboBox_currentIndexChanged ( int index ) ;
+    void on_lockMarginToolButton_toggled ( bool checked ) ;
+    void on_spriteRepeatComboBox_currentIndexChanged ( int index ) ;
 
 private:
-    CssSpriteElementImageList * _images;
+    Ui::SpriteFormatSelector * _ui;
+
+signals:
+    void settingsChanged();
+    void repeatNeedsAutoChange(bool);
 };
 
 #endif

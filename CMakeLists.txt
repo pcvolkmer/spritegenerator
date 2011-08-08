@@ -6,7 +6,7 @@ find_package(Qt4 REQUIRED)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
-set(VERSION_RELEASE 20110803)
+set(VERSION_RELEASE 20110806)
 
 set(EXECUTABLE_OUTPUT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/bin
@@ -24,6 +24,14 @@ SET(FILES
 )
 
 add_subdirectory(src)
+
+if(TESTS)
+  message ("Build of tests is enabled")
+  enable_testing()
+  add_subdirectory(tests)
+else(TESTS)
+  message ("To enable build of tests use param '-DTESTS=ON'")
+endif(TESTS)
 
 IF (UNIX AND NOT APPLE)
   INSTALL(FILES ${DESKTOP}

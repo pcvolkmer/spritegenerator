@@ -5,6 +5,7 @@ set(spritegenerator_SRCS
   ui/infodialog.cpp
   ui/spriteelementtreewidget.cpp
   ui/spriteelementlistwidget.cpp
+  ui/spriteformattoolbar.cpp
   spritewidget.cpp
   cssspriteelementdescription.cpp
   cssspriteelementimage.cpp
@@ -18,6 +19,7 @@ set(spritegenerator_MOC_SRCS
   ui/infodialog.h
   ui/spriteelementtreewidget.h
   ui/spriteelementlistwidget.h
+  ui/spriteformattoolbar.h
   spritewidget.h
 ) 
 
@@ -29,6 +31,7 @@ set(spritegenerator_UIS
   ui/mainwindow.ui
   ui/infoDialog.ui
   ui/spriteFormatSelector.ui
+  ui/spriteQualitySelector.ui
 )
 
 qt4_add_resources(resources_RCC_SRCS ${resources_RCCS})
