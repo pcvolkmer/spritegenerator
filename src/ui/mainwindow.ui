@@ -574,7 +574,7 @@
     <bool>true</bool>
    </attribute>
   </widget>
-  <widget class="QToolBar" name="spriteQualityToolBar">
+  <widget class="SpriteQualityToolBar" name="spriteQualityToolBar">
    <property name="windowTitle">
     <string>toolBar_3</string>
    </property>
@@ -678,6 +678,11 @@
    <class>SpriteFormatToolBar</class>
    <extends>QToolBar</extends>
    <header>ui/spriteformattoolbar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SpriteQualityToolBar</class>
+   <extends>QToolBar</extends>
+   <header>ui/spritequalitytoolbar.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

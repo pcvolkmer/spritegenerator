@@ -3,6 +3,7 @@
 #include <QApplication>
 
 #include "ui/spriteformattoolbartest.h"
+#include "ui/spritequalitytoolbartest.h"
 #include "ui/spriteelementlistwidgettest.h"
 #include "ui/spriteelementtreewidgettest.h"
 #include "ui/mainwindowtest.h"
@@ -13,6 +14,10 @@ int main( int argc, char ** argv ) {
     if (QString(argv[argc-1]) == "SpriteFormatToolBarTest") {
         SpriteFormatToolBarTest spriteFormatToolBarTest;
         return QTest::qExec(&spriteFormatToolBarTest, argc-1, argv);
+    }
+    else if (QString(argv[argc-1]) == "SpriteQualityToolBarTest") {
+        SpriteQualityToolBarTest spriteQualityToolBarTest;
+        return QTest::qExec(&spriteQualityToolBarTest, argc-1, argv);
     }
     else if (QString(argv[argc-1]) == "SpriteElementListWidgetTest") {
         SpriteElementListWidgetTest spriteElementListWidgetTest;

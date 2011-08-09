@@ -6,6 +6,7 @@ set(spritegenerator_SRCS
   ui/spriteelementtreewidget.cpp
   ui/spriteelementlistwidget.cpp
   ui/spriteformattoolbar.cpp
+  ui/spritequalitytoolbar.cpp
   spritewidget.cpp
   cssspriteelementdescription.cpp
   cssspriteelementimage.cpp
@@ -20,6 +21,7 @@ set(spritegenerator_MOC_SRCS
   ui/spriteelementtreewidget.h
   ui/spriteelementlistwidget.h
   ui/spriteformattoolbar.h
+  ui/spritequalitytoolbar.h
   spritewidget.h
 ) 
 

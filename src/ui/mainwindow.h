@@ -53,8 +53,7 @@ private:
     void update();
     QString stripFileName ( QString filePath );
     bool createPreviewPage ( QString dirName );
-    SpriteWidget::Format selectedSpriteFormat();
-    void addQualityComboBox();
+    SpriteWidget::Format selectedSpriteColorDepth();
 
 protected slots:
     void onFileChanged ( QString path );

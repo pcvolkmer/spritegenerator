@@ -7,6 +7,8 @@ include_directories(
 set(tests_SRCS
   ui/spriteformattoolbartest.cpp
   ../src/ui/spriteformattoolbar.cpp
+  ui/spritequalitytoolbartest.cpp
+  ../src/ui/spritequalitytoolbar.cpp
   ui/spriteelementtreewidgettest.cpp
   ../src/ui/spriteelementtreewidget.cpp
   ui/spriteelementlistwidgettest.cpp
@@ -25,6 +27,8 @@ set(tests_SRCS
 set(tests_MOC_SRCS
   ui/spriteformattoolbartest.h
   ../src/ui/spriteformattoolbar.h
+  ui/spritequalitytoolbartest.h
+  ../src/ui/spritequalitytoolbar.h
   ui/spriteelementtreewidgettest.h
   ../src/ui/spriteelementtreewidget.h
   ui/spriteelementlistwidgettest.h
@@ -59,6 +63,7 @@ target_link_libraries(tests
 )
 
 add_test(SpriteFormatToolBarTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteFormatToolBarTest)
+add_test(SpriteQualityToolBarTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteQualityToolBarTest)
 add_test(SpriteElementListWidgetTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteElementListWidgetTest)
 add_test(SpriteElementTreeWidgetTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteElementTreeWidgetTest)
 add_test(MainWindowTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests MainWindowTest)

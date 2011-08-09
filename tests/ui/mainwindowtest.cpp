@@ -8,7 +8,7 @@ void MainWindowTest::initTestCase() {
 }
 
 void MainWindowTest::cleanupTestCase() {
-    delete mainWindow;
+    mainWindow->deleteLater();
 }
 
 void MainWindowTest::testShouldDisableXMarginSelectorOnXRepeat() {

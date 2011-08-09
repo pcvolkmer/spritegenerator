@@ -44,8 +44,6 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
         }
     }
 
-    this->addQualityComboBox();
-
     this->update();
     this->fsWatcher = new QFileSystemWatcher();
 
@@ -256,7 +254,7 @@ void MainWindow::on_actionExport_triggered() {
         ui->spriteSettingsToolBar->xMargin(),
         ui->spriteSettingsToolBar->yMargin(),
         ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteFormat()
+        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
     );
 
     this->update();
@@ -416,8 +414,8 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
         ui->spriteSettingsToolBar->xMargin(),
         ui->spriteSettingsToolBar->yMargin(),
         ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteFormat()
-    ).save ( fileName );
+        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
+    ).save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
 void MainWindow::on_previewPageCommandButton_clicked() {
@@ -429,8 +427,8 @@ void MainWindow::on_previewPageCommandButton_clicked() {
         ui->spriteSettingsToolBar->xMargin(),
         ui->spriteSettingsToolBar->yMargin(),
         ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteFormat()
-    ).save ( dirName + "/sprite.png" );
+        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
+    ).save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
 
 #ifdef WIN32
     QDesktopServices::openUrl ( QUrl ( "file:///" + dirName + "/index.html" ) );
@@ -625,8 +623,8 @@ QString MainWindow::stripFileName ( QString filePath ) {
     return filePath.split ( "/" ).last();
 }
 
-SpriteWidget::Format MainWindow::selectedSpriteFormat() {
-    return ( SpriteWidget::Format ) this->ui->spriteQualityToolBar->findChild<QComboBox *> ( "qualityComboBox" )->currentIndex();
+SpriteWidget::Format MainWindow::selectedSpriteColorDepth() {
+    return ( SpriteWidget::Format ) this->ui->spriteQualityToolBar->colorDepth();
 }
 
 bool MainWindow::readyToExportSprite() {
@@ -645,13 +643,6 @@ void MainWindow::on_treeWidget_itemMoved() {
         ui->listWidget->addItem ( image.fileName() );
     }
     this->update();
-}
-
-void MainWindow::addQualityComboBox() {
-    Ui_SpriteQualitySelector * spriteQualitySelector = new Ui_SpriteQualitySelector();
-    QWidget * spriteQualityWidget = new QWidget ( this );
-    spriteQualitySelector->setupUi ( spriteQualityWidget );
-    ui->spriteQualityToolBar->addWidget ( spriteQualityWidget );
 }
 
 void MainWindow::onSettingsChanged() {
