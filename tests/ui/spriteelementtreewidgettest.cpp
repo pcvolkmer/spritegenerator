@@ -28,7 +28,7 @@ void SpriteElementTreeWidgetTest::initTestCase() {
 }
 
 void SpriteElementTreeWidgetTest::cleanupTestCase() {
-    delete spriteElementTreeWidget;
+    spriteElementTreeWidget->deleteLater();
 }
 
 void SpriteElementTreeWidgetTest::testShouldUpdateTreeWidget() {
@@ -37,10 +37,4 @@ void SpriteElementTreeWidgetTest::testShouldUpdateTreeWidget() {
     QVERIFY(node->childCount() == 2);
     QVERIFY(node->child(0)->text(0) == QString("arrow-down.png"));
     QVERIFY(node->child(1)->text(0) == QString("arrow-up.png"));
-}
-
-void SpriteElementTreeWidgetTest::testShouldRemoveImage() {
-    QTreeWidgetItem * node = spriteElementTreeWidget->invisibleRootItem()->child(1)->child(0)->child(0);
-    spriteElementTreeWidget->setCurrentItem(node->child(0));
-
 }

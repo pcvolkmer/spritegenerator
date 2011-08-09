@@ -49,6 +49,7 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     connect ( fsWatcher, SIGNAL ( fileChanged ( QString ) ), SLOT ( onFileChanged ( QString ) ) );
     connect ( ui->spriteSettingsToolBar, SIGNAL(settingsChanged()), SLOT (onSettingsChanged()));
+    connect ( ui->spriteQualityToolBar, SIGNAL(qualityChanged()), SLOT (onQualityChanged()));
     connect ( ui->spriteSettingsToolBar, SIGNAL(repeatNeedsAutoChange(bool)), SLOT (onShowAutoChangeForm(bool)));
 }
 
@@ -148,14 +149,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
         );
     }
 
-    this->_images = new CssSpriteElementImageList (
-        SpriteWidget::updateCssSprite (
-            this->_images,
-            ui->spriteSettingsToolBar->xMargin(),
-            ui->spriteSettingsToolBar->yMargin(),
-            ui->spriteSettingsToolBar->layout()
-        )
-    );
+    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
     this->_progressBar->reset();
     this->setCursor ( Qt::ArrowCursor );
     this->update();
@@ -189,12 +183,7 @@ void MainWindow::on_actionAddFile_triggered() {
             10000
         );
     }
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->spriteSettingsToolBar->xMargin(),
-                ui->spriteSettingsToolBar->yMargin(),
-                ui->spriteSettingsToolBar->layout()
-            ) );
+    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
     this->setCursor ( Qt::ArrowCursor );
     this->update();
 }
@@ -209,12 +198,7 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 }
             }
             this->fsWatcher->removePath ( item->text() );
-            this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                        this->_images,
-                        ui->spriteSettingsToolBar->xMargin(),
-                        ui->spriteSettingsToolBar->yMargin(),
-                        ui->spriteSettingsToolBar->layout()
-                    ) );
+            this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
             delete item;
         }
     } else if ( ui->tabWidget->currentIndex() == 1 ) {
@@ -226,12 +210,7 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 }
             }
             this->fsWatcher->removePath ( ui->treeWidget->fileName ( item ) );
-            this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                        this->_images,
-                        ui->spriteSettingsToolBar->xMargin(),
-                        ui->spriteSettingsToolBar->yMargin(),
-                        ui->spriteSettingsToolBar->layout()
-                    ) );
+            this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
             delete item;
         }
     }
@@ -248,14 +227,7 @@ void MainWindow::on_actionExport_triggered() {
 
     if ( fileName.isEmpty() ) return;
 
-    SpriteWidget::exportToFile (
-        fileName,
-        this->_images,
-        ui->spriteSettingsToolBar->xMargin(),
-        ui->spriteSettingsToolBar->yMargin(),
-        ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
-    );
+    SpriteWidget::instance()->exportToFile(fileName);
 
     this->update();
 }
@@ -285,7 +257,7 @@ void MainWindow::on_actionImport_triggered() {
     ui->listWidget->clear();
     this->_images->clear();
 
-    foreach ( CssSpriteElementImage image, * SpriteWidget::importFromFile ( fileName ) ) {
+    foreach ( CssSpriteElementImage image, * SpriteWidget::instance()->importFromFile ( fileName ) ) {
         ui->listWidget->addItem ( image.fileName() );
         this->_images->append ( image );
         QListWidgetItem * item = ui->listWidget->findItems ( image.fileName(), Qt::MatchExactly ).at ( 0 );
@@ -293,12 +265,7 @@ void MainWindow::on_actionImport_triggered() {
         item->setTextColor ( QColor::fromRgb ( qRgb ( 0,100,0 ) ) );
     }
 
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->spriteSettingsToolBar->xMargin(),
-                ui->spriteSettingsToolBar->yMargin(),
-                ui->spriteSettingsToolBar->layout()
-            ) );
+    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
 
     this->update();
 }
@@ -409,26 +376,14 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
 
     if ( fileName.isEmpty() ) return;
 
-    SpriteWidget::createCssSprite (
-        this->_images,
-        ui->spriteSettingsToolBar->xMargin(),
-        ui->spriteSettingsToolBar->yMargin(),
-        ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
-    ).save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
+    SpriteWidget::instance()->createCssSprite().save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
 void MainWindow::on_previewPageCommandButton_clicked() {
     QString dirName = QDir::tempPath();
     if ( dirName.isEmpty() ) return;
     this->createPreviewPage ( dirName );
-    SpriteWidget::createCssSprite (
-        this->_images,
-        ui->spriteSettingsToolBar->xMargin(),
-        ui->spriteSettingsToolBar->yMargin(),
-        ui->spriteSettingsToolBar->layout(),
-        ( SpriteWidget::Format ) this->selectedSpriteColorDepth()
-    ).save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
+    SpriteWidget::instance()->createCssSprite().save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
 
 #ifdef WIN32
     QDesktopServices::openUrl ( QUrl ( "file:///" + dirName + "/index.html" ) );
@@ -571,12 +526,7 @@ void MainWindow::on_moveDownToolButton_clicked() {
         }
     }
 
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->spriteSettingsToolBar->xMargin(),
-                ui->spriteSettingsToolBar->yMargin(),
-                ui->spriteSettingsToolBar->layout()
-            ) );
+    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
 
     ui->listWidget->update ( this->_images );
 
@@ -602,12 +552,7 @@ void MainWindow::on_moveUpToolButton_clicked() {
             selectedItemLabels.append ( item->text() );
         }
     }
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->spriteSettingsToolBar->xMargin(),
-                ui->spriteSettingsToolBar->yMargin(),
-                ui->spriteSettingsToolBar->layout()
-            ) );
+    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
 
     ui->listWidget->update ( this->_images );
 
@@ -646,13 +591,19 @@ void MainWindow::on_treeWidget_itemMoved() {
 }
 
 void MainWindow::onSettingsChanged() {
-    this->_images = new CssSpriteElementImageList ( SpriteWidget::updateCssSprite (
-                this->_images,
-                ui->spriteSettingsToolBar->xMargin(),
-                ui->spriteSettingsToolBar->yMargin(),
-                ui->spriteSettingsToolBar->layout()
-            ) );
+    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
+    SpriteWidget::instance()->setLayout(ui->spriteSettingsToolBar->xMargin(), ui->spriteSettingsToolBar->yMargin(), ui->spriteSettingsToolBar->layout());
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
+    
+    updateSaveRatioProgessBar();
+}
+
+void MainWindow::onQualityChanged() {
+    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
+    SpriteWidget::instance()->setFormat(ui->spriteQualityToolBar->colorDepth(), ui->spriteQualityToolBar->compressionLevel());
+    this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
+    
+    updateSaveRatioProgessBar();
 }
 
 void MainWindow::onShowAutoChangeForm(bool show) {

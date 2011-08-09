@@ -47,3 +47,11 @@ CssSpriteElementImage * CssSpriteElementImageList::find ( QString fileName ) {
     }
     return NULL;
 }
+
+int CssSpriteElementImageList::sumOfImageSizes() {
+    int size = 0;
+    foreach (CssSpriteElementImage image, *this) {
+        size += image.fileData().size();
+    }
+    return size;
+}

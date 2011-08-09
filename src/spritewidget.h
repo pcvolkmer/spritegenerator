@@ -54,64 +54,36 @@ public:
         FORMAT_INDEXED8
     };
 
-    static QList< CssSpriteElementImage > * updateCssSprite (
-        QList< CssSpriteElementImage > * images,
-        int xMargin = 8,
-        int yMargin = 8,
-        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL
-    );
+    static SpriteWidget * instance() ;
 
-    static QImage createCssSprite (
-        QList< CssSpriteElementImage > * images,
-        int xMargin = 8,
-        int yMargin = 8,
-        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
-        SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
-    );
-
-    static bool exportToFile (
-        QString fileName,
-        QList< CssSpriteElementImage > * images,
-        int xMargin = 8,
-        int yMargin = 8,
-        SpriteWidget::Layout layout = SpriteWidget::LAYOUT_VERTICAL,
-        SpriteWidget::Format format = SpriteWidget::FORMAT_RGBA32
-    ) ;
-
-    static CssSpriteElementImageList * importFromFile (
-        QString fileName
-    ) ;
+    CssSpriteElementImageList * updateElementImages ( CssSpriteElementImageList * images );
+    CssSpriteElementImageList * setLayout (int elementXMargin, int elementYMargin, Layout elementLayout) ;
+    CssSpriteElementImageList * setFormat (Format colorDepth, int compression) ;
+    QImage createCssSprite ();
+    int resultingFileSize () ;
+    bool exportToFile ( QString fileName ) ;
+    CssSpriteElementImageList * importFromFile ( QString fileName ) ;
 
 private:
     SpriteWidget (
-        QList< CssSpriteElementImage > * images,
-        int xMargin,
-        int yMargin,
-        SpriteWidget::Layout layout,
+        CssSpriteElementImageList * images,
         QWidget* parent = 0,
         Qt::WFlags fl = 0
     );
-    static SpriteWidget::Layout bestfit (
-        QList< CssSpriteElementImage > * images,
-        int xMargin = 8,
-        int yMargin = 8
-    );
-    static SpriteWidget::Layout bestFileSize (
-        QList< CssSpriteElementImage > * images,
-        int xMargin = 8,
-        int yMargin = 8
-    );
-    static QPair< QSize, QSize > extremeSizes (
-        QList< CssSpriteElementImage > * images
-    );
+    SpriteWidget::Layout bestfit ();
+    SpriteWidget::Layout bestFileSize ();
+    QPair< QSize, QSize > extremeSizes ();
     QSize _spriteSize();
     void _init();
     void _calcImage();
     QPixmap _spriteImage;
-    QList< CssSpriteElementImage > * _images;
+    CssSpriteElementImageList * _images;
     int _elementXMargin;
     int _elementYMargin;
-    SpriteWidget::Layout _layout;
+    SpriteWidget::Layout _elementLayout;
+    SpriteWidget::Format _colorDepth;
+    int _qImageQuality;
+    int _compression;
 
 private slots:
     void paintEvent ( QPaintEvent * e );

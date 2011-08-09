@@ -27,5 +27,12 @@ void SpriteElementListWidgetTest::initTestCase() {
 }
 
 void SpriteElementListWidgetTest::cleanupTestCase() {
-    delete spriteElementListWidget;
+    spriteElementListWidget->deleteLater();
+}
+
+void SpriteElementListWidgetTest::testShouldInsertNewImagesIntoList() {
+    spriteElementListWidget->update(cssSpriteElementImageList());
+    QVERIFY(spriteElementListWidget->count() == 2);
+    QVERIFY(spriteElementListWidget->item(0)->text() == QString("images/16x16/arrow-down.png"));
+    QVERIFY(spriteElementListWidget->item(1)->text() == QString("images/16x16/arrow-up.png"));
 }

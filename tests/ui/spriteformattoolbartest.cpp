@@ -8,7 +8,7 @@ void SpriteFormatToolBarTest::initTestCase() {
 }
 
 void SpriteFormatToolBarTest::cleanupTestCase() {
-    delete this->spriteFormatToolBar;
+    this->spriteFormatToolBar->deleteLater();
 }
 
 void SpriteFormatToolBarTest::testShouldEnableYMarginSpinBox() {

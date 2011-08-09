@@ -22,11 +22,34 @@
 
 SpriteQualityToolBar::SpriteQualityToolBar(QWidget* parent): QToolBar(parent) {
     _ui = new Ui::SpriteQualitySelector();
-    
+
     QWidget * spriteQualityWidget = new QWidget ( this );
     _ui->setupUi ( spriteQualityWidget );
-    
+
+    connect(_ui->compressionSpinBox, SIGNAL(valueChanged(int)), SLOT(emitQualityChanged()));
+    connect(_ui->qualityComboBox, SIGNAL(currentIndexChanged(int)), SLOT(emitQualityChanged()));
+
     this->addWidget( spriteQualityWidget );
 }
 
 SpriteQualityToolBar::~SpriteQualityToolBar() {}
+
+void SpriteQualityToolBar::emitQualityChanged() {
+    emit qualityChanged();
+}
+
+const Ui_SpriteQualitySelector* SpriteQualityToolBar::ui() {
+    return _ui;
+}
+
+int SpriteQualityToolBar::compressionLevel() {
+    return _ui->compressionSpinBox->value();
+}
+
+int SpriteQualityToolBar::qImageQuality() {
+    return this->compressionLevel() * 11;
+}
+
+SpriteWidget::Format SpriteQualityToolBar::colorDepth() {
+    return (SpriteWidget::Format) _ui->qualityComboBox->currentIndex();
+}

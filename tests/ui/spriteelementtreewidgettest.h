@@ -25,7 +25,6 @@ private slots:
     void cleanupTestCase() ;
 
     void testShouldUpdateTreeWidget() ;
-    void testShouldRemoveImage() ;
 };
 
 #endif

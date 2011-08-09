@@ -23,13 +23,7 @@ private:
 private slots:
     void initTestCase() ;
     void cleanupTestCase() ;
-
-    void testShouldInsertNewImagesIntoList() {
-        spriteElementListWidget->update(cssSpriteElementImageList());
-        QVERIFY(spriteElementListWidget->count() == 2);
-        QVERIFY(spriteElementListWidget->item(0)->text() == QString("images/16x16/arrow-down.png"));
-        QVERIFY(spriteElementListWidget->item(1)->text() == QString("images/16x16/arrow-up.png"));
-    }
+    void testShouldInsertNewImagesIntoList() ;
 };
 
 #endif

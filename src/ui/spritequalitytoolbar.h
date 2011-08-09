@@ -33,24 +33,19 @@ public:
     explicit SpriteQualityToolBar(QWidget * parent = 0);
     virtual ~SpriteQualityToolBar();
 
-    const Ui_SpriteQualitySelector * ui() {
-        return _ui;
-    }
-
-    int compressionLevel() {
-        return _ui->compressionSpinBox->value();
-    }
-
-    int qImageQuality() {
-        return this->compressionLevel() * 11;
-    }
-
-    SpriteWidget::Format colorDepth() {
-        return (SpriteWidget::Format) _ui->qualityComboBox->currentIndex();
-    }
+    const Ui_SpriteQualitySelector * ui() ;
+    int compressionLevel() ;
+    int qImageQuality() ;
+    SpriteWidget::Format colorDepth() ;
 
 private:
     Ui::SpriteQualitySelector * _ui;
+    
+private slots:
+    void emitQualityChanged() ;
+
+signals:
+    void qualityChanged();
 };
 
 #endif

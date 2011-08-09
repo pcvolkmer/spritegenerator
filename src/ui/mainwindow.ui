@@ -444,6 +444,29 @@
           </item>
          </layout>
         </item>
+        <item row="1" column="0">
+         <widget class="QWidget" name="widget" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>80</height>
+           </size>
+          </property>
+          <widget class="QProgressBar" name="saveRatioProgessBar">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>10</y>
+             <width>118</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">

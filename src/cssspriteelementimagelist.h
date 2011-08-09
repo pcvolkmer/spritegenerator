@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.th-mittelhessen.de
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -35,6 +35,7 @@ public:
     bool moveDown ( CssSpriteElementImage image );
 
     CssSpriteElementImage * find ( QString fileName );
+    int sumOfImageSizes();
 };
 
 #endif // CSSSPRITEELEMENTIMAGELIST_H

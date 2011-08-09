@@ -20,17 +20,17 @@
 
 #include "spritewidget.h"
 
-QImage SpriteWidget::createCssSprite (
-    QList< CssSpriteElementImage > * images,
-    int xMargin,
-    int yMargin,
-    Layout layout,
-    SpriteWidget::Format format
-) {
-    SpriteWidget swObject ( images, xMargin, yMargin, layout );
-    QImage image = swObject._spriteImage.toImage();
+static SpriteWidget * _instance = 0;
+
+SpriteWidget * SpriteWidget::instance() {
+    if (_instance == NULL) _instance = new SpriteWidget(new CssSpriteElementImageList());
+    return _instance;
+}
+
+QImage SpriteWidget::createCssSprite () {
+    QImage image = this->_spriteImage.toImage();
     if ( !image.isNull() ) {
-        switch ( format ) {
+        switch ( this->_colorDepth ) {
         case SpriteWidget::FORMAT_INDEXED8:
             return image.convertToFormat ( QImage::Format_Indexed8 );
             break;
@@ -49,53 +49,46 @@ QImage SpriteWidget::createCssSprite (
     return QImage();
 }
 
-QList< CssSpriteElementImage > * SpriteWidget::updateCssSprite (
-    QList< CssSpriteElementImage > * images,
-    int xMargin,
-    int yMargin,
-    Layout layout
-) {
-    SpriteWidget swObject ( images, xMargin, yMargin, layout );
-    return swObject._images;
+CssSpriteElementImageList * SpriteWidget::updateElementImages ( CssSpriteElementImageList * images ) {
+    this->_images = images;
+    this->update();
+    this->_init();
+    this->_calcImage();
+    return this->_images;
 }
 
-SpriteWidget::Layout SpriteWidget::bestfit (
-    QList< CssSpriteElementImage > * images,
-    int xMargin,
-    int yMargin
-) {
+SpriteWidget::Layout SpriteWidget::bestfit () {
+    Layout oldLayout = _elementLayout;
     int minSize = 0;
-    SpriteWidget swObject ( images, xMargin, yMargin, SpriteWidget::LAYOUT_HORIZONTAL );
-    int horizontalSize = swObject._spriteSize().height() * swObject._spriteSize().width();
-    swObject._layout = SpriteWidget::LAYOUT_VERTICAL;
-    int verticalSize = swObject._spriteSize().height() * swObject._spriteSize().width();
-    swObject._layout = SpriteWidget::LAYOUT_BLOCK;
-    int blockSize = swObject._spriteSize().height() * swObject._spriteSize().width();
+    int horizontalSize = _spriteSize().height() * _spriteSize().width();
+    _elementLayout = SpriteWidget::LAYOUT_VERTICAL;
+    int verticalSize = _spriteSize().height() * _spriteSize().width();
+    _elementLayout = SpriteWidget::LAYOUT_BLOCK;
+    int blockSize = _spriteSize().height() * _spriteSize().width();
 
     minSize = ( horizontalSize < verticalSize ) ? horizontalSize : verticalSize;
     minSize = ( minSize < blockSize ) ? minSize : blockSize;
 
     if ( minSize == horizontalSize ) return SpriteWidget::LAYOUT_HORIZONTAL;
     if ( minSize == verticalSize ) return SpriteWidget::LAYOUT_VERTICAL;
+
+    _elementLayout = oldLayout;
+
     return SpriteWidget::LAYOUT_BLOCK;
 }
 
-SpriteWidget::Layout SpriteWidget::bestFileSize (
-    QList< CssSpriteElementImage > * images,
-    int xMargin,
-    int yMargin
-) {
+SpriteWidget::Layout SpriteWidget::bestFileSize () {
     int minSize = 0;
     QBuffer buffer;
-    SpriteWidget::createCssSprite ( images,xMargin,yMargin,SpriteWidget::LAYOUT_HORIZONTAL ).save ( &buffer,"PNG" );
+    createCssSprite().save ( &buffer,"PNG", this->_qImageQuality );
     int horizontalFileSize = buffer.size();
     buffer.close();
     buffer.setData ( NULL );
-    SpriteWidget::createCssSprite ( images,xMargin,yMargin,SpriteWidget::LAYOUT_VERTICAL ).save ( &buffer,"PNG" );
+    createCssSprite().save ( &buffer,"PNG", this->_qImageQuality );
     int verticalFileSize = buffer.size();
     buffer.close();
     buffer.setData ( NULL );
-    SpriteWidget::createCssSprite ( images,xMargin,yMargin,SpriteWidget::LAYOUT_BLOCK ).save ( &buffer,"PNG" );
+    createCssSprite().save ( &buffer,"PNG", this->_qImageQuality );
     int blockFileSize = buffer.size();
     buffer.close();
     buffer.setData ( NULL );
@@ -108,10 +101,10 @@ SpriteWidget::Layout SpriteWidget::bestFileSize (
     return SpriteWidget::LAYOUT_BLOCK;
 }
 
-QPair< QSize, QSize > SpriteWidget::extremeSizes ( QList< CssSpriteElementImage > * images ) {
-    QSize minSize = images->first().image().size();
-    QSize maxSize = images->first().image().size();
-    foreach ( CssSpriteElementImage image, * images ) {
+QPair< QSize, QSize > SpriteWidget::extremeSizes () {
+    QSize minSize = _images->first().image().size();
+    QSize maxSize = _images->first().image().size();
+    foreach ( CssSpriteElementImage image, * _images ) {
         minSize = minSize.boundedTo ( image.image().size() );
         maxSize = maxSize.expandedTo ( image.image().size() );
     }
@@ -119,17 +112,18 @@ QPair< QSize, QSize > SpriteWidget::extremeSizes ( QList< CssSpriteElementImage 
 }
 
 SpriteWidget::SpriteWidget (
-    QList< CssSpriteElementImage > * images,
-    int xMargin,
-    int yMargin,
-    Layout layout,
+    CssSpriteElementImageList * images,
     QWidget * parent,
     Qt::WFlags fl
 ) : QWidget ( parent, fl ) {
     this->_images = images;
-    this->_elementXMargin = xMargin;
-    this->_elementYMargin = yMargin;
-    this->_layout = layout;
+    this->_elementXMargin = 8;
+    this->_elementYMargin = 8;
+    this->_elementLayout = SpriteWidget::LAYOUT_BESTFILESIZE;
+    this->_colorDepth = SpriteWidget::FORMAT_RGBA32;
+    this->_compression = 3;
+    this->_qImageQuality = _compression * 11;
+
     this->update();
     this->_init();
     this->_calcImage();
@@ -153,24 +147,24 @@ void SpriteWidget::paintEvent ( QPaintEvent* e ) {
     if ( this->_images->count() == 0 ) return;
     int xPos = this->_elementXMargin;
     int yPos = this->_elementYMargin;
-    QSize maxSize = SpriteWidget::extremeSizes ( this->_images ).second;
+    QSize maxSize = extremeSizes ().second;
     int horizontalElements = ( int ) sqrt ( this->_images->count() );
     int verticalElements = ( int ) ( this->_images->count() / horizontalElements );
     verticalElements = ( horizontalElements * verticalElements < this->_images->count() )
                        ? verticalElements + 1
                        :verticalElements;
 
-    this->_layout = ( this->_layout == SpriteWidget::LAYOUT_BESTFIT )
-                    ? SpriteWidget::bestfit ( this->_images,this->_elementXMargin,this->_elementYMargin )
-                    : this->_layout;
+    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFIT )
+                           ? SpriteWidget::bestfit()
+                           : this->_elementLayout;
 
-    this->_layout = ( this->_layout == SpriteWidget::LAYOUT_BESTFILESIZE )
-                    ? SpriteWidget::bestFileSize ( this->_images,this->_elementXMargin,this->_elementYMargin )
-                    : this->_layout;
+    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFILESIZE )
+                           ? SpriteWidget::bestFileSize()
+                           : this->_elementLayout;
 
     QPainter painter ( this );
 
-    switch ( this->_layout ) {
+    switch ( this->_elementLayout ) {
     case SpriteWidget::LAYOUT_BLOCK:
         for ( int yElement = 1; yElement <= verticalElements; yElement++ ) {
             for ( int xElement = 1; xElement <= horizontalElements; xElement++ ) {
@@ -214,17 +208,17 @@ QSize SpriteWidget::_spriteSize() {
     int y = this->_elementYMargin;
     int horizontalElements = ( int ) sqrt ( this->_images->count() );
     int verticalElements = ( int ) ( this->_images->count() / horizontalElements );
-    QSize maxSize = SpriteWidget::extremeSizes ( this->_images ).second;
+    QSize maxSize = extremeSizes().second;
 
-    this->_layout = ( this->_layout == SpriteWidget::LAYOUT_BESTFIT )
-                    ? SpriteWidget::bestfit ( this->_images,this->_elementXMargin,this->_elementYMargin )
-                    : this->_layout;
+    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFIT )
+                           ? SpriteWidget::bestfit()
+                           : this->_elementLayout;
 
-    this->_layout = ( this->_layout == SpriteWidget::LAYOUT_BESTFILESIZE )
-                    ? SpriteWidget::bestFileSize ( this->_images,this->_elementXMargin,this->_elementYMargin )
-                    : this->_layout;
+    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFILESIZE )
+                           ? SpriteWidget::bestFileSize()
+                           : this->_elementLayout;
 
-    switch ( this->_layout ) {
+    switch ( this->_elementLayout ) {
     case SpriteWidget::LAYOUT_BLOCK:
         verticalElements = ( horizontalElements * verticalElements < this->_images->count() )
                            ? verticalElements + 1
@@ -258,24 +252,20 @@ QSize SpriteWidget::_spriteSize() {
 }
 
 bool SpriteWidget::exportToFile (
-    QString fileName,
-    QList< CssSpriteElementImage >* images,
-    int xMargin,
-    int yMargin,
-    SpriteWidget::Layout layout,
-    SpriteWidget::Format format
+    QString fileName
 ) {
     QDomDocument doc;
     QDomElement rootElement = doc.createElement ( "spritewidget" );
-    rootElement.setAttribute ( "xMargin",QString::number ( xMargin,10 ) );
-    rootElement.setAttribute ( "yMargin",QString::number ( yMargin,10 ) );
-    rootElement.setAttribute ( "layout",QString::number ( ( int ) layout,10 ) );
-    rootElement.setAttribute ( "format",QString::number ( ( int ) format ) );
+    rootElement.setAttribute ( "xMargin",QString::number ( _elementXMargin,10 ) );
+    rootElement.setAttribute ( "yMargin",QString::number ( _elementYMargin,10 ) );
+    rootElement.setAttribute ( "layout",QString::number ( ( int ) _elementLayout,10 ) );
+    rootElement.setAttribute ( "format",QString::number ( ( int ) _colorDepth ) );
+    rootElement.setAttribute ( "compression",QString::number ( ( int ) _compression ) );
 
     // Gemeinsamer Pfadanteil
     QString minSeperatorsPath;
     int minSeperators = 0;
-    foreach ( CssSpriteElementImage image, * images ) {
+    foreach ( CssSpriteElementImage image, * _images ) {
         if ( QDir::fromNativeSeparators ( image.fileName() ).count() < minSeperators || minSeperators == 0 ) {
             minSeperators = QDir::fromNativeSeparators ( image.fileName() ).count();
             minSeperatorsPath = QDir::fromNativeSeparators ( image.fileName() );
@@ -286,7 +276,7 @@ bool SpriteWidget::exportToFile (
 
     QDir baseDir ( minSeperatorsPath );
 
-    foreach ( CssSpriteElementImage image, * images ) {
+    foreach ( CssSpriteElementImage image, * _images ) {
         if ( ! QDir::fromNativeSeparators ( image.fileName() ).startsWith ( minSeperatorsPath ) ) {
             baseDir.cdUp();
             minSeperatorsPath = baseDir.path();
@@ -295,7 +285,7 @@ bool SpriteWidget::exportToFile (
 
     QDomElement imagesElement = doc.createElement ( "images" );
 
-    QListIterator<CssSpriteElementImage> i ( * images );
+    QListIterator<CssSpriteElementImage> i ( * _images );
 
     while ( i.hasNext() ) {
         CssSpriteElementImage * image = ( CssSpriteElementImage * ) &i.next();
@@ -319,8 +309,8 @@ bool SpriteWidget::exportToFile (
     return ( bool ) bytesWritten;
 }
 
-CssSpriteElementImageList* SpriteWidget::importFromFile ( QString fileName ) {
-    CssSpriteElementImageList * result = new CssSpriteElementImageList();
+CssSpriteElementImageList * SpriteWidget::importFromFile ( QString fileName ) {
+    _images = new CssSpriteElementImageList();
     QDomDocument doc;
     QFile file ( fileName );
     if ( !file.open ( QIODevice::ReadOnly ) )
@@ -340,8 +330,40 @@ CssSpriteElementImageList* SpriteWidget::importFromFile ( QString fileName ) {
         }
         CssSpriteElementImage cssSpriteElementImage ( fileName, image );
         cssSpriteElementImage.setFileData ( QByteArray::fromBase64 ( doc.elementsByTagName ( "image" ).at ( i ).toElement().text().toUtf8() ) );
-        result->append ( cssSpriteElementImage );
+        _images->append ( cssSpriteElementImage );
     }
 
-    return result;
+    this->_init();
+    this->_calcImage();
+
+    return _images;
+}
+
+CssSpriteElementImageList* SpriteWidget::setLayout(int elementXMargin, int elementYMargin, SpriteWidget::Layout elementLayout) {
+    _elementXMargin = elementXMargin;
+    _elementYMargin = elementYMargin;
+    _elementLayout = elementLayout;
+
+    this->_init();
+    this->_calcImage();
+    return this->_images;
+}
+
+CssSpriteElementImageList* SpriteWidget::setFormat(SpriteWidget::Format colorDepth, int compression) {
+    _colorDepth = colorDepth;
+    _compression = compression;
+    _qImageQuality = _compression * 11;
+
+    this->_init();
+    this->_calcImage();
+    return this->_images;
+}
+
+int SpriteWidget::resultingFileSize() {
+    QBuffer buffer;
+    createCssSprite().save ( &buffer,"PNG", _qImageQuality );
+    int fileSize = buffer.size();
+    buffer.close();
+    buffer.setData ( NULL );
+    return fileSize;
 }
