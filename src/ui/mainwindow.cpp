@@ -37,13 +37,6 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 
     ui->repeatSettingsInfoWidget->setVisible ( false );
 
-    ui->listWidget->setContextMenuPolicy ( Qt::ActionsContextMenu );
-    foreach ( QAction * action, ui->toolBar->actions() ) {
-        if ( ! ( action->text() == NULL ) ) {
-            ui->listWidget->addAction ( action );
-        }
-    }
-
     this->update();
     this->fsWatcher = new QFileSystemWatcher();
 

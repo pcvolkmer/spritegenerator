@@ -717,6 +717,9 @@
    </property>
   </action>
   <action name="actionSaveCssFile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/images/images/22x22/text-css.png</normaloff>:/images/images/22x22/text-css.png</iconset>
