@@ -57,10 +57,16 @@ private:
 
     void updateSaveRatioProgessBar() {
         int savedBytes = _images->sumOfImageSizes() - SpriteWidget::instance()->resultingFileSize();
-        int savedPercent = _images->sumOfImageSizes() == 0 || ((savedBytes * 100) / _images->sumOfImageSizes()) < 0
-                           ? 0
-                           : (savedBytes * 100) / _images->sumOfImageSizes();
-        ui->saveRatioProgessBar->setValue(100 - savedPercent);
+        int savedBytesPercent = _images->sumOfImageSizes() == 0 || ((savedBytes * 100) / _images->sumOfImageSizes()) < 0
+                                ? 0
+                                : (savedBytes * 100) / _images->sumOfImageSizes();
+
+        int savedRequests = _images->count() - 1;
+        int savedRequestsPercent = _images->count() == 0 || ((savedRequests * 100) / _images->count()) < 0
+                                   ? 0
+                                   : (savedRequests * 100) / _images->count();
+        ui->savedBytesRatioProgessBar->setValue(100 - savedBytesPercent);
+        ui->savedRequestsRatioProgessBar->setValue(100 - savedRequestsPercent);
     }
 
 protected slots:
@@ -76,8 +82,8 @@ protected slots:
     void on_actionExport_triggered();
     void on_actionImport_triggered();
     void on_actionExportToFilesystem_triggered();
-    void on_createSpriteCommandButton_clicked();
-    void on_previewPageCommandButton_clicked();
+    void on_actionSaveCssSprite_triggered();
+    void on_actionPreview_triggered();
     void on_listWidget_itemPressed ( QListWidgetItem* item );
     void on_listWidget_currentItemChanged ( QListWidgetItem* item );
     void on_treeWidget_itemPressed ( QTreeWidgetItem* item );

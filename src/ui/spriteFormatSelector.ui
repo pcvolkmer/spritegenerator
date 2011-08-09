@@ -83,11 +83,6 @@
      </item>
      <item>
       <property name="text">
-       <string>optimize for best fit</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>horizontal</string>
       </property>
      </item>

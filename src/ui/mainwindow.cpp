@@ -63,13 +63,13 @@ void MainWindow::update() {
     ui->actionRemoveFile->setEnabled ( false );
     ui->actionExport->setEnabled ( false );
     ui->actionExportToFilesystem->setEnabled ( false );
-    ui->createSpriteCommandButton->setEnabled ( false );
-    ui->previewPageCommandButton->setEnabled ( false );
+    ui->actionSaveCssSprite->setEnabled ( false );
+    ui->actionPreview->setEnabled ( false );
     if ( this->_images->count() > 0 ) {
         if ( this->readyToExportSprite() ) {
             ui->actionExport->setEnabled ( true );
-            ui->createSpriteCommandButton->setEnabled ( true );
-            ui->previewPageCommandButton->setEnabled ( true );
+            ui->actionSaveCssSprite->setEnabled ( true );
+            ui->actionPreview->setEnabled ( true );
         }
         ui->actionRemoveFile->setEnabled ( true );
         ui->actionExportToFilesystem->setEnabled ( true );
@@ -77,6 +77,8 @@ void MainWindow::update() {
 
     ui->listWidget->update ( this->_images );
     ui->treeWidget->update ( this->_images );
+
+    updateSaveRatioProgessBar();
 }
 
 void MainWindow::onFileChanged ( QString path ) {
@@ -366,7 +368,7 @@ void MainWindow::on_actionExportToFilesystem_triggered() {
     this->update();
 }
 
-void MainWindow::on_createSpriteCommandButton_clicked() {
+void MainWindow::on_actionSaveCssSprite_triggered() {
     QString fileName = QFileDialog::getSaveFileName (
                            this,
                            tr ( "Save css sprite file" ),
@@ -379,7 +381,7 @@ void MainWindow::on_createSpriteCommandButton_clicked() {
     SpriteWidget::instance()->createCssSprite().save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
-void MainWindow::on_previewPageCommandButton_clicked() {
+void MainWindow::on_actionPreview_triggered() {
     QString dirName = QDir::tempPath();
     if ( dirName.isEmpty() ) return;
     this->createPreviewPage ( dirName );
@@ -594,7 +596,7 @@ void MainWindow::onSettingsChanged() {
     this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
     SpriteWidget::instance()->setLayout(ui->spriteSettingsToolBar->xMargin(), ui->spriteSettingsToolBar->yMargin(), ui->spriteSettingsToolBar->layout());
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
-    
+
     updateSaveRatioProgessBar();
 }
 
@@ -602,7 +604,7 @@ void MainWindow::onQualityChanged() {
     this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
     SpriteWidget::instance()->setFormat(ui->spriteQualityToolBar->colorDepth(), ui->spriteQualityToolBar->compressionLevel());
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
-    
+
     updateSaveRatioProgessBar();
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>690</height>
+    <height>783</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,37 +25,11 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="2">
+    <item row="0" column="2" rowspan="2">
      <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QCommandLinkButton" name="createSpriteCommandButton">
-        <property name="maximumSize">
-         <size>
-          <width>340</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Save css sprite</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCommandLinkButton" name="previewPageCommandButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>340</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Preview</string>
-        </property>
-       </widget>
-      </item>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="sizePolicy">
@@ -343,14 +317,7 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="1">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="tabPosition">
        <enum>QTabWidget::West</enum>
@@ -362,7 +329,7 @@
        <enum>Qt::ElideNone</enum>
       </property>
       <property name="documentMode">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -375,7 +342,7 @@
         <string>Element list</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <widget class="SpriteElementListWidget" name="listWidget">
@@ -444,29 +411,6 @@
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
-         <widget class="QWidget" name="widget" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>80</height>
-           </size>
-          </property>
-          <widget class="QProgressBar" name="saveRatioProgessBar">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>10</y>
-             <width>118</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-          </widget>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -502,6 +446,78 @@
             <string notr="true">1</string>
            </property>
           </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QWidget" name="widget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>80</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>403</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="labelAlignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Resulting sprite size</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QProgressBar" name="savedBytesRatioProgessBar">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Resulting requests</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QProgressBar" name="savedRequestsRatioProgessBar">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
          </widget>
         </item>
        </layout>
@@ -556,6 +572,9 @@
    <addaction name="actionAddFile"/>
    <addaction name="actionAddDirectory"/>
    <addaction name="actionRemoveFile"/>
+   <addaction name="actionSaveCssSprite"/>
+   <addaction name="actionSaveCssFile"/>
+   <addaction name="actionPreview"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
@@ -685,6 +704,42 @@
     <string>Export to filesystem</string>
    </property>
   </action>
+  <action name="actionSaveCssSprite">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/image-x-generic.png</normaloff>:/images/images/22x22/image-x-generic.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save CSS sprite</string>
+   </property>
+   <property name="toolTip">
+    <string>Save CSS sprite</string>
+   </property>
+  </action>
+  <action name="actionSaveCssFile">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/text-css.png</normaloff>:/images/images/22x22/text-css.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save CSS file</string>
+   </property>
+   <property name="toolTip">
+    <string>Save CSS file</string>
+   </property>
+  </action>
+  <action name="actionPreview">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/images/22x22/document-preview.png</normaloff>:/images/images/22x22/document-preview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preview</string>
+   </property>
+   <property name="toolTip">
+    <string>Preview</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -710,8 +765,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>listWidget</tabstop>
-  <tabstop>createSpriteCommandButton</tabstop>
-  <tabstop>previewPageCommandButton</tabstop>
   <tabstop>fileName</tabstop>
   <tabstop>imageSizeX</tabstop>
   <tabstop>imageSizeY</tabstop>

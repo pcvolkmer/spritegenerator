@@ -35,7 +35,6 @@ class SpriteWidget : public QWidget {
 public:
     enum Layout {
         LAYOUT_BESTFILESIZE,
-        LAYOUT_BESTFIT,
         LAYOUT_HORIZONTAL,
         LAYOUT_VERTICAL,
         LAYOUT_BLOCK
@@ -70,7 +69,6 @@ private:
         QWidget* parent = 0,
         Qt::WFlags fl = 0
     );
-    SpriteWidget::Layout bestfit ();
     SpriteWidget::Layout bestFileSize ();
     QPair< QSize, QSize > extremeSizes ();
     QSize _spriteSize();

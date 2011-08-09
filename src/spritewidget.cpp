@@ -57,26 +57,6 @@ CssSpriteElementImageList * SpriteWidget::updateElementImages ( CssSpriteElement
     return this->_images;
 }
 
-SpriteWidget::Layout SpriteWidget::bestfit () {
-    Layout oldLayout = _elementLayout;
-    int minSize = 0;
-    int horizontalSize = _spriteSize().height() * _spriteSize().width();
-    _elementLayout = SpriteWidget::LAYOUT_VERTICAL;
-    int verticalSize = _spriteSize().height() * _spriteSize().width();
-    _elementLayout = SpriteWidget::LAYOUT_BLOCK;
-    int blockSize = _spriteSize().height() * _spriteSize().width();
-
-    minSize = ( horizontalSize < verticalSize ) ? horizontalSize : verticalSize;
-    minSize = ( minSize < blockSize ) ? minSize : blockSize;
-
-    if ( minSize == horizontalSize ) return SpriteWidget::LAYOUT_HORIZONTAL;
-    if ( minSize == verticalSize ) return SpriteWidget::LAYOUT_VERTICAL;
-
-    _elementLayout = oldLayout;
-
-    return SpriteWidget::LAYOUT_BLOCK;
-}
-
 SpriteWidget::Layout SpriteWidget::bestFileSize () {
     int minSize = 0;
     QBuffer buffer;
@@ -154,10 +134,6 @@ void SpriteWidget::paintEvent ( QPaintEvent* e ) {
                        ? verticalElements + 1
                        :verticalElements;
 
-    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFIT )
-                           ? SpriteWidget::bestfit()
-                           : this->_elementLayout;
-
     this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFILESIZE )
                            ? SpriteWidget::bestFileSize()
                            : this->_elementLayout;
@@ -209,10 +185,6 @@ QSize SpriteWidget::_spriteSize() {
     int horizontalElements = ( int ) sqrt ( this->_images->count() );
     int verticalElements = ( int ) ( this->_images->count() / horizontalElements );
     QSize maxSize = extremeSizes().second;
-
-    this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFIT )
-                           ? SpriteWidget::bestfit()
-                           : this->_elementLayout;
 
     this->_elementLayout = ( this->_elementLayout == SpriteWidget::LAYOUT_BESTFILESIZE )
                            ? SpriteWidget::bestFileSize()
