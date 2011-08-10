@@ -54,20 +54,8 @@ private:
     QString stripFileName ( QString filePath );
     bool createPreviewPage ( QString dirName );
     SpriteWidget::Format selectedSpriteColorDepth();
-
-    void updateSaveRatioProgessBar() {
-        int savedBytes = _images->sumOfImageSizes() - SpriteWidget::instance()->resultingFileSize();
-        int savedBytesPercent = _images->sumOfImageSizes() == 0 || ((savedBytes * 100) / _images->sumOfImageSizes()) < 0
-                                ? 0
-                                : (savedBytes * 100) / _images->sumOfImageSizes();
-
-        int savedRequests = _images->count() - 1;
-        int savedRequestsPercent = _images->count() == 0 || ((savedRequests * 100) / _images->count()) < 0
-                                   ? 0
-                                   : (savedRequests * 100) / _images->count();
-        ui->savedBytesRatioProgessBar->setValue(100 - savedBytesPercent);
-        ui->savedRequestsRatioProgessBar->setValue(100 - savedRequestsPercent);
-    }
+    void updateSaveRatioProgessBar() ;
+    void updateResultingCssTextBrowser(QString fileName) ;
 
 protected slots:
     void onFileChanged ( QString path );

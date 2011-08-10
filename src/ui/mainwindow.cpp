@@ -74,6 +74,66 @@ void MainWindow::update() {
     updateSaveRatioProgessBar();
 }
 
+void MainWindow::updateSaveRatioProgessBar() {
+    int savedBytes = _images->sumOfImageSizes() - SpriteWidget::instance()->resultingFileSize();
+    int savedBytesPercent = _images->sumOfImageSizes() == 0 || ((savedBytes * 100) / _images->sumOfImageSizes()) < 0
+                            ? 0
+                            : (savedBytes * 100) / _images->sumOfImageSizes();
+
+    int savedRequests = _images->count() - 1;
+    int savedRequestsPercent = _images->count() == 0 || ((savedRequests * 100) / _images->count()) < 0
+                               ? 0
+                               : (savedRequests * 100) / _images->count();
+    ui->savedBytesRatioProgessBar->setValue(100 - savedBytesPercent);
+    ui->savedRequestsRatioProgessBar->setValue(100 - savedRequestsPercent);
+}
+
+void MainWindow::updateResultingCssTextBrowser(QString fileName) {
+    foreach ( CssSpriteElementImage elem, * this->_images ) {
+        if ( elem.fileName() == fileName ) {
+            ui->fileName->setText ( this->stripFileName ( fileName ) );
+            ui->imageSizeX->setText ( QString::number ( elem.description()->size().width(),10 ) + "px" );
+            ui->imageSizeY->setText ( QString::number ( elem.description()->size().height(),10 ) + "px" );
+            ui->resultingCssTextBrowser->setText (
+                "/* " + this->stripFileName ( fileName ) + " */\n"
+                + QString ( "background-image: url(<SPRITE URL>);\n" )
+                + QString ( "background-repeat: " )
+                + ui->spriteSettingsToolBar->repeat()
+                + ";\nbackground-position: -"
+                + QString::number ( elem.description()->startPosition().x(),10 )
+                + "px -"
+                + QString::number ( elem.description()->startPosition().y(),10 )
+                + "px;\n"
+                + "width: "
+                + QString::number ( elem.description()->size().width(),10 )
+                + "px;\nheight: "
+                + QString::number ( elem.description()->size().height(),10 )
+                + "px;"
+            );
+            ui->elementImageLabel->setPixmap ( QPixmap::fromImage ( elem.image() ) );
+            return;
+        }
+    }
+}
+
+QString MainWindow::stripFileName ( QString filePath ) {
+    return filePath.split ( "/" ).last();
+}
+
+SpriteWidget::Format MainWindow::selectedSpriteColorDepth() {
+    return ( SpriteWidget::Format ) this->ui->spriteQualityToolBar->colorDepth();
+}
+
+bool MainWindow::readyToExportSprite() {
+    bool pureVirtual = true;
+    foreach ( CssSpriteElementImage image, * this->_images ) {
+        if ( ! ( image.fileState() & ( CssSpriteElementImage::FILE_VIRTUAL|CssSpriteElementImage::FILE_MODIFIED ) ) ) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void MainWindow::onFileChanged ( QString path ) {
     QListWidgetItem * item = ui->listWidget->findItems ( path, Qt::MatchExactly ).at ( 0 );
     item->setTextColor ( QColor::fromRgb ( qRgb ( 240,0,0 ) ) );
@@ -115,7 +175,6 @@ void MainWindow::on_actionAddDirectory_triggered() {
             if ( !this->_images->contains ( img ) ) {
                 img.setFileState ( CssSpriteElementImage::FILE_ADDED );
                 this->_images->append ( img );
-                ui->listWidget->addItem ( dirName + "/" + fileName );
                 this->fsWatcher->addPath ( dirName + "/" + fileName );
             }
             importCounter++;
@@ -144,7 +203,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
         );
     }
 
-    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
+    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
     this->_progressBar->reset();
     this->setCursor ( Qt::ArrowCursor );
     this->update();
@@ -178,7 +237,7 @@ void MainWindow::on_actionAddFile_triggered() {
             10000
         );
     }
-    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
+    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
     this->setCursor ( Qt::ArrowCursor );
     this->update();
 }
@@ -193,7 +252,6 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 }
             }
             this->fsWatcher->removePath ( item->text() );
-            this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
             delete item;
         }
     } else if ( ui->tabWidget->currentIndex() == 1 ) {
@@ -205,10 +263,10 @@ void MainWindow::on_actionRemoveFile_triggered() {
                 }
             }
             this->fsWatcher->removePath ( ui->treeWidget->fileName ( item ) );
-            this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
             delete item;
         }
     }
+    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
     this->update();
 }
 
@@ -255,20 +313,16 @@ void MainWindow::on_actionImport_triggered() {
     foreach ( CssSpriteElementImage image, * SpriteWidget::instance()->importFromFile ( fileName ) ) {
         ui->listWidget->addItem ( image.fileName() );
         this->_images->append ( image );
-        QListWidgetItem * item = ui->listWidget->findItems ( image.fileName(), Qt::MatchExactly ).at ( 0 );
-        item->setIcon ( QIcon ( ":images/images/16x16/vcs-added.png" ) );
-        item->setTextColor ( QColor::fromRgb ( qRgb ( 0,100,0 ) ) );
     }
 
-    this->_images = new CssSpriteElementImageList (SpriteWidget::instance()->updateElementImages( this->_images ));
-
+    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
     this->update();
 }
 
 void MainWindow::on_actionExportToFilesystem_triggered() {
     QString dirName = QFileDialog::getExistingDirectory (
                           this,
-                          tr ( "Select directory to store imported files" ),
+                          tr ( "Select directory to export files to" ),
                           "./",
                           QFileDialog::ReadOnly
                       );
@@ -326,8 +380,8 @@ void MainWindow::on_actionExportToFilesystem_triggered() {
         if (
             QMessageBox::question (
                 this,
-                "Sync filesystem",
-                "Some conflicts occure. Do you wish to overwrite files on filesystem?",
+                "Export to filesystem",
+                "Some of the files allready exist. Do you wish to overwrite files on filesystem?",
                 QMessageBox::Ok|QMessageBox::Abort,
                 QMessageBox::Abort
             ) == QMessageBox::Ok
@@ -400,69 +454,18 @@ bool MainWindow::createPreviewPage ( QString dirName ) {
 
 void MainWindow::on_listWidget_itemPressed ( QListWidgetItem * item ) {
     QString fileName = item->text();
-
-    foreach ( CssSpriteElementImage elem, * this->_images ) {
-        if ( elem.fileName() == fileName ) {
-            ui->fileName->setText ( this->stripFileName ( fileName ) );
-            ui->imageSizeX->setText ( QString::number ( elem.description()->size().width(),10 ) + "px" );
-            ui->imageSizeY->setText ( QString::number ( elem.description()->size().height(),10 ) + "px" );
-            ui->resultingCssTextBrowser->setText (
-                "/* " + this->stripFileName ( fileName ) + " */\n"
-                + QString ( "background-image: url(<SPRITE URL>);\n" )
-                + QString ( "background-repeat: " )
-                + ui->spriteSettingsToolBar->repeat()
-                + ";\nbackground-position: -"
-                + QString::number ( elem.description()->startPosition().x(),10 )
-                + "px -"
-                + QString::number ( elem.description()->startPosition().y(),10 )
-                + "px;\n"
-                + "width: "
-                + QString::number ( elem.description()->size().width(),10 )
-                + "px;\nheight: "
-                + QString::number ( elem.description()->size().height(),10 )
-                + "px;"
-            );
-            ui->elementImageLabel->setPixmap ( QPixmap::fromImage ( elem.image() ) );
-            return;
-        }
-    }
+    this->updateResultingCssTextBrowser(fileName);
 }
 
 void MainWindow::on_treeWidget_itemPressed ( QTreeWidgetItem * item ) {
     QString fileName;
-
     while ( item->parent() ) {
         fileName.prepend ( item->text ( 0 ) );
         if ( item->text ( 0 ) != "/" ) fileName.prepend ( "/" );
         item = item->parent();
     }
     fileName.remove ( 0,1 );
-
-    foreach ( CssSpriteElementImage elem, * this->_images ) {
-        if ( elem.fileName() == fileName ) {
-            ui->fileName->setText ( this->stripFileName ( fileName ) );
-            ui->imageSizeX->setText ( QString::number ( elem.description()->size().width(),10 ) + "px" );
-            ui->imageSizeY->setText ( QString::number ( elem.description()->size().height(),10 ) + "px" );
-            ui->resultingCssTextBrowser->setText (
-                "/* " + this->stripFileName ( fileName ) + " */\n"
-                + QString ( "background-image: url(<SPRITE URL>);\n" )
-                + QString ( "background-repeat: " )
-                + ui->spriteSettingsToolBar->repeat()
-                + ";\nbackground-position: -"
-                + QString::number ( elem.description()->startPosition().x(),10 )
-                + "px -"
-                + QString::number ( elem.description()->startPosition().y(),10 )
-                + "px;\n"
-                + "width: "
-                + QString::number ( elem.description()->size().width(),10 )
-                + "px;\nheight: "
-                + QString::number ( elem.description()->size().height(),10 )
-                + "px;"
-            );
-            ui->elementImageLabel->setPixmap ( QPixmap::fromImage ( elem.image() ) );
-            return;
-        }
-    }
+    this->updateResultingCssTextBrowser(fileName);
 }
 
 void MainWindow::on_listWidget_currentItemChanged ( QListWidgetItem* item ) {
@@ -557,24 +560,6 @@ void MainWindow::on_moveUpToolButton_clicked() {
             this->on_listWidget_itemPressed ( ui->listWidget->item ( i ) );
         }
     }
-}
-
-QString MainWindow::stripFileName ( QString filePath ) {
-    return filePath.split ( "/" ).last();
-}
-
-SpriteWidget::Format MainWindow::selectedSpriteColorDepth() {
-    return ( SpriteWidget::Format ) this->ui->spriteQualityToolBar->colorDepth();
-}
-
-bool MainWindow::readyToExportSprite() {
-    bool pureVirtual = true;
-    foreach ( CssSpriteElementImage image, * this->_images ) {
-        if ( ! ( image.fileState() & ( CssSpriteElementImage::FILE_VIRTUAL|CssSpriteElementImage::FILE_MODIFIED ) ) ) {
-            return false;
-        }
-    }
-    return true;
 }
 
 void MainWindow::on_treeWidget_itemMoved() {
