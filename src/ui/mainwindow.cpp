@@ -71,7 +71,7 @@ void MainWindow::update() {
     ui->listWidget->update ( this->_images );
     ui->treeWidget->update ( this->_images );
 
-    updateSaveRatioProgessBar();
+    this->updateSaveRatioProgessBar();
 }
 
 void MainWindow::updateSaveRatioProgessBar() {
@@ -86,6 +86,20 @@ void MainWindow::updateSaveRatioProgessBar() {
                                : (savedRequests * 100) / _images->count();
     ui->savedBytesRatioProgessBar->setValue(100 - savedBytesPercent);
     ui->savedRequestsRatioProgessBar->setValue(100 - savedRequestsPercent);
+
+    if (_images->size() > 0) {
+        ui->savedBytesDescriptionLabel->setText(
+            tr ("This sprite will save %n bytes " , "", savedBytes)
+            + tr ("and will have  a file size of %n bytes.", "", SpriteWidget::instance()->resultingFileSize())
+        );
+
+        ui->savedRequestsDescriptionLabel->setText(
+            tr("Instead of requesting %n images, only a single request will be done.", "", savedRequests + 1)
+        );
+    } else {
+        ui->savedBytesDescriptionLabel->setText( tr ("No images available in sprite."));
+        ui->savedRequestsDescriptionLabel->setText( tr ("No images available in sprite."));
+    }
 }
 
 void MainWindow::updateResultingCssTextBrowser(QString fileName) {
@@ -173,7 +187,8 @@ void MainWindow::on_actionAddDirectory_triggered() {
         if ( !image.isNull() ) {
             CssSpriteElementImage img ( dirName + "/" + fileName,image );
             if ( !this->_images->contains ( img ) ) {
-                img.setFileState ( CssSpriteElementImage::FILE_ADDED );
+                img.setFileState ( CssSpriteElementImage::FILE_VIRTUAL );
+                img.setFileName ( stripFileName( dirName ) + "/" + fileName );
                 this->_images->append ( img );
                 this->fsWatcher->addPath ( dirName + "/" + fileName );
             }
@@ -220,9 +235,10 @@ void MainWindow::on_actionAddFile_triggered() {
     this->setCursor ( Qt::WaitCursor );
     QImage image ( fileName );
     if ( !image.isNull() ) {
-        CssSpriteElementImage img ( fileName,image );
+        CssSpriteElementImage img ( fileName, image );
         if ( !this->_images->contains ( img ) ) {
-            img.setFileState ( CssSpriteElementImage::FILE_ADDED );
+            img.setFileState ( CssSpriteElementImage::FILE_VIRTUAL );
+            img.setFileName ( stripFileName( fileName ) );
             this->_images->append ( img );
             ui->listWidget->addItem ( fileName );
             this->fsWatcher->addPath ( fileName );
