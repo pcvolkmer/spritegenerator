@@ -336,7 +336,7 @@ CssSpriteElementImageList* SpriteWidget::setLayout(int elementXMargin, int eleme
 CssSpriteElementImageList* SpriteWidget::setFormat(SpriteWidget::Format colorDepth, int compression) {
     _colorDepth = colorDepth;
     _compression = compression;
-    _qImageQuality = _compression * 11;
+    _qImageQuality = (9 - _compression) * 11;
 
     this->_init();
     this->_calcImage();

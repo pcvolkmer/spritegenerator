@@ -11,6 +11,23 @@ void SpriteQualityToolBarTest::cleanupTestCase() {
     this->spriteQualityToolBar->deleteLater();
 }
 
+void SpriteQualityToolBarTest::testShouldChangeSliderValueOnSpinBoxKeyboardChange() {
+    QTest::keyClick(
+        this->spriteQualityToolBar->ui()->compressionSpinBox,
+        Qt::Key_Right
+    );
+    QTest::keyClick(
+        this->spriteQualityToolBar->ui()->compressionSpinBox,
+        Qt::Key_Backspace
+    );
+    QTest::keyClick(
+        this->spriteQualityToolBar->ui()->compressionSpinBox,
+        Qt::Key_3
+    );
+    QVERIFY(this->spriteQualityToolBar->ui()->compressionSlider->value() == 3);
+    QVERIFY(this->spriteQualityToolBar->qImageQuality() == 66);
+}
+
 void SpriteQualityToolBarTest::testShouldChangeSpinBoxValueOnSliderChange() {
     QVERIFY(this->spriteQualityToolBar->compressionLevel() == 3);
     QTest::keyClick(
@@ -18,7 +35,7 @@ void SpriteQualityToolBarTest::testShouldChangeSpinBoxValueOnSliderChange() {
         Qt::Key_Right
     );
     QVERIFY(this->spriteQualityToolBar->ui()->compressionSpinBox->value() == 4);
-    QVERIFY(this->spriteQualityToolBar->qImageQuality() == 44);
+    QVERIFY(this->spriteQualityToolBar->qImageQuality() == 55);
 
 }
 
@@ -29,7 +46,7 @@ void SpriteQualityToolBarTest::testShouldChangeSliderValueOnSpinBoxChange() {
         Qt::Key_Up
     );
     QVERIFY(this->spriteQualityToolBar->ui()->compressionSlider->value() == 5);
-    QVERIFY(this->spriteQualityToolBar->qImageQuality() == 55);
+    QVERIFY(this->spriteQualityToolBar->qImageQuality() == 44);
 }
 
 void SpriteQualityToolBarTest::testShouldChangeColorDepth() {

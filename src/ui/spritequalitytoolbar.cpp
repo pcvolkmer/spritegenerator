@@ -47,7 +47,7 @@ int SpriteQualityToolBar::compressionLevel() {
 }
 
 int SpriteQualityToolBar::qImageQuality() {
-    return this->compressionLevel() * 11;
+    return (9 - this->compressionLevel()) * 11;
 }
 
 SpriteWidget::Format SpriteQualityToolBar::colorDepth() {

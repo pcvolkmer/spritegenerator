@@ -22,7 +22,8 @@ private:
 private slots:
     void initTestCase() ;
     void cleanupTestCase() ;
-
+    
+    void testShouldChangeSliderValueOnSpinBoxKeyboardChange() ;
     void testShouldChangeSpinBoxValueOnSliderChange() ;
     void testShouldChangeSliderValueOnSpinBoxChange() ;
     void testShouldChangeColorDepth() ;
