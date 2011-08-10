@@ -293,6 +293,18 @@ CssSpriteElementImageList * SpriteWidget::importFromFile ( QString fileName ) {
     }
     file.close();
 
+    if (doc.elementsByTagName ( "spritewidget" ).count() != 1) return _images;
+    QDomElement rootElement = doc.elementsByTagName ( "spritewidget" ).at(0).toElement();
+
+    int xMargin = rootElement.attribute("xMargin").toInt();
+    int yMargin = rootElement.attribute("yMargin").toInt();
+    SpriteWidget::Layout layout = (SpriteWidget::Layout) rootElement.attribute("yMargin").toInt();
+    this->setLayout(xMargin, yMargin, layout);
+
+    SpriteWidget::Format format = (SpriteWidget::Format) rootElement.attribute("format").toInt();
+    int compression = rootElement.attribute("compression").toInt();
+    this->setFormat(format, compression);
+
     for ( int i = 0; i < doc.elementsByTagName ( "image" ).count(); i++ ) {
         QString fileName = doc.elementsByTagName ( "image" ).at ( i ).toElement().attribute ( "file" );
         QImage image;

@@ -332,6 +332,11 @@ void MainWindow::on_actionImport_triggered() {
     }
 
     this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
+    ui->spriteSettingsToolBar->ui()->xMarginSpinBox->setValue(SpriteWidget::instance()->elementXMargin());
+    ui->spriteSettingsToolBar->ui()->yMarginSpinBox->setValue(SpriteWidget::instance()->elementYMargin());
+    ui->spriteSettingsToolBar->ui()->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::instance()->elementLayout());
+    ui->spriteQualityToolBar->ui()->qualityComboBox->setCurrentIndex((int)SpriteWidget::instance()->colorDepth());
+    ui->spriteQualityToolBar->ui()->compressionSpinBox->setValue((int)SpriteWidget::instance()->compression());
     this->update();
 }
 

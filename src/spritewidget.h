@@ -62,6 +62,22 @@ public:
     int resultingFileSize () ;
     bool exportToFile ( QString fileName ) ;
     CssSpriteElementImageList * importFromFile ( QString fileName ) ;
+    const int elementXMargin() {
+        return _elementXMargin;
+    }
+    const int elementYMargin() {
+        return _elementYMargin;
+    }
+    const Layout elementLayout() {
+        return _elementLayout;
+    }
+    const Format colorDepth() {
+        return _colorDepth;
+    }
+    const int compression() {
+        return _compression;
+    }
+
 
 private:
     SpriteWidget (
