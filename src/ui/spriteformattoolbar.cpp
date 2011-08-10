@@ -27,6 +27,8 @@ SpriteFormatToolBar::SpriteFormatToolBar(QWidget * parent): QToolBar(parent) {
     QWidget * spriteFormatWidget = new QWidget ( this );
     _ui->setupUi ( spriteFormatWidget );
 
+    _lastRepeatSetting = SpriteWidget::REPEAT_NO_REPEAT;
+
     connect (_ui->xMarginSpinBox, SIGNAL(valueChanged(int)), SLOT(on_xMarginSpinBox_valueChanged(int)));
     connect (_ui->yMarginSpinBox, SIGNAL(valueChanged(int)), SLOT(on_yMarginSpinBox_valueChanged(int)));
     connect (_ui->lockMarginToolButton, SIGNAL(toggled(bool)), SLOT(on_lockMarginToolButton_toggled(bool)));
@@ -58,6 +60,7 @@ int SpriteFormatToolBar::repeatIndex() {
 }
 
 void SpriteFormatToolBar::autoChangeSettings() {
+    _lastRepeatSetting = (SpriteWidget::Repeat) _ui->spriteRepeatComboBox->currentIndex();
     if ( _ui->spriteRepeatComboBox->currentIndex() == ( int ) SpriteWidget::REPEAT_REPEAT_X ) {
         _ui->xMarginSpinBox->setEnabled ( false );
         _ui->yMarginSpinBox->setEnabled ( true );
@@ -69,8 +72,12 @@ void SpriteFormatToolBar::autoChangeSettings() {
         _ui->yMarginSpinBox->setValue ( 0 );
         _ui->elementLayoutComboBox->setCurrentIndex ( ( int ) SpriteWidget::LAYOUT_HORIZONTAL );
     }
-
     _ui->elementLayoutComboBox->setEnabled ( false );
+}
+
+void SpriteFormatToolBar::undoRepeatChange() {
+    qDebug() << (int)_lastRepeatSetting;
+    _ui->spriteRepeatComboBox->setCurrentIndex((int)_lastRepeatSetting);
 }
 
 void SpriteFormatToolBar::on_xMarginSpinBox_valueChanged(int i) {
@@ -107,6 +114,7 @@ void SpriteFormatToolBar::on_spriteRepeatComboBox_currentIndexChanged(int index)
     }
 
     if ( index == ( int ) SpriteWidget::REPEAT_NO_REPEAT ) {
+        _lastRepeatSetting = (SpriteWidget::Repeat) _ui->spriteRepeatComboBox->currentIndex();
         _ui->xMarginSpinBox->setEnabled ( true );
         _ui->yMarginSpinBox->setEnabled ( ! _ui->lockMarginToolButton->isChecked() );
     }

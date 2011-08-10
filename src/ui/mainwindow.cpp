@@ -516,10 +516,13 @@ void MainWindow::on_actionInfo_triggered() {
 
 void MainWindow::on_changeSettingsButton_clicked() {
     ui->spriteSettingsToolBar->autoChangeSettings();
-    this->on_abortChangeSettingsButton_clicked();
+    ui->repeatSettingsInfoWidget->setVisible ( false );
+    ui->resultingCssTextBrowser->setVisible ( true );
+    this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
 }
 
 void MainWindow::on_abortChangeSettingsButton_clicked() {
+    ui->spriteSettingsToolBar->undoRepeatChange();
     ui->repeatSettingsInfoWidget->setVisible ( false );
     ui->resultingCssTextBrowser->setVisible ( true );
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );

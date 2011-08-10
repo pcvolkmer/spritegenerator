@@ -26,6 +26,7 @@ private slots:
     void testShouldDisableXMarginSelectorOnXRepeat() ;
     void testShouldDisableYMarginSelectorOnYRepeat() ;
     void testShouldEnableMarginSelectorsOnNoRepeat() ;
+    void testShouldUndoRepeatOnCancelButtonClicked() ;
 };
 
 #endif

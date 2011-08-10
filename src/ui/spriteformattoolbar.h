@@ -34,15 +34,16 @@ public:
     ~SpriteFormatToolBar();
 
     const Ui_SpriteFormatSelector * ui() {
-      return _ui;
+        return _ui;
     }
-    
+
     int xMargin();
     int yMargin();
     SpriteWidget::Layout layout();
     QString repeat();
     int repeatIndex();
     void autoChangeSettings();
+    void undoRepeatChange();
 
 private slots:
     void on_xMarginSpinBox_valueChanged ( int i ) ;
@@ -53,6 +54,7 @@ private slots:
 
 private:
     Ui::SpriteFormatSelector * _ui;
+    SpriteWidget::Repeat _lastRepeatSetting;
 
 signals:
     void settingsChanged();

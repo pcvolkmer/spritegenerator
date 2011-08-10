@@ -81,3 +81,27 @@ void MainWindowTest::testShouldEnableMarginSelectorsOnNoRepeat() {
     QVERIFY(mainWindow->getUi()->spriteSettingsToolBar->ui()->xMarginSpinBox->isEnabled());
     QVERIFY(! mainWindow->getUi()->spriteSettingsToolBar->ui()->yMarginSpinBox->isEnabled());
 }
+
+void MainWindowTest::testShouldUndoRepeatOnCancelButtonClicked() {
+    QVERIFY(mainWindow->getUi()->resultingCssTextBrowser->isVisible());
+    QVERIFY(! mainWindow->getUi()->repeatSettingsInfoWidget->isVisible());
+    QVERIFY(mainWindow->getUi()->spriteSettingsToolBar->ui()->spriteRepeatComboBox->currentText() == QString("no-repeat"));
+
+    QTest::keyClick(
+        mainWindow->getUi()->spriteSettingsToolBar->ui()->spriteRepeatComboBox,
+        Qt::Key_Down
+    );
+
+    QVERIFY(mainWindow->getUi()->spriteSettingsToolBar->ui()->spriteRepeatComboBox->currentText() == QString("repeat-x"));
+
+    QVERIFY(! mainWindow->getUi()->resultingCssTextBrowser->isVisible());
+    QVERIFY(mainWindow->getUi()->repeatSettingsInfoWidget->isVisible());
+
+    QTest::mouseClick(
+        mainWindow->getUi()->abortChangeSettingsButton,
+        Qt::LeftButton
+    );
+
+    QVERIFY(mainWindow->getUi()->spriteSettingsToolBar->ui()->xMarginSpinBox->isEnabled());
+    QVERIFY(mainWindow->getUi()->spriteSettingsToolBar->ui()->spriteRepeatComboBox->currentText() == QString("no-repeat"));
+}
