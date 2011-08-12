@@ -298,7 +298,7 @@ CssSpriteElementImageList * SpriteWidget::importFromFile ( QString fileName ) {
 
     int xMargin = rootElement.attribute("xMargin").toInt();
     int yMargin = rootElement.attribute("yMargin").toInt();
-    SpriteWidget::Layout layout = (SpriteWidget::Layout) rootElement.attribute("yMargin").toInt();
+    SpriteWidget::Layout layout = (SpriteWidget::Layout) rootElement.attribute("layout").toInt();
     this->setLayout(xMargin, yMargin, layout);
 
     SpriteWidget::Format format = (SpriteWidget::Format) rootElement.attribute("format").toInt();

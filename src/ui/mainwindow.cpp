@@ -323,15 +323,8 @@ void MainWindow::on_actionImport_triggered() {
 
     if ( fileName.isEmpty() ) return;
 
-    ui->listWidget->clear();
-    this->_images->clear();
-
-    foreach ( CssSpriteElementImage image, * SpriteWidget::instance()->importFromFile ( fileName ) ) {
-        ui->listWidget->addItem ( image.fileName() );
-        this->_images->append ( image );
-    }
-
-    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
+    this->_images = SpriteWidget::instance()->importFromFile(fileName);
+    
     ui->spriteSettingsToolBar->ui()->xMarginSpinBox->setValue(SpriteWidget::instance()->elementXMargin());
     ui->spriteSettingsToolBar->ui()->yMarginSpinBox->setValue(SpriteWidget::instance()->elementYMargin());
     ui->spriteSettingsToolBar->ui()->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::instance()->elementLayout());
