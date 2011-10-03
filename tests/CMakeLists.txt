@@ -62,8 +62,8 @@ target_link_libraries(tests
   ${QT_QTXML_LIBRARY}
 )
 
-add_test(SpriteFormatToolBarTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteFormatToolBarTest)
-add_test(SpriteQualityToolBarTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteQualityToolBarTest)
-add_test(SpriteElementListWidgetTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteElementListWidgetTest)
-add_test(SpriteElementTreeWidgetTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests SpriteElementTreeWidgetTest)
-add_test(MainWindowTest ${CMAKE_CURRENT_BINARY_DIR}/../bin/tests MainWindowTest)
+add_test(SpriteFormatToolBarTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteFormatToolBarTest)
+add_test(SpriteQualityToolBarTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteQualityToolBarTest)
+add_test(SpriteElementListWidgetTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteElementListWidgetTest)
+add_test(SpriteElementTreeWidgetTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteElementTreeWidgetTest)
+add_test(MainWindowTest ${EXECUTABLE_OUTPUT_PATH}/tests MainWindowTest)
