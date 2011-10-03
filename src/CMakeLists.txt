@@ -63,6 +63,7 @@ target_link_libraries(spritegenerator
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTXML_LIBRARY}
+  csscomposer
 )
 
 IF(APPLE)

@@ -12,6 +12,10 @@ set(EXECUTABLE_OUTPUT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/bin
 )
 
+set(LIBRARY_OUTPUT_PATH
+  ${CMAKE_CURRENT_BINARY_DIR}/libs
+)
+
 CONFIGURE_FILE( version.h.cmake src/version.h )
 CONFIGURE_FILE( Doxyfile.cmake Doxyfile )
 
@@ -24,11 +28,13 @@ SET(FILES
 )
 
 add_subdirectory(src)
+add_subdirectory(libs/csscomposer/src)
 
 if(TESTS)
   message ("Build of tests is enabled")
   enable_testing()
   add_subdirectory(tests)
+  add_subdirectory(libs/csscomposer/tests)
 else(TESTS)
   message ("To enable build of tests use param '-DTESTS=ON'")
 endif(TESTS)

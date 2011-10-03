@@ -60,6 +60,7 @@ target_link_libraries(tests
   ${QT_QTGUI_LIBRARY}
   ${QT_QTTEST_LIBRARY}
   ${QT_QTXML_LIBRARY}
+  csscomposer
 )
 
 add_test(SpriteFormatToolBarTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteFormatToolBarTest)

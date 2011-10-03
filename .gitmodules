@@ -1,0 +1,3 @@
+[submodule "libs/csscomposer"]
+	path = libs/csscomposer
+	url = git://scm.mni.thm.de/libcsscomposer/libcsscomposer.git
