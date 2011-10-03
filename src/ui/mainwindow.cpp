@@ -57,11 +57,13 @@ void MainWindow::update() {
     ui->actionExport->setEnabled ( false );
     ui->actionExportToFilesystem->setEnabled ( false );
     ui->actionSaveCssSprite->setEnabled ( false );
+    ui->actionSaveCssFile->setEnabled ( false );
     ui->actionPreview->setEnabled ( false );
     if ( this->_images->count() > 0 ) {
         if ( this->readyToExportSprite() ) {
             ui->actionExport->setEnabled ( true );
             ui->actionSaveCssSprite->setEnabled ( true );
+            ui->actionSaveCssFile->setEnabled ( true );
             ui->actionPreview->setEnabled ( true );
         }
         ui->actionRemoveFile->setEnabled ( true );
@@ -324,7 +326,7 @@ void MainWindow::on_actionImport_triggered() {
     if ( fileName.isEmpty() ) return;
 
     this->_images = SpriteWidget::instance()->importFromFile(fileName);
-    
+
     ui->spriteSettingsToolBar->ui()->xMarginSpinBox->setValue(SpriteWidget::instance()->elementXMargin());
     ui->spriteSettingsToolBar->ui()->yMarginSpinBox->setValue(SpriteWidget::instance()->elementYMargin());
     ui->spriteSettingsToolBar->ui()->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::instance()->elementLayout());
@@ -440,6 +442,23 @@ void MainWindow::on_actionSaveCssSprite_triggered() {
     if ( fileName.isEmpty() ) return;
 
     SpriteWidget::instance()->createCssSprite().save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
+}
+
+void MainWindow::on_actionSaveCssFile_triggered() {
+    QString fileName = QFileDialog::getSaveFileName (
+                           this,
+                           tr ( "Save generated css file" ),
+                           "./",
+                           "CSS file (*.css)"
+                       );
+
+    if ( fileName.isEmpty() ) return;
+
+    QFile cssFile ( fileName );
+    cssFile.open ( QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate );
+
+    cssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+    cssFile.close();
 }
 
 void MainWindow::on_actionPreview_triggered() {

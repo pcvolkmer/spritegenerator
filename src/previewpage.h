@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -28,12 +28,14 @@
 class PreviewPage {
 public:
     static QByteArray create ( QList<CssSpriteElementImage> images );
-
+    static QByteArray createCssOnly ( QList<CssSpriteElementImage> images );
+    
 private:
     PreviewPage ( QList<CssSpriteElementImage> images );
     ~PreviewPage();
 
     QByteArray create();
+    QByteArray generateCss();
 
     QString * _outPuffer;
     QList<CssSpriteElementImage> _images;

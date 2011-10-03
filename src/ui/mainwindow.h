@@ -70,6 +70,7 @@ protected slots:
     void on_actionExport_triggered();
     void on_actionImport_triggered();
     void on_actionExportToFilesystem_triggered();
+    void on_actionSaveCssFile_triggered();
     void on_actionSaveCssSprite_triggered();
     void on_actionPreview_triggered();
     void on_listWidget_itemPressed ( QListWidgetItem* item );

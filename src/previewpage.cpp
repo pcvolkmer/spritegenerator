@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010  Paul-Christian Volkmer
- *   paul-christian.volkmer@mni.fh-giessen.de
+ *   Copyright (C) 2011  Paul-Christian Volkmer
+ *   paul-christian.volkmer@mni.thm.de
  *
  *   This file is part of SpriteGenerator.
  *
@@ -25,12 +25,47 @@ QByteArray PreviewPage::create ( QList<CssSpriteElementImage> images ) {
     return obj.create();
 }
 
+QByteArray PreviewPage::createCssOnly(QList< CssSpriteElementImage > images) {
+    PreviewPage obj ( images );
+    return obj.generateCss();
+}
+
+
 PreviewPage::PreviewPage ( QList< CssSpriteElementImage > images ) : _images ( images ) {
     this->_outPuffer = new QString();
 }
 
 PreviewPage::~PreviewPage() {
     delete _outPuffer;
+}
+
+QByteArray PreviewPage::generateCss() {
+    QTextStream out ( this->_outPuffer );
+    foreach ( CssSpriteElementImage elem, this->_images ) {
+        out << ".style_" << QCryptographicHash::hash (
+            elem.fileName().toUtf8(),
+            QCryptographicHash::Md5
+        ).toHex();
+        if (elem.fileName() != this->_images.last().fileName()) out << ",\n";
+    }
+
+    out << " {\n  background-image: url(sprite.png);\n";
+    out << "}\n\n";
+
+    foreach ( CssSpriteElementImage elem, this->_images ) {
+        out << "/* generated for image: " << elem.fileName() << " */\n";
+        out << ".style_" << QCryptographicHash::hash (
+            elem.fileName().toUtf8(),
+            QCryptographicHash::Md5
+        ).toHex() << " {\n";
+        out << "  background-repeat: no-repeat;\n";
+        out << "  background-position: -" << elem.description()->startPosition().x() << "px -";
+        out << elem.description()->startPosition().y() << "px;\n";
+        out << "  width: " << elem.description()->size().width() << "px;\n";
+        out << "  height: " << elem.description()->size().height() << "px;\n";
+        out << "}\n\n";
+    }
+    return out.string()->toUtf8();
 }
 
 QByteArray PreviewPage::create() {
@@ -43,19 +78,9 @@ QByteArray PreviewPage::create() {
     out << "-moz-border-radius: 8px; -webkit-border-radius: 8px; }\n";
     out << ".style:hover { background-color: #FFC; ";
     out << "-moz-box-shadow:0 0 2px gray; -webkit-box-shadow:0 0 2px gray; }\n";
-    foreach ( CssSpriteElementImage elem, this->_images ) {
-        out << ".style_" << QCryptographicHash::hash (
-            elem.fileName().toUtf8(),
-            QCryptographicHash::Md5
-        ).toHex() << " {";
-        out << "  background-image: url(sprite.png);\n";
-        out << "  background-repeat: no-repeat;\n";
-        out << "background-position: -" << elem.description()->startPosition().x() << "px -";
-        out << elem.description()->startPosition().y() << "px; ";
-        out << "width: " << elem.description()->size().width() << "px; ";
-        out << "height: " << elem.description()->size().height() << "px; ";
-        out << "}\n";
-    }
+
+    out << this->generateCss();
+
     out << "</style>\n</head>\n";
     out << "<body>\n";
     QString versionText = "SpriteGenerator "
