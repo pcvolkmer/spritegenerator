@@ -444,6 +444,16 @@ void MainWindow::on_actionSaveCssSprite_triggered() {
     SpriteWidget::instance()->createCssSprite().save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
+void MainWindow::on_actionUseCssComposer_triggered() {
+    if (ui->actionUseCssComposer->isChecked()) {
+        ui->actionSaveCssFile->setIcon( QIcon ( ":images/images/22x22/application-x-archive.png" ));
+        ui->actionSaveCssFile->setToolTip( "Save CSS file (CSSComposer)" );
+        return;
+    }
+    ui->actionSaveCssFile->setIcon( QIcon ( ":images/images/22x22/text-css.png" ));
+    ui->actionSaveCssFile->setToolTip( "Save CSS file" );
+}
+
 void MainWindow::on_actionSaveCssFile_triggered() {
     QString fileName = QFileDialog::getSaveFileName (
                            this,
@@ -457,15 +467,34 @@ void MainWindow::on_actionSaveCssFile_triggered() {
     QFile cssFile ( fileName );
     cssFile.open ( QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate );
 
-    cssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+    if (ui->actionUseCssComposer->isChecked()) {
+        QString dirName = QDir::tempPath();
+        this->savePreviewFiles(dirName);
+        QTemporaryFile tempCssFile;
+        tempCssFile.open();
+        tempCssFile.setAutoRemove(false);
+        tempCssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+        qDebug() << tempCssFile.fileName();
+        tempCssFile.close();
+        CssFileComposer cssFileComposer(tempCssFile.fileName());
+        cssFile.write( cssFileComposer.composedFile(true) );
+        tempCssFile.remove();
+    }
+    else {
+        cssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+    }
     cssFile.close();
+}
+
+void MainWindow::savePreviewFiles(QString dirName) {
+    this->createPreviewPage ( dirName );
+    SpriteWidget::instance()->createCssSprite().save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
 void MainWindow::on_actionPreview_triggered() {
     QString dirName = QDir::tempPath();
     if ( dirName.isEmpty() ) return;
-    this->createPreviewPage ( dirName );
-    SpriteWidget::instance()->createCssSprite().save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
+    this->savePreviewFiles(dirName);
 
 #ifdef WIN32
     QDesktopServices::openUrl ( QUrl ( "file:///" + dirName + "/index.html" ) );

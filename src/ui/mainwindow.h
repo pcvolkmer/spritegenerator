@@ -29,6 +29,8 @@
 #include "previewpage.h"
 #include "cssspriteelementimagelist.h"
 
+#include "../libs/csscomposer/src/cssfilecomposer.h"
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -83,6 +85,9 @@ protected slots:
     void on_abortChangeSettingsButton_clicked();
     void on_moveUpToolButton_clicked();
     void on_moveDownToolButton_clicked();
+    void on_actionUseCssComposer_triggered();
+    
+    void savePreviewFiles(QString dirName);
 };
 
 #endif

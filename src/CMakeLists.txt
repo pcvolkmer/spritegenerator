@@ -1,4 +1,8 @@
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${QT_INCLUDES}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${LIBRARY_OUTPUT_PATH}
+)
 
 set(spritegenerator_SRCS
   ui/mainwindow.cpp
