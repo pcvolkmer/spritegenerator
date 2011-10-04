@@ -22,6 +22,7 @@
 #define PREVIEWPAGE_H
 
 #include <QtCore>
+#include <memory>
 #include "cssspriteelementimage.h"
 #include "version.h"
 
@@ -36,6 +37,7 @@ private:
 
     QByteArray create();
     QByteArray generateCss();
+    QString styleName(QString fileName);
 
     QString * _outPuffer;
     QList<CssSpriteElementImage> _images;
