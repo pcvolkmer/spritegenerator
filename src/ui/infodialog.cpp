@@ -23,14 +23,12 @@
 InfoDialog::InfoDialog ( QWidget* parent, Qt::WFlags fl )
         : QDialog ( parent, fl ), Ui::InfoDialog() {
     setupUi ( this );
+    this->licenseBrowser->hide();
+    this->setFixedHeight(200);
     QFile license ( ":others/others/license" );
     license.open ( QIODevice::ReadOnly );
     this->licenseBrowser->setText ( license.readAll() );
-    this->versionLabel->setText ( "SpriteGenerator "
-                                  + QString::number ( VERSION_MAJOR,10 )
-                                  + "." + QString::number ( VERSION_MINOR,10 )
-                                  + "." + QString::number ( VERSION_RELEASE,10 )
-                                );
+    this->versionLabel->setText ( QString(VERSION_MAJOR) +"." + QString(VERSION_MINOR) + "." + QString(VERSION_RELEASE) + "-" + QString(VERSION_BUILD) );
 }
 
 InfoDialog::~InfoDialog() {
@@ -39,3 +37,15 @@ InfoDialog::~InfoDialog() {
 void InfoDialog::on_closeButton_clicked() {
     this->close();
 }
+
+void InfoDialog::on_licenseButton_clicked() {
+    if (this->licenseButton->isChecked()) {
+        this->setFixedHeight(400);
+        this->licenseBrowser->show();
+    }
+    else {
+        this->setFixedHeight(200);
+        this->licenseBrowser->hide();
+    }
+}
+

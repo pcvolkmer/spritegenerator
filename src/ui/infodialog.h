@@ -21,7 +21,7 @@
 #ifndef INFODIALOG_H
 #define INFODIALOG_H
 
-#include <QDialog>
+#include <QtGui>
 #include <QtCore>
 #include "ui_infoDialog.h"
 #include "version.h"
@@ -39,6 +39,7 @@ protected:
 
 protected slots:
     void on_closeButton_clicked();
+    void on_licenseButton_clicked();
 
 };
 

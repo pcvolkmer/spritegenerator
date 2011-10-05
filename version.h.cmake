@@ -21,12 +21,13 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#cmakedefine VERSION_MAJOR   @VERSION_MAJOR@
-#cmakedefine VERSION_MINOR   @VERSION_MINOR@
-#cmakedefine VERSION_RELEASE @VERSION_RELEASE@
+#cmakedefine VERSION_MAJOR   "@VERSION_MAJOR@"
+#cmakedefine VERSION_MINOR   "@VERSION_MINOR@"
+#cmakedefine VERSION_RELEASE "@VERSION_RELEASE@"
+#cmakedefine VERSION_BUILD "@VERSION_BUILD@"
 
 #ifndef VERSION_MAJOR
-#define VERSION_MAJOR 0
+#define VERSION_MAJOR "0"
 #endif
 
 #ifndef VERSION_MINOR
