@@ -112,19 +112,21 @@ void MainWindow::updateResultingCssTextBrowser(QString fileName) {
             ui->imageSizeY->setText ( QString::number ( elem.description()->size().height(),10 ) + "px" );
             ui->resultingCssTextBrowser->setText (
                 "/* " + this->stripFileName ( fileName ) + " */\n"
-                + QString ( "background-image: url(<SPRITE URL>);\n" )
-                + QString ( "background-repeat: " )
+                + QString ( "." ) + PreviewPage::styleName(fileName) + " {\n"
+                + QString ( "  background-image: url(<SPRITE URL>);\n" )
+                + QString ( "  background-repeat: " )
                 + ui->spriteSettingsToolBar->repeat()
-                + ";\nbackground-position: -"
+                + ";\n  background-position: -"
                 + QString::number ( elem.description()->startPosition().x(),10 )
                 + "px -"
                 + QString::number ( elem.description()->startPosition().y(),10 )
                 + "px;\n"
-                + "width: "
+                + "  width: "
                 + QString::number ( elem.description()->size().width(),10 )
-                + "px;\nheight: "
+                + "px;\n  height: "
                 + QString::number ( elem.description()->size().height(),10 )
                 + "px;"
+                + "\n}"
             );
             ui->elementImageLabel->setPixmap ( QPixmap::fromImage ( elem.image() ) );
             return;

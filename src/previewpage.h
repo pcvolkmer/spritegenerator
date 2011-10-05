@@ -30,6 +30,7 @@ class PreviewPage {
 public:
     static QByteArray create ( QList<CssSpriteElementImage> images );
     static QByteArray createCssOnly ( QList<CssSpriteElementImage> images );
+    static QString styleName(QString fileName);
     
 private:
     PreviewPage ( QList<CssSpriteElementImage> images );
@@ -37,7 +38,6 @@ private:
 
     QByteArray create();
     QByteArray generateCss();
-    QString styleName(QString fileName);
 
     QString * _outPuffer;
     QList<CssSpriteElementImage> _images;

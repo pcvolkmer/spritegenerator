@@ -5,6 +5,8 @@ include_directories(
 )
 
 set(tests_SRCS
+  previewpagetest.cpp
+  ../src/previewpage.cpp
   ui/spriteformattoolbartest.cpp
   ../src/ui/spriteformattoolbar.cpp
   ui/spritequalitytoolbartest.cpp
@@ -25,6 +27,8 @@ set(tests_SRCS
 )
 
 set(tests_MOC_SRCS
+  previewpagetest.h
+  ../src/previewpage.h
   ui/spriteformattoolbartest.h
   ../src/ui/spriteformattoolbar.h
   ui/spritequalitytoolbartest.h
@@ -68,3 +72,4 @@ add_test(SpriteQualityToolBarTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteQualityT
 add_test(SpriteElementListWidgetTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteElementListWidgetTest)
 add_test(SpriteElementTreeWidgetTest ${EXECUTABLE_OUTPUT_PATH}/tests SpriteElementTreeWidgetTest)
 add_test(MainWindowTest ${EXECUTABLE_OUTPUT_PATH}/tests MainWindowTest)
+add_test(PreviewPageTest ${EXECUTABLE_OUTPUT_PATH}/tests PreviewPageTest)
