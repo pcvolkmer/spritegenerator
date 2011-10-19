@@ -1,11 +1,9 @@
 [Desktop Entry]
-Type=Application
-Version=1.0
+X-SuSE-translate=true
+Categories=Development;Design;
+Encoding=UTF-8
 Name=SpriteGenerator
 GenericName=SpriteGenerator
-Comment=Generator for CSS sprites
-Exec=/usr/bin/spritegenerator
-Icon=/usr/share/spritegenerator/spritegenerator.svg
-Terminal=false
-Categories=Development;
-X-SuSE-translate=false
+Type=Application
+Exec=spritegenerator
+Icon=spritegenerator

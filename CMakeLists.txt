@@ -6,7 +6,7 @@ find_package(Qt4 REQUIRED)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
-set(VERSION_RELEASE 20111004)
+set(VERSION_RELEASE 20111019)
 
 if (BUILD_NUMBER)
   set(VERSION_BUILD ${BUILD_NUMBER})
@@ -29,7 +29,7 @@ SET(DESKTOP
   spritegenerator.desktop
 )
 
-SET(FILES
+SET(ICONS
   src/resources/images/spritegenerator.svg
 )
 
@@ -49,8 +49,8 @@ IF (UNIX AND NOT APPLE)
   INSTALL(FILES ${DESKTOP}
     DESTINATION share/applications
   )
-  INSTALL(FILES ${FILES}
-    DESTINATION share/spritegenerator
+  INSTALL(FILES ${ICONS}
+    DESTINATION share/icons/hicolor/scalable/apps
   )
 ENDIF (UNIX AND NOT APPLE)
 
