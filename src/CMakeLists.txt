@@ -71,7 +71,7 @@ target_link_libraries(spritegenerator
 )
 
 IF(APPLE)
-  SET (CMAKE_CXX_FLAGS "-mmacosx-version-min=10.5") 
+  SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.6") 
   INSTALL(CODE
     "SET(BUNDLE
       \"\${CMAKE_INSTALL_PREFIX}/../..\"
