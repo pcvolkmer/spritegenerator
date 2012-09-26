@@ -74,7 +74,7 @@ IF (WIN32)
     ${CMAKE_CURRENT_BINARY_DIR}/lib/QtXml4.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/libjpeg-8.dll 
     ${CMAKE_CURRENT_BINARY_DIR}/lib/libpng15-15.dll
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/libtiff-3.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/libtiff-5.dll
     ${CMAKE_CURRENT_BINARY_DIR}/lib/zlib1.dll
   )
   INSTALL(FILES ${WINQTFILES}
