@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="images">
+    <file>images/22x22/application-x-compress.png</file>
     <file>images/22x22/application-x-archive.png</file>
     <file>images/22x22/document-preview.png</file>
     <file>images/22x22/text-css.png</file>

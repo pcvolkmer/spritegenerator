@@ -23,7 +23,7 @@
 static SpriteWidget * _instance = 0;
 
 SpriteWidget * SpriteWidget::instance() {
-    if (_instance == NULL) _instance = new SpriteWidget(new CssSpriteElementImageList());
+    if ( _instance == NULL ) _instance = new SpriteWidget ( new CssSpriteElementImageList() );
     return _instance;
 }
 
@@ -233,6 +233,7 @@ bool SpriteWidget::exportToFile (
     rootElement.setAttribute ( "layout",QString::number ( ( int ) _elementLayout,10 ) );
     rootElement.setAttribute ( "format",QString::number ( ( int ) _colorDepth ) );
     rootElement.setAttribute ( "compression",QString::number ( ( int ) _compression ) );
+    rootElement.setAttribute ( "prefix", _prefix );
 
     // Gemeinsamer Pfadanteil
     QString minSeperatorsPath;
@@ -293,17 +294,20 @@ CssSpriteElementImageList * SpriteWidget::importFromFile ( QString fileName ) {
     }
     file.close();
 
-    if (doc.elementsByTagName ( "spritewidget" ).count() != 1) return _images;
-    QDomElement rootElement = doc.elementsByTagName ( "spritewidget" ).at(0).toElement();
+    if ( doc.elementsByTagName ( "spritewidget" ).count() != 1 ) return _images;
+    QDomElement rootElement = doc.elementsByTagName ( "spritewidget" ).at ( 0 ).toElement();
 
-    int xMargin = rootElement.attribute("xMargin").toInt();
-    int yMargin = rootElement.attribute("yMargin").toInt();
-    SpriteWidget::Layout layout = (SpriteWidget::Layout) rootElement.attribute("layout").toInt();
-    this->setLayout(xMargin, yMargin, layout);
+    int xMargin = rootElement.attribute ( "xMargin" ).toInt();
+    int yMargin = rootElement.attribute ( "yMargin" ).toInt();
+    SpriteWidget::Layout layout = ( SpriteWidget::Layout ) rootElement.attribute ( "layout" ).toInt();
+    this->setLayout ( xMargin, yMargin, layout );
 
-    SpriteWidget::Format format = (SpriteWidget::Format) rootElement.attribute("format").toInt();
-    int compression = rootElement.attribute("compression").toInt();
-    this->setFormat(format, compression);
+    SpriteWidget::Format format = ( SpriteWidget::Format ) rootElement.attribute ( "format" ).toInt();
+    int compression = rootElement.attribute ( "compression" ).toInt();
+    this->setFormat ( format, compression );
+
+    QString prefix = rootElement.attribute ( "prefix" );
+    this->setPrefix ( prefix );
 
     for ( int i = 0; i < doc.elementsByTagName ( "image" ).count(); i++ ) {
         QString fileName = doc.elementsByTagName ( "image" ).at ( i ).toElement().attribute ( "file" );
@@ -323,7 +327,7 @@ CssSpriteElementImageList * SpriteWidget::importFromFile ( QString fileName ) {
     return _images;
 }
 
-CssSpriteElementImageList* SpriteWidget::setLayout(int elementXMargin, int elementYMargin, SpriteWidget::Layout elementLayout) {
+CssSpriteElementImageList* SpriteWidget::setLayout ( int elementXMargin, int elementYMargin, SpriteWidget::Layout elementLayout ) {
     _elementXMargin = elementXMargin;
     _elementYMargin = elementYMargin;
     _elementLayout = elementLayout;
@@ -333,10 +337,18 @@ CssSpriteElementImageList* SpriteWidget::setLayout(int elementXMargin, int eleme
     return this->_images;
 }
 
-CssSpriteElementImageList* SpriteWidget::setFormat(SpriteWidget::Format colorDepth, int compression) {
+CssSpriteElementImageList* SpriteWidget::setFormat ( SpriteWidget::Format colorDepth, int compression ) {
     _colorDepth = colorDepth;
     _compression = compression;
-    _qImageQuality = (9 - _compression) * 11;
+    _qImageQuality = ( 9 - _compression ) * 11;
+
+    this->_init();
+    this->_calcImage();
+    return this->_images;
+}
+
+CssSpriteElementImageList* SpriteWidget::setPrefix ( QString prefix ) {
+    this->_prefix = prefix;
 
     this->_init();
     this->_calcImage();

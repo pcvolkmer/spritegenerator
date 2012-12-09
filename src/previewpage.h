@@ -28,17 +28,18 @@
 
 class PreviewPage {
 public:
-    static QByteArray create ( QList<CssSpriteElementImage> images );
-    static QByteArray createCssOnly ( QList<CssSpriteElementImage> images );
-    static QString styleName(QString fileName);
-    
+    static QByteArray create ( QList<CssSpriteElementImage> images, QString prefix );
+    static QByteArray createCssOnly ( QList<CssSpriteElementImage> images, QString prefix );
+    static QString styleName ( QString fileName, QString prefix );
+
 private:
-    PreviewPage ( QList<CssSpriteElementImage> images );
+    PreviewPage ( QList<CssSpriteElementImage> images, QString prefix );
     ~PreviewPage();
 
-    QByteArray create();
-    QByteArray generateCss();
-
+    QByteArray create ();
+    QByteArray generateCss ();
+    QString _prefix;
+    
     QString * _outPuffer;
     QList<CssSpriteElementImage> _images;
 };

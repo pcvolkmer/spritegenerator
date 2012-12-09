@@ -23,8 +23,7 @@
 
 #cmakedefine VERSION_MAJOR   "@VERSION_MAJOR@"
 #cmakedefine VERSION_MINOR   "@VERSION_MINOR@"
-#cmakedefine VERSION_RELEASE "@VERSION_RELEASE@"
-#cmakedefine VERSION_BUILD "@VERSION_BUILD@"
+#cmakedefine VERSION_PATCH   "@VERSION_PATCH@"
 
 #ifndef VERSION_MAJOR
 #define VERSION_MAJOR "0"
@@ -34,8 +33,8 @@
 #define VERSION_MINOR 0
 #endif
 
-#ifndef VERSION_RELEASE
-#define VERSION_RELEASE 0
+#ifndef VERSION_PATCH
+#define VERSION_PATCH 0
 #endif
 
 #endif

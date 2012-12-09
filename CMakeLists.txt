@@ -5,13 +5,22 @@ set(QT_MIN_VERSION 4.6.0)
 find_package(Qt4 REQUIRED)
 
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-set(VERSION_RELEASE 20111128)
+set(VERSION_MINOR 2)
+set(VERSION_PATCH 0)
 
 if (BUILD_NUMBER)
-  set(VERSION_BUILD ${BUILD_NUMBER})
-else ()
-  set(VERSION_BUILD "0 (Developer Build)")
+  set(VERSION_PATCH "${VERSION_PATCH}_${BUILD_NUMBER}")
+else(BUILD_NUMBER)
+  find_program(GIT_EXECUTABLE "git")
+  if(GIT_EXECUTABLE)
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} rev-parse --verify -q --short=7 HEAD
+      OUTPUT_VARIABLE head
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    set(VERSION_PATCH "${VERSION_PATCH}-git${head}")
+  endif()
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH
@@ -22,8 +31,30 @@ set(LIBRARY_OUTPUT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/libs
 )
 
+message ("Start build configuration for SpriteGenerator ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} ...")
+message ("use 'cmake -i' to run CMake in interactive mode")
+message ("or use:")
+message ("  -DTESTS=(ON|OFF)    to build test application")
+message ("  -DCOVERAGE=(ON|OFF) to run test application with code coverage")
+message ("")
+
+option (TESTS "Enable build of tests" OFF)
+option (COVERAGE "Enable coverage" OFF)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/libs)
+
 CONFIGURE_FILE( version.h.cmake src/version.h )
 CONFIGURE_FILE( Doxyfile.cmake Doxyfile )
+
+add_custom_target(doc)
+find_program(DOXYGEN_EXECUTABLE "doxygen")
+if (DOXYGEN_EXECUTABLE)
+  add_custom_command(TARGET doc POST_BUILD
+    COMMAND ${DOXYGEN_EXECUTABLE}
+  )
+endif()
 
 SET(DESKTOP
   spritegenerator.desktop
@@ -37,12 +68,20 @@ add_subdirectory(src)
 add_subdirectory(libs/csscomposer/src)
 
 if(TESTS)
+  if (COVERAGE)
+    message ("Execute tests with coverage is enabled")
+    find_program(LCOV_TOOL "lcov")
+    find_program(LCOV_HTML "genhtml")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+  else (COVERAGE)
+    message ("Execute tests with coverage is disabled")
+  endif(COVERAGE)
   message ("Build of tests is enabled")
   enable_testing()
   add_subdirectory(tests)
-  add_subdirectory(libs/csscomposer/tests)
 else(TESTS)
-  message ("To enable build of tests use param '-DTESTS=ON'")
+  message ("Build of tests is disabled")
 endif(TESTS)
 
 IF (UNIX AND NOT APPLE)

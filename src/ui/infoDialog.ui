@@ -165,7 +165,7 @@ font-weight: bold;</string>
           <property name="text">
            <string>SpriteGenerator is a generator for CSS sprites.
 
-Copyright © Paul-Christian Volkmer 2011</string>
+Copyright © Paul-Christian Volkmer 2012</string>
           </property>
           <property name="textFormat">
            <enum>Qt::PlainText</enum>

@@ -28,7 +28,7 @@ InfoDialog::InfoDialog ( QWidget* parent, Qt::WFlags fl )
     QFile license ( ":others/others/license" );
     license.open ( QIODevice::ReadOnly );
     this->licenseBrowser->setText ( license.readAll() );
-    this->versionLabel->setText ( QString(VERSION_MAJOR) +"." + QString(VERSION_MINOR) + "." + QString(VERSION_RELEASE) + "-" + QString(VERSION_BUILD) );
+    this->versionLabel->setText ( QString(VERSION_MAJOR) +"." + QString(VERSION_MINOR) + "." + QString(VERSION_PATCH) );
 }
 
 InfoDialog::~InfoDialog() {

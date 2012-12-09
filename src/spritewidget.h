@@ -56,8 +56,9 @@ public:
     static SpriteWidget * instance() ;
 
     CssSpriteElementImageList * updateElementImages ( CssSpriteElementImageList * images );
-    CssSpriteElementImageList * setLayout (int elementXMargin, int elementYMargin, Layout elementLayout) ;
-    CssSpriteElementImageList * setFormat (Format colorDepth, int compression) ;
+    CssSpriteElementImageList * setLayout ( int elementXMargin, int elementYMargin, Layout elementLayout ) ;
+    CssSpriteElementImageList * setFormat ( Format colorDepth, int compression ) ;
+    CssSpriteElementImageList * setPrefix ( QString prefix );
     QImage createCssSprite ();
     int resultingFileSize () ;
     bool exportToFile ( QString fileName ) ;
@@ -76,6 +77,9 @@ public:
     }
     const int compression() {
         return _compression;
+    }
+    const QString prefix() {
+        return _prefix;
     }
 
 
@@ -98,6 +102,7 @@ private:
     SpriteWidget::Format _colorDepth;
     int _qImageQuality;
     int _compression;
+    QString _prefix;
 
 private slots:
     void paintEvent ( QPaintEvent * e );

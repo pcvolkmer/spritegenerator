@@ -21,7 +21,7 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
-        : QMainWindow ( parent, fl ), ui ( new Ui::MainWindow() ) {
+    : QMainWindow ( parent, fl ), ui ( new Ui::MainWindow() ) {
     this->_progressBar = new QProgressBar();
 
     this->_statusWarningPushButton = new QPushButton();
@@ -41,9 +41,9 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
     this->fsWatcher = new QFileSystemWatcher();
 
     connect ( fsWatcher, SIGNAL ( fileChanged ( QString ) ), SLOT ( onFileChanged ( QString ) ) );
-    connect ( ui->spriteSettingsToolBar, SIGNAL(settingsChanged()), SLOT (onSettingsChanged()));
-    connect ( ui->spriteQualityToolBar, SIGNAL(qualityChanged()), SLOT (onQualityChanged()));
-    connect ( ui->spriteSettingsToolBar, SIGNAL(repeatNeedsAutoChange(bool)), SLOT (onShowAutoChangeForm(bool)));
+    connect ( ui->spriteSettingsToolBar, SIGNAL ( settingsChanged() ), SLOT ( onSettingsChanged() ) );
+    connect ( ui->spriteQualityToolBar, SIGNAL ( qualityChanged() ), SLOT ( onQualityChanged() ) );
+    connect ( ui->spriteSettingsToolBar, SIGNAL ( repeatNeedsAutoChange ( bool ) ), SLOT ( onShowAutoChangeForm ( bool ) ) );
 }
 
 MainWindow::~MainWindow() {
@@ -78,33 +78,33 @@ void MainWindow::update() {
 
 void MainWindow::updateSaveRatioProgessBar() {
     int savedBytes = _images->sumOfImageSizes() - SpriteWidget::instance()->resultingFileSize();
-    int savedBytesPercent = _images->sumOfImageSizes() == 0 || ((savedBytes * 100) / _images->sumOfImageSizes()) < 0
+    int savedBytesPercent = _images->sumOfImageSizes() == 0 || ( ( savedBytes * 100 ) / _images->sumOfImageSizes() ) < 0
                             ? 0
-                            : (savedBytes * 100) / _images->sumOfImageSizes();
+                            : ( savedBytes * 100 ) / _images->sumOfImageSizes();
 
     int savedRequests = _images->count() - 1;
-    int savedRequestsPercent = _images->count() == 0 || ((savedRequests * 100) / _images->count()) < 0
+    int savedRequestsPercent = _images->count() == 0 || ( ( savedRequests * 100 ) / _images->count() ) < 0
                                ? 0
-                               : (savedRequests * 100) / _images->count();
-    ui->savedBytesRatioProgessBar->setValue(100 - savedBytesPercent);
-    ui->savedRequestsRatioProgessBar->setValue(100 - savedRequestsPercent);
+                               : ( savedRequests * 100 ) / _images->count();
+    ui->savedBytesRatioProgessBar->setValue ( 100 - savedBytesPercent );
+    ui->savedRequestsRatioProgessBar->setValue ( 100 - savedRequestsPercent );
 
-    if (_images->size() > 0) {
-        ui->savedBytesDescriptionLabel->setText(
-            tr ("This sprite will save %n bytes " , "", savedBytes)
-            + tr ("and will have  a file size of %n bytes.", "", SpriteWidget::instance()->resultingFileSize())
+    if ( _images->size() > 0 ) {
+        ui->savedBytesDescriptionLabel->setText (
+            tr ( "This sprite will save %n bytes " , "", savedBytes )
+            + tr ( "and will have  a file size of %n bytes.", "", SpriteWidget::instance()->resultingFileSize() )
         );
 
-        ui->savedRequestsDescriptionLabel->setText(
-            tr("Instead of requesting %n images, only a single request will be done.", "", savedRequests + 1)
+        ui->savedRequestsDescriptionLabel->setText (
+            tr ( "Instead of requesting %n images, only a single request will be done.", "", savedRequests + 1 )
         );
     } else {
-        ui->savedBytesDescriptionLabel->setText( tr ("No images available in sprite."));
-        ui->savedRequestsDescriptionLabel->setText( tr ("No images available in sprite."));
+        ui->savedBytesDescriptionLabel->setText ( tr ( "No images available in sprite." ) );
+        ui->savedRequestsDescriptionLabel->setText ( tr ( "No images available in sprite." ) );
     }
 }
 
-void MainWindow::updateResultingCssTextBrowser(QString fileName) {
+void MainWindow::updateResultingCssTextBrowser ( QString fileName ) {
     foreach ( CssSpriteElementImage elem, * this->_images ) {
         if ( elem.fileName() == fileName ) {
             ui->fileName->setText ( this->stripFileName ( fileName ) );
@@ -112,7 +112,7 @@ void MainWindow::updateResultingCssTextBrowser(QString fileName) {
             ui->imageSizeY->setText ( QString::number ( elem.description()->size().height(),10 ) + "px" );
             ui->resultingCssTextBrowser->setText (
                 "/* " + this->stripFileName ( fileName ) + " */\n"
-                + QString ( "." ) + PreviewPage::styleName(fileName) + " {\n"
+                + QString ( "." ) + PreviewPage::styleName ( fileName, ui->cssElementPrefix->text() ) + " {\n"
                 + QString ( "  background-image: url(<SPRITE URL>);\n" )
                 + QString ( "  background-repeat: " )
                 + ui->spriteSettingsToolBar->repeat()
@@ -192,7 +192,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
             CssSpriteElementImage img ( dirName + "/" + fileName,image );
             if ( !this->_images->contains ( img ) ) {
                 img.setFileState ( CssSpriteElementImage::FILE_VIRTUAL );
-                img.setFileName ( stripFileName( dirName ) + "/" + fileName );
+                img.setFileName ( stripFileName ( dirName ) + "/" + fileName );
                 this->_images->append ( img );
                 this->fsWatcher->addPath ( dirName + "/" + fileName );
             }
@@ -222,7 +222,7 @@ void MainWindow::on_actionAddDirectory_triggered() {
         );
     }
 
-    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
     this->_progressBar->reset();
     this->setCursor ( Qt::ArrowCursor );
     this->update();
@@ -242,7 +242,7 @@ void MainWindow::on_actionAddFile_triggered() {
         CssSpriteElementImage img ( fileName, image );
         if ( !this->_images->contains ( img ) ) {
             img.setFileState ( CssSpriteElementImage::FILE_VIRTUAL );
-            img.setFileName ( stripFileName( fileName ) );
+            img.setFileName ( stripFileName ( fileName ) );
             this->_images->append ( img );
             ui->listWidget->addItem ( fileName );
             this->fsWatcher->addPath ( fileName );
@@ -257,7 +257,7 @@ void MainWindow::on_actionAddFile_triggered() {
             10000
         );
     }
-    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
     this->setCursor ( Qt::ArrowCursor );
     this->update();
 }
@@ -286,7 +286,7 @@ void MainWindow::on_actionRemoveFile_triggered() {
             delete item;
         }
     }
-    this->_images = SpriteWidget::instance()->updateElementImages( this->_images );
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
     this->update();
 }
 
@@ -300,7 +300,7 @@ void MainWindow::on_actionExport_triggered() {
 
     if ( fileName.isEmpty() ) return;
 
-    SpriteWidget::instance()->exportToFile(fileName);
+    SpriteWidget::instance()->exportToFile ( fileName );
 
     this->update();
 }
@@ -327,13 +327,15 @@ void MainWindow::on_actionImport_triggered() {
 
     if ( fileName.isEmpty() ) return;
 
-    this->_images = SpriteWidget::instance()->importFromFile(fileName);
+    this->_images = SpriteWidget::instance()->importFromFile ( fileName );
 
-    ui->spriteSettingsToolBar->ui()->xMarginSpinBox->setValue(SpriteWidget::instance()->elementXMargin());
-    ui->spriteSettingsToolBar->ui()->yMarginSpinBox->setValue(SpriteWidget::instance()->elementYMargin());
-    ui->spriteSettingsToolBar->ui()->elementLayoutComboBox->setCurrentIndex((int)SpriteWidget::instance()->elementLayout());
-    ui->spriteQualityToolBar->ui()->qualityComboBox->setCurrentIndex((int)SpriteWidget::instance()->colorDepth());
-    ui->spriteQualityToolBar->ui()->compressionSpinBox->setValue((int)SpriteWidget::instance()->compression());
+    ui->spriteSettingsToolBar->ui()->xMarginSpinBox->setValue ( SpriteWidget::instance()->elementXMargin() );
+    ui->spriteSettingsToolBar->ui()->yMarginSpinBox->setValue ( SpriteWidget::instance()->elementYMargin() );
+    ui->spriteSettingsToolBar->ui()->elementLayoutComboBox->setCurrentIndex ( ( int ) SpriteWidget::instance()->elementLayout() );
+    ui->spriteQualityToolBar->ui()->qualityComboBox->setCurrentIndex ( ( int ) SpriteWidget::instance()->colorDepth() );
+    ui->spriteQualityToolBar->ui()->compressionSpinBox->setValue ( ( int ) SpriteWidget::instance()->compression() );
+    
+    ui->cssElementPrefix->setText(SpriteWidget::instance()->prefix());
     this->update();
 }
 
@@ -446,14 +448,14 @@ void MainWindow::on_actionSaveCssSprite_triggered() {
     SpriteWidget::instance()->createCssSprite().save ( fileName, "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
 
-void MainWindow::on_actionUseCssComposer_triggered() {
-    if (ui->actionUseCssComposer->isChecked()) {
-        ui->actionSaveCssFile->setIcon( QIcon ( ":images/images/22x22/application-x-archive.png" ));
-        ui->actionSaveCssFile->setToolTip( "Save CSS file (CSSComposer)" );
+void MainWindow::on_actionMinimize_CSS_triggered() {
+    if ( ui->actionMinimize_CSS->isChecked() ) {
+        ui->actionSaveCssFile->setIcon ( QIcon ( ":images/images/22x22/application-x-archive.png" ) );
+        ui->actionSaveCssFile->setToolTip ( "Save CSS file (minimized)" );
         return;
     }
-    ui->actionSaveCssFile->setIcon( QIcon ( ":images/images/22x22/text-css.png" ));
-    ui->actionSaveCssFile->setToolTip( "Save CSS file" );
+    ui->actionSaveCssFile->setIcon ( QIcon ( ":images/images/22x22/text-css.png" ) );
+    ui->actionSaveCssFile->setToolTip ( "Save CSS file" );
 }
 
 void MainWindow::on_actionSaveCssFile_triggered() {
@@ -469,26 +471,25 @@ void MainWindow::on_actionSaveCssFile_triggered() {
     QFile cssFile ( fileName );
     cssFile.open ( QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate );
 
-    if (ui->actionUseCssComposer->isChecked()) {
+    if ( ui->actionMinimize_CSS->isChecked() ) {
         QString dirName = QDir::tempPath();
-        this->savePreviewFiles(dirName);
+        this->savePreviewFiles ( dirName );
         QTemporaryFile tempCssFile;
         tempCssFile.open();
-        tempCssFile.setAutoRemove(false);
-        tempCssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+        tempCssFile.setAutoRemove ( false );
+        tempCssFile.write ( PreviewPage::createCssOnly ( * this->_images, ui->cssElementPrefix->text() ) );
         qDebug() << tempCssFile.fileName();
         tempCssFile.close();
-        CssFileComposer cssFileComposer(tempCssFile.fileName());
-        cssFile.write( cssFileComposer.composedFile(true) );
+        CssFileComposer cssFileComposer ( tempCssFile.fileName() );
+        cssFile.write ( cssFileComposer.composedFile ( true ) );
         tempCssFile.remove();
-    }
-    else {
-        cssFile.write( PreviewPage::createCssOnly( * this->_images ) );
+    } else {
+        cssFile.write ( PreviewPage::createCssOnly ( * this->_images, ui->cssElementPrefix->text() ) );
     }
     cssFile.close();
 }
 
-void MainWindow::savePreviewFiles(QString dirName) {
+void MainWindow::savePreviewFiles ( QString dirName ) {
     this->createPreviewPage ( dirName );
     SpriteWidget::instance()->createCssSprite().save ( dirName + "/sprite.png", "PNG", ui->spriteQualityToolBar->qImageQuality() );
 }
@@ -496,7 +497,7 @@ void MainWindow::savePreviewFiles(QString dirName) {
 void MainWindow::on_actionPreview_triggered() {
     QString dirName = QDir::tempPath();
     if ( dirName.isEmpty() ) return;
-    this->savePreviewFiles(dirName);
+    this->savePreviewFiles ( dirName );
 
 #ifdef WIN32
     QDesktopServices::openUrl ( QUrl ( "file:///" + dirName + "/index.html" ) );
@@ -510,7 +511,7 @@ bool MainWindow::createPreviewPage ( QString dirName ) {
     htmlFile.open ( QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate );
     if ( !htmlFile.isWritable() ) return false;
 
-    htmlFile.write ( PreviewPage::create ( *this->_images ) );
+    htmlFile.write ( PreviewPage::create ( *this->_images, ui->cssElementPrefix->text() ) );
 
     htmlFile.close();
     return true;
@@ -518,7 +519,7 @@ bool MainWindow::createPreviewPage ( QString dirName ) {
 
 void MainWindow::on_listWidget_itemPressed ( QListWidgetItem * item ) {
     QString fileName = item->text();
-    this->updateResultingCssTextBrowser(fileName);
+    this->updateResultingCssTextBrowser ( fileName );
 }
 
 void MainWindow::on_treeWidget_itemPressed ( QTreeWidgetItem * item ) {
@@ -529,7 +530,7 @@ void MainWindow::on_treeWidget_itemPressed ( QTreeWidgetItem * item ) {
         item = item->parent();
     }
     fileName.remove ( 0,1 );
-    this->updateResultingCssTextBrowser(fileName);
+    this->updateResultingCssTextBrowser ( fileName );
 }
 
 void MainWindow::on_listWidget_currentItemChanged ( QListWidgetItem* item ) {
@@ -591,7 +592,7 @@ void MainWindow::on_moveDownToolButton_clicked() {
         }
     }
 
-    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
 
     ui->listWidget->update ( this->_images );
 
@@ -617,7 +618,7 @@ void MainWindow::on_moveUpToolButton_clicked() {
             selectedItemLabels.append ( item->text() );
         }
     }
-    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
 
     ui->listWidget->update ( this->_images );
 
@@ -638,22 +639,27 @@ void MainWindow::on_treeWidget_itemMoved() {
 }
 
 void MainWindow::onSettingsChanged() {
-    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
-    SpriteWidget::instance()->setLayout(ui->spriteSettingsToolBar->xMargin(), ui->spriteSettingsToolBar->yMargin(), ui->spriteSettingsToolBar->layout());
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
+    SpriteWidget::instance()->setLayout ( ui->spriteSettingsToolBar->xMargin(), ui->spriteSettingsToolBar->yMargin(), ui->spriteSettingsToolBar->layout() );
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
 
     updateSaveRatioProgessBar();
 }
 
 void MainWindow::onQualityChanged() {
-    this->_images = SpriteWidget::instance()->updateElementImages(this->_images);
-    SpriteWidget::instance()->setFormat(ui->spriteQualityToolBar->colorDepth(), ui->spriteQualityToolBar->compressionLevel());
+    this->_images = SpriteWidget::instance()->updateElementImages ( this->_images );
+    SpriteWidget::instance()->setFormat ( ui->spriteQualityToolBar->colorDepth(), ui->spriteQualityToolBar->compressionLevel() );
     this->on_listWidget_currentItemChanged ( ui->listWidget->currentItem() );
 
     updateSaveRatioProgessBar();
 }
 
-void MainWindow::onShowAutoChangeForm(bool show) {
+void MainWindow::onShowAutoChangeForm ( bool show ) {
     ui->repeatSettingsInfoWidget->setVisible ( show );
     ui->resultingCssTextBrowser->setVisible ( ! show );
+}
+
+void MainWindow::on_cssElementPrefix_textEdited ( QString text ) {
+    this->updateResultingCssTextBrowser ( ui->listWidget->currentItem()->text() );
+    SpriteWidget::instance()->setPrefix ( text );
 }

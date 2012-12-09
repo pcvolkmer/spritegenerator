@@ -57,14 +57,14 @@ private:
     bool createPreviewPage ( QString dirName );
     SpriteWidget::Format selectedSpriteColorDepth();
     void updateSaveRatioProgessBar() ;
-    void updateResultingCssTextBrowser(QString fileName) ;
+    void updateResultingCssTextBrowser ( QString fileName ) ;
 
 protected slots:
     void onFileChanged ( QString path );
     void onSettingsChanged() ;
     void onQualityChanged() ;
 
-    void onShowAutoChangeForm(bool show) ;
+    void onShowAutoChangeForm ( bool show ) ;
 
     void on_actionAddFile_triggered();
     void on_actionAddDirectory_triggered();
@@ -85,9 +85,10 @@ protected slots:
     void on_abortChangeSettingsButton_clicked();
     void on_moveUpToolButton_clicked();
     void on_moveDownToolButton_clicked();
-    void on_actionUseCssComposer_triggered();
-    
-    void savePreviewFiles(QString dirName);
+    void on_actionMinimize_CSS_triggered();
+    void on_cssElementPrefix_textEdited ( QString text );
+
+    void savePreviewFiles ( QString dirName );
 };
 
 #endif

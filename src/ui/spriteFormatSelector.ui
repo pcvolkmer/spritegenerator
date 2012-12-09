@@ -78,7 +78,7 @@
     <widget class="QComboBox" name="elementLayoutComboBox">
      <item>
       <property name="text">
-       <string>optimize for best file size</string>
+       <string>auto select best file size</string>
       </property>
      </item>
      <item>
